@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Poolr driver</string>
+    <string name="title_activity_home_page">HomePageActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="spinner_array">
+        <item>254</item>
+        <item>255</item>
+        <item>256</item>
+    </string-array>
+    <string-array name="number_of_seats">
+        <item>1 seat</item>
+        <item>2 seats</item>
+        <item>3 seats</item>
+        <item>4 seat</item>
+        <item>5 seats</item>
+        <item>6 seats</item>
+    </string-array>
+    <string-array name="privacy">
+        <item>Network</item>
+        <item>Friends</item>
+    </string-array>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="channel_name">Poolr driver notifications</string>
+    <string name="channel_description">Notifications for the driver app of Poolr</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="sign_up_message">Sign up</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
