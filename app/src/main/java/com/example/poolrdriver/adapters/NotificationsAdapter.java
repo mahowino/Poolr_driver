@@ -32,18 +32,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public HolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater=LayoutInflater.from(mContext);
-        View view=inflater.inflate(R.layout.upcoming_trips_card_layout,parent,false);
+        View view=inflater.inflate(R.layout.notification_card,parent,false);
         return new NotificationsAdapter.HolderView(view);
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull HolderView holder, int position) {
-        holder.message.setText(notifications.get(position).getMessage());
+       // holder.message.setText(notifications.get(position).getMessage());
+        holder.message.setText("Mahalon Requested a carpool from you");
 
         //set image of user setting the message
-        if (notifications.get(position).getType()!=2)
-        Glide.with(mContext).load(notifications.get(position).getImageUri()).into(holder.notificationImage);
+        //if (notifications.get(position).getType()!=2)
+       // Glide.with(mContext).load(notifications.get(position).getImageUri()).into(holder.notificationImage);
 
     }
 

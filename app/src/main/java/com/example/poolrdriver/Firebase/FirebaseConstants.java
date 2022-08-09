@@ -3,6 +3,7 @@ package com.example.poolrdriver.Firebase;
 public abstract class FirebaseConstants {
     public static  final String PASSENGERS = "passengers";
 
+    public static  final String RIDES = "rides";
 
     public static final String USER_NETWORKS = "networks";
 
@@ -18,7 +19,7 @@ public abstract class FirebaseConstants {
 
     public static final String TRIPS = "trips";
 
-    public static final String WALLET = "wallet";
+    public static final String DRIVER_WALLET = "driver_wallet";
 
     public static final String BROADCASTS = "broadcasts";
 
@@ -33,6 +34,10 @@ public abstract class FirebaseConstants {
     public static final String PAST_RIDES="past_rides";
 
     public static final String DRIVER_WITHDRAWALS="driver_withdrawals";
+
+    public static final String SUCCESS ="success";
+
+    public static final String FAIL ="fail";
 
 
 

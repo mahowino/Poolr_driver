@@ -1,7 +1,6 @@
 package com.example.poolrdriver.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,29 +34,29 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
 
     @Override
     public void onBindViewHolder(@NonNull holderView holder, int position) {
-        //setting texts on views
-        //setup of views
-        holder.driverName.setText(tripsList.get(position).getDriverName());
-        holder.driverSource.setText(tripsList.get(position).getRouteSource());
-        holder.driverDestination.setText(tripsList.get(position).getRouteDestination());
+        setViewsText(tripsList.get(position), holder);
+        setListeners(holder);
+    }
 
-        holder.actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void setListeners(holderView holder) {
 
-                /*
+        holder.actionButton.setOnClickListener(v -> {
+            /*
 
-               *Intent myTrips=new Intent(mContext, My_trips_expanded.class);
-               *myTrips.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-               *mContext.startActivity(myTrips);
+             *Intent myTrips=new Intent(mContext, My_trips_expanded.class);
+             *myTrips.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             *mContext.startActivity(myTrips);
 
-                 */
-
-            }
+             */
         });
+    }
 
-
-
+    private void setViewsText(Trips trip,holderView holder) {
+        holder.seatsOffered.setText(trip.getSeats());
+        holder.driverSource.setText(trip.getDriverSource());
+        holder.driverDestination.setText(trip.getDriverDestination());
+        holder.tripPrice.setText(trip.getTripPrice());
+        holder.tripPrivacy.setText(trip.getPrivacy());
     }
 
     @Override
@@ -66,19 +65,22 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
     }
 
     public class holderView extends RecyclerView.ViewHolder {
-        TextView driverName,driverDestination,driverSource,driverSourceTime,driverDestionationTime,actionButton,tripPrice;
+        TextView seatsOffered,driverDestination,driverSource,driverSourceTime,tripPrivacy,actionButton,tripPrice;
         public holderView(@NonNull View itemView) {
             super(itemView);
+            setViews(itemView);
+        }
 
+        private void setViews(View itemView) {
             //declarations
-            driverName=itemView.findViewById(R.id.TripDriverName_myTrips);
+            seatsOffered=itemView.findViewById(R.id.seats_booked);
             driverSource=itemView.findViewById(R.id.TripSource);
             driverSourceTime=itemView.findViewById(R.id.TimeToDepart);
             driverDestination=itemView.findViewById(R.id.TripDestination);
-            driverDestionationTime=itemView.findViewById(R.id.TimeToArrive);
+            tripPrivacy=itemView.findViewById(R.id.privacy_setting);
             tripPrice=itemView.findViewById(R.id.CashPaid);
             actionButton=itemView.findViewById(R.id.viewDetailsOnTrip);
-
         }
+
     }
 }

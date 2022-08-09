@@ -1,4 +1,4 @@
-package com.example.poolrdriver.classes;
+package com.example.poolrdriver.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;

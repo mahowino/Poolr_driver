@@ -27,7 +27,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView10">
 
             <AutoCompleteTextView
-                android:id="@+id/editTextSourcePage2"
+                android:id="@+id/locationWhereFrom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -50,7 +50,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             <AutoCompleteTextView
-                android:id="@+id/editTextDestinationPage2"
+                android:id="@+id/locationWhereTo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -73,7 +73,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextSourcePage2" />
+                app:layout_constraintTop_toBottomOf="@+id/locationWhereFrom" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -101,7 +101,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView14">
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/textView27"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
@@ -226,7 +226,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
 
         <AutoCompleteTextView
-            android:id="@+id/edittext_time_picker3"
+            android:id="@+id/who_to_post_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -267,7 +267,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_time_picker2" />
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
         <TextView
             android:id="@+id/textView15"
@@ -291,17 +291,17 @@
             android:textColor="@color/body_text_color"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_time_picker3" />
+            app:layout_constraintTop_toBottomOf="@+id/who_to_post_to" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_post_ride"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
-            android:text="Post ride"
+            android:text="Next"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -340,6 +340,20 @@
 
 
         </com.google.android.material.tabs.TabLayout>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_weight="50"
+            android:text="Please note range of pickup is within 15 minutes of specified time"
+            android:textColor="@color/body_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edittext_time_picker2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

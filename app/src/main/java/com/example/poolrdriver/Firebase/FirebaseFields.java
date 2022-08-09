@@ -12,6 +12,9 @@ public class FirebaseFields {
     public static String PROFILE_PICTURE= "profile_picture";
     public static String WORK_ADRESS = "work_adress";
     public static String HOME_ADRESS = "home_adress";
+    public static String REVIEWS="reviews";
+    public static String PRIVACY="privacy";
+    public static String RATING="rating";
 
 
     //ride requests

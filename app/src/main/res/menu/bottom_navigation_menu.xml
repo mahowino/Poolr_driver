@@ -6,6 +6,6 @@
         android:title="Ride" />
     <item
         android:id="@+id/nav_schedule"
-        android:icon="@drawable/icons8_trekking_64px"
-        android:title="my schedule" />
+        android:icon="@drawable/icons8_user_48px"
+        android:title="more items" />
 </menu>

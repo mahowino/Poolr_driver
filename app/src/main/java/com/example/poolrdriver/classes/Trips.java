@@ -1,15 +1,73 @@
 package com.example.poolrdriver.classes;
 
-public class Trips extends Route {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private int tripPrice,passengerProfilePicture;
-    private String passengerName;
+import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.type.LatLng;
 
-    public Trips(String routeSource, String routeDestination, String userSource, String userDestination, int tripPrice, int driverProfilePicture, String driverName) {
-        super(routeSource, routeDestination, userSource, userDestination);
-        this.passengerName=driverName;
-        this.passengerProfilePicture=driverProfilePicture;
-        this.tripPrice=tripPrice;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class Trips implements Parcelable {
+
+    private int tripPrice,seats;
+    private ArrayList<Passenger> passengers;
+    private ArrayList<Requests> requests;
+    private String driverSource,driverDestination,driverUid,privacy;
+    private ArrayList<LatLng> driverRoute;
+    private Date date;
+    DocumentSnapshot snapshot;
+
+    public Trips(DocumentSnapshot snapshot) {
+     this.snapshot=snapshot;
+    }
+
+    protected Trips(Parcel in) {
+        tripPrice = in.readInt();
+        seats = in.readInt();
+        driverSource = in.readString();
+        driverDestination = in.readString();
+        driverUid = in.readString();
+        privacy = in.readString();
+    }
+
+    public Date getDate() {
+        return snapshot.getDate(FirebaseFields.DEPARTURETIME);
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public static final Creator<Trips> CREATOR = new Creator<Trips>() {
+        @Override
+        public Trips createFromParcel(Parcel in) {
+            return new Trips(in);
+        }
+
+        @Override
+        public Trips[] newArray(int size) {
+            return new Trips[size];
+        }
+    };
+
+    public String getPrivacy() {
+        return String.valueOf(snapshot.get(FirebaseFields.PRIVACY));
+    }
+
+    public void setPrivacy(String privacy) {
+        this.privacy = privacy;
+    }
+
+    public int getSeats() {
+        return seats;
+    }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
     }
 
     public int getTripPrice() {
@@ -20,19 +78,68 @@ public class Trips extends Route {
         this.tripPrice = tripPrice;
     }
 
-    public int getDriverProfilePicture() {
-        return passengerProfilePicture;
+    public ArrayList<Passenger> getPassengers() {
+        return passengers;
+    }
+    public int getNumberOfPassengers(){return passengers.size();}
+    public int getNumberOfRequests(){return requests.size();}
+
+    public void setPassengers(ArrayList<Passenger> passengers) {
+        this.passengers = passengers;
     }
 
-    public void setDriverProfilePicture(int driverProfilePicture) {
-        this.passengerProfilePicture = driverProfilePicture;
+    public ArrayList<Requests> getRequests() {
+        return requests;
     }
 
-    public String getDriverName() {
-        return passengerName;
+    public void setRequests(ArrayList<Requests> requests) {
+        this.requests = requests;
     }
 
-    public void setDriverName(String driverName) {
-        this.passengerName = driverName;
+    public String getDriverSource() {
+        return driverSource;
+    }
+
+    public void setDriverSource(String driverSource) {
+        this.driverSource = driverSource;
+    }
+
+    public String getDriverDestination() {
+        return driverDestination;
+    }
+
+    public void setDriverDestination(String driverDestination) {
+        this.driverDestination = driverDestination;
+    }
+
+    public String getDriverUid() {
+        return driverUid;
+    }
+
+    public void setDriverUid(String driverUid) {
+        this.driverUid = driverUid;
+    }
+
+    public ArrayList<LatLng> getDriverRoute() {
+        return driverRoute;
+    }
+
+    public void setDriverRoute(ArrayList<LatLng> driverRoute) {
+        this.driverRoute = driverRoute;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(tripPrice);
+        dest.writeInt(seats);
+        dest.writeString(driverSource);
+        dest.writeString(driverDestination);
+        dest.writeString(driverUid);
+        dest.writeString(privacy);
     }
 }

@@ -110,10 +110,11 @@
                 android:id="@+id/linearLayout20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout21"
-                tools:layout_editor_absoluteY="54dp">
+                app:layout_constraintTop_toBottomOf="@+id/TripStatus">
 
                 <TextView
                     android:id="@+id/textView108"
@@ -143,7 +144,7 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/TimeToArrive"
+                    android:id="@+id/privacy_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
@@ -155,10 +156,11 @@
                 android:id="@+id/linearLayout21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="54dp">
+                app:layout_constraintTop_toBottomOf="@+id/TripStatus">
 
                 <TextView
                     android:id="@+id/textView110"
@@ -170,7 +172,7 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/TripDriverName_myTrips"
+                    android:id="@+id/seats_booked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"

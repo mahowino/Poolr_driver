@@ -1,31 +1,29 @@
 package com.example.poolrdriver;
 
-import static com.example.poolrdriver.SignUpScreen.TAG;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
-import com.example.poolrdriver.adapters.MyTripsAdapter;
+import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.NotificationsAdapter;
 import com.example.poolrdriver.classes.Notifications;
-import com.example.poolrdriver.classes.SignedUpDriver;
-import com.example.poolrdriver.classes.Trips;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -33,108 +31,77 @@ import java.util.List;
 
 public class NotificationsActivity extends AppCompatActivity {
 
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     RecyclerView notificationsView;
-    private List<com.example.poolrdriver.classes.Notifications> notifications;
+    private List<Notifications> notifications;
+    ImageView no_notifications_image;
+    TextView no_notification_text;
+    boolean is_notification_available;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
-
-        //initialization
-        db=FirebaseFirestore.getInstance();
-        mAuth=FirebaseAuth.getInstance();
-        notifications=new ArrayList<>();
-        notifications=findViewById(R.id.notifications_recycler);
-
-
+        initializeVariables();
         getNotificationFromFirebase();
     }
 
-    private void getSpecificRequests() {
-
-        db.collection(FirebaseConstants.DRIVERS)
-                .document(mAuth.getCurrentUser().getUid())
-                .collection(FirebaseConstants.REQUESTS)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        if(task.isSuccessful()) {
-                            String locationFrom, locationTo, passengerName;
-                            Timestamp time;
-                            boolean tripAcceptanceStatus;
-
-                            for (DocumentSnapshot snapshot:task.getResult()){
-
-                                locationFrom=snapshot.getString(FirebaseFields.P_LOCATION_FROM);
-                                locationTo=snapshot.getString(FirebaseFields.P_LOCATION_TO);
-                                passengerName=snapshot.getString(FirebaseFields.P_NAME);
-                                time=snapshot.getTimestamp(FirebaseFields.DEPARTURETIME);
-                                tripAcceptanceStatus=snapshot.getBoolean(FirebaseFields.STATUS);
-
-                            }
-
-
-
-                        }
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: "+e.getMessage());
-                    }
-                });
+    private void initializeVariables() {
+        //initialization
+        notifications=new ArrayList<>();
+        notificationsView=findViewById(R.id.notifications_recycler);
+        no_notifications_image=findViewById(R.id.no_notification_image);
+        no_notification_text=findViewById(R.id.no_notification_text);
+        is_notification_available=false;
     }
 
+
+
     private void getNotificationFromFirebase() {
-        db.collection(FirebaseConstants.DRIVERS)
-                .document(SignedUpDriver.getUsername())
-                .collection(FirebaseConstants.NOTIFICATIONS)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (DocumentSnapshot snapshot:task.getResult()){
-                                String message=snapshot.getString(FirebaseFields.MESSAGE);
-                                int type=Integer.parseInt(snapshot.get(FirebaseFields.TYPE).toString());
+        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.REQUESTS;
 
-                                com.example.poolrdriver.classes.Notifications notification=new com.example.poolrdriver.classes.Notifications(message,type);
+        getDocumentsInCollection(createCollectionReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                Task<QuerySnapshot> task=(Task<QuerySnapshot>)object;
+                for (DocumentSnapshot snapshot:task.getResult())
+                    if (snapshot.exists()){createNotification(snapshot);is_notification_available=true;}
 
-                                //if notification requires picture, get from database
-                                if (snapshot.getString(FirebaseFields.IMAGE_URI)!=null){
+                if (is_notification_available)initializeRecyclerView();
+                else initializeNoNotificationView();
 
-                                    //parse the URI
-                                    String uri=snapshot.getString(FirebaseFields.IMAGE_URI);
-                                    Uri imageUri=Uri.parse(uri);
-                                    notification.setImageUri(imageUri);
-                                }
+            }
 
-                                notifications.add(notification);
+            @Override
+            public void onError(Object object) {
+                Log.d(TAG.TAG, "onFailure: "+((Exception)object).getMessage());
+                Toast.makeText(getApplicationContext(),"error getting notifications",Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                                initializeRecyclerView();
-                            }
-                        }
+    }
 
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+    private void initializeNoNotificationView() {
+        no_notifications_image.setVisibility(View.VISIBLE);
+        no_notification_text.setVisibility(View.VISIBLE);
+        notificationsView.setVisibility(View.INVISIBLE);
+    }
 
-                        Log.d(TAG, "onFailure: "+e.getMessage());
-                        Toast.makeText(getApplicationContext(),"error getting notifications",Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void createNotification(DocumentSnapshot snapshot) {
+        String message=snapshot.getString(FirebaseFields.MESSAGE);
+        int type=Integer.parseInt((String) snapshot.get(FirebaseFields.TYPE));
+        Notifications notification=new Notifications(message,type);
+
+        //if notification requires picture, get from database
+        if (snapshot.getString(FirebaseFields.IMAGE_URI)!=null)
+            notification.setImageUri(Uri.parse(snapshot.getString(FirebaseFields.IMAGE_URI)));
+
+        notifications.add(notification);
     }
 
     private void initializeRecyclerView() {
+        no_notifications_image.setVisibility(View.INVISIBLE);
+        no_notification_text.setVisibility(View.INVISIBLE);
+        notificationsView.setVisibility(View.VISIBLE);
 
         //RecyclerView initializations
         NotificationsAdapter adapter=new NotificationsAdapter(getApplicationContext(),notifications);

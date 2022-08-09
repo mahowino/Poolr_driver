@@ -22,7 +22,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="8dp">
 
             <RelativeLayout
                 android:id="@+id/relativeLayout"
@@ -41,7 +42,7 @@
 
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true" />
 
             </RelativeLayout>
 
@@ -59,6 +60,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
                 <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From" />
+
+                <TextView
                     android:id="@+id/TripSource"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -74,6 +81,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/icons8_thick_vertical_line_20px_1" />
+
+                <TextView
+                    android:id="@+id/textView32"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -100,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="settled"
+                android:text="2 passengers requested"
                 android:textColor="@color/purple_500"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -138,17 +151,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="Arrival"
+                    android:text="Privacy"
                     android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/TimeToArrive"
+                    android:id="@+id/privacy_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="TextView"
-                    android:textSize="12sp" />
+                    android:text="Everyone"
+                    android:textSize="12sp"
+                    android:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout
@@ -163,24 +178,24 @@
 
                 <TextView
                     android:id="@+id/textView110"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="Driver"
+                    android:text="Seats booked"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/TripDriverName_myTrips"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/seats_booked"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="David el-Mayo"
+                    android:text="3"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/textView112"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_alternates"
@@ -190,11 +205,11 @@
 
                 <TextView
                     android:id="@+id/CashPaid"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="50/="
-                    android:textColor="@color/teal_700"/>
+                    android:text="KSH 50/="
+                    android:textColor="@color/teal_700" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -221,8 +236,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="View details"
-                    android:textColor="@color/colorPrimary" />
+                    android:text="Cancel trip"
+                    android:textColor="@color/red" />
 
             </LinearLayout>
 
@@ -234,13 +249,14 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/button_signup"
-                android:text="Accept"
-                android:visibility="invisible"
+                android:text="View"
                 android:textColor="@color/light_grey"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout21"
                 app:layout_constraintVertical_bias="0.0" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
