@@ -72,6 +72,9 @@ public class FirebaseRepository {
     public static Query createQuery(CollectionReference reference, String key, String value) {
         return reference.whereEqualTo(key, value);
     }
+    public static Query createArrayQuery(CollectionReference reference, String key, String value) {
+        return reference.whereArrayContains(key,value);
+    }
 
     public static void updateGoogleSignInUserData(DocumentReference reference, Activity activity, Class nextClass) {
         if (checkIfDocumentExists(reference, activity))

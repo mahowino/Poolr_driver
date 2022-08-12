@@ -1,7 +1,19 @@
 package com.example.poolrdriver.classes;
 
+import android.net.Uri;
+
 public class Reviews {
     String reviewerName,review;
+
+    public Uri getReviewerProfilePicture() {
+        return reviewerProfilePicture;
+    }
+
+    public void setReviewerProfilePicture(Uri reviewerProfilePicture) {
+        this.reviewerProfilePicture = reviewerProfilePicture;
+    }
+
+    Uri reviewerProfilePicture;
     int rating;
 
     public String getReviewerName() {

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.poolrdriver.Firebase.Callback;
@@ -26,6 +27,7 @@ public class My_trips_expanded extends AppCompatActivity {
     Button btnRequests;
     Trips trip;
     User user;
+
     List<Passenger> passengers;
     private final String CHOSEN_TRIP="chosen_trip";
     private  String userDetailsPath;
@@ -129,6 +131,11 @@ public class My_trips_expanded extends AppCompatActivity {
     private void getValues() {
         trip=getIntent().getParcelableExtra(CHOSEN_TRIP);
         user=getIntent().getParcelableExtra(USER_ACCOUNT);
-        userDetailsPath= FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.BOOKINGS;
+
+        if (trip.isRidePublic())
+            userDetailsPath= FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.POSTED_RIDES+"/"+trip.getTripUID()+"/"+FirebaseConstants.BOOKINGS;
+        else
+            userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripUID()+"/"+FirebaseConstants.BOOKINGS;
+
     }
 }

@@ -3,6 +3,7 @@ package com.example.poolrdriver.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.poolrdriver.PassengerProfile;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.Passenger;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.HolderView> {
     Context context;
     List<Passenger> passengers;
+    private final String PASSENGER="passenger";
     public PassengersAdapter(Context context, List<Passenger> passengers) {
         this.context=context;
         this.passengers=passengers;
@@ -42,6 +46,13 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
 
     private void setListener(Passenger passenger, HolderView holder) {
         holder.callPassenger.setOnClickListener(v -> callPassenger(passenger));
+        holder.passengerCard.setOnClickListener(v -> openPassengerProfile(passenger));
+    }
+
+    private void openPassengerProfile(Passenger passenger) {
+        Intent intent=new Intent(context.getApplicationContext(), PassengerProfile.class);
+        intent.putExtra(PASSENGER,passenger);
+        context.startActivity(intent);
     }
 
     private void callPassenger(Passenger passenger) {
@@ -66,6 +77,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
         TextView passengerName,passengerRating,passengerSource,passengerDestination;
         ImageView passengerDisplayPicture;
         Button callPassenger;
+        CardView passengerCard;
         public HolderView(@NonNull View itemView) {
             super(itemView);
             initializeViews(itemView);
@@ -77,6 +89,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
             passengerDestination=itemView.findViewById(R.id.PassengerTripDestination);
             passengerDisplayPicture=itemView.findViewById(R.id.passenger_DP);
             callPassenger=itemView.findViewById(R.id.btn_call_passenger);
+            passengerCard=itemView.findViewById(R.id.call_card);
         }
     }
 

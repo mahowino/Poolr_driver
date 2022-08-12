@@ -5,7 +5,9 @@ public abstract class FirebaseConstants {
 
     public static  final String RIDES = "rides";
 
-    public static final String USER_NETWORKS = "networks";
+    public static  final String PUBLIC_RIDES = "public_rides";
+
+    public static final String NETWORKS = "networks";
 
     public static final String DRIVERS = "drivers";
 

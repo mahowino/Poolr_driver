@@ -4,12 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.models.TimePickerObject;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.type.LatLng;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Trips implements Parcelable {
 
@@ -17,14 +21,25 @@ public class Trips implements Parcelable {
     private ArrayList<Passenger> passengers;
     private ArrayList<Requests> requests;
     private String driverSource,driverDestination,driverUid,privacy;
-    private ArrayList<LatLng> driverRoute;
-    private Date date;
+    private List<com.google.android.gms.maps.model.LatLng> driverRoute;
+    private TimePickerObject timePickerObject;
+    private String networkId;
+
+    public boolean isRidePublic() {
+        return isRidePublic;
+    }
+
+    public void setRidePublic(boolean ridePublic) {
+        isRidePublic = ridePublic;
+    }
+
+    private boolean isRidePublic;
     DocumentSnapshot snapshot;
 
     public Trips(DocumentSnapshot snapshot) {
      this.snapshot=snapshot;
     }
-
+    public Trips(){}
     protected Trips(Parcel in) {
         tripPrice = in.readInt();
         seats = in.readInt();
@@ -34,12 +49,16 @@ public class Trips implements Parcelable {
         privacy = in.readString();
     }
 
-    public Date getDate() {
-        return snapshot.getDate(FirebaseFields.DEPARTURETIME);
+    public String getTripUID() {
+        return snapshot.getId();
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public Date getDate() {
+        return timePickerObject.getDate();
+    }
+
+    public void setDate(TimePickerObject date) {
+        this.timePickerObject = date;
     }
 
     public static final Creator<Trips> CREATOR = new Creator<Trips>() {
@@ -120,11 +139,19 @@ public class Trips implements Parcelable {
         this.driverUid = driverUid;
     }
 
-    public ArrayList<LatLng> getDriverRoute() {
+    public List<LatLng> getDriverRoute() {
+        List<GeoPoint> Route = (List<GeoPoint>) snapshot.getGeoPoint(FirebaseFields.DRIVER_ROUTE);
+
+        if (Route != null) {
+            for (GeoPoint point : Route)
+                driverRoute.add(new com.google.android.gms.maps.model.LatLng(point.getLatitude(), point.getLongitude()));
+
+        }
+
         return driverRoute;
     }
 
-    public void setDriverRoute(ArrayList<LatLng> driverRoute) {
+    public void setDriverRoute(List<com.google.android.gms.maps.model.LatLng> driverRoute) {
         this.driverRoute = driverRoute;
     }
 
@@ -142,4 +169,14 @@ public class Trips implements Parcelable {
         dest.writeString(driverUid);
         dest.writeString(privacy);
     }
+
+    public String getNetworkID() {return networkId;}
+    public void setNetworkID(String networkId) {
+        this.networkId=networkId;
+    }
+
+    public void setNetworkID(QuerySnapshot snapshot) {
+        //todo: write this code
+    }
 }
+

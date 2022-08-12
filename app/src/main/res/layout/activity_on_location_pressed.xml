@@ -195,7 +195,7 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
         <AutoCompleteTextView
-            android:id="@+id/edittext_time_picker2"
+            android:id="@+id/time_picker_post_rides"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -217,7 +217,7 @@
             android:paddingEnd="20dp"
             android:paddingRight="20dp"
             android:paddingBottom="5dp"
-            android:text="Choose your trip date and time"
+            android:text="Going now"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -229,7 +229,7 @@
             android:id="@+id/who_to_post_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/bckground_edittext_white"
@@ -248,7 +248,7 @@
             android:paddingEnd="20dp"
             android:paddingRight="20dp"
             android:paddingBottom="5dp"
-            android:text="My carpools"
+            android:text="Everyone"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -305,10 +305,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/seats_offered" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+            android:id="@+id/seats_offered"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -353,7 +353,7 @@
             android:textColor="@color/body_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_time_picker2" />
+            app:layout_constraintTop_toBottomOf="@+id/time_picker_post_rides" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

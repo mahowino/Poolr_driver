@@ -41,6 +41,7 @@ public class My_trips extends AppCompatActivity {
     RecyclerView upcomingTrips;
     private List<Trips> tripsList;
     private TextView viewPastTrips;
+    private String network_trips_path,public_trips_path;
 
 
     @Override
@@ -61,19 +62,28 @@ public class My_trips extends AppCompatActivity {
         tripsList=new ArrayList<>();
         upcomingTrips=findViewById(R.id.upcomingtripsRecyclerView);
         viewPastTrips=findViewById(R.id.lnk_view_past_trips);
+
+        //public trips
+        public_trips_path=FirebaseConstants.PUBLIC_RIDES+"/"+new User().getUID() +"/"+FirebaseConstants.TRIPS;
+
+        //network trips
+        network_trips_path=FirebaseConstants.NETWORKS+"/"+new User().getUID() +"/"+FirebaseConstants.TRIPS;
     }
 
     private void getPostsDataFromDriver() {
-        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID() +"/"+FirebaseConstants.POSTED_RIDES;
 
-        getDocumentsInCollection(createCollectionReference(path), new Callback() {
+
+        getDocumentsInCollection(createCollectionReference(network_trips_path), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
                 if(task.isSuccessful()) {
-                    for (DocumentSnapshot snapshot:task.getResult())
+                    for (DocumentSnapshot snapshot:task.getResult()) {
+                        Trips trip=snapshot.toObject(Trips.class);
+                        trip.setRidePublic(false);
                         tripsList.add(snapshot.toObject(Trips.class));
-                    initializeRecyclerView();
+                    }
+                    getPublicTripsFromDatabase();
                 }
             }
 
@@ -81,6 +91,26 @@ public class My_trips extends AppCompatActivity {
             public void onError(Object object) {Log.d(TAG.TAG, "onFailure: "+((Exception)object).getMessage());}
         });
 
+    }
+
+    private void getPublicTripsFromDatabase() {
+        getDocumentsInCollection(createCollectionReference(public_trips_path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
+                if(task.isSuccessful()) {
+                    for (DocumentSnapshot snapshot:task.getResult()) {
+                        Trips trip=snapshot.toObject(Trips.class);
+                        trip.setRidePublic(true);
+                        tripsList.add(snapshot.toObject(Trips.class));
+                    }
+                    initializeRecyclerView();
+                }
+            }
+
+            @Override
+            public void onError(Object object) {Log.d(TAG.TAG, "onFailure: "+((Exception)object).getMessage());}
+        });
     }
 
 

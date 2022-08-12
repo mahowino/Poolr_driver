@@ -15,14 +15,16 @@ public class FirebaseFields {
     public static String REVIEWS="reviews";
     public static String PRIVACY="privacy";
     public static String RATING="rating";
+    public static String BIO="bio";
 
 
     //ride requests
     public static String P_IS_RIDE_ACCEPTED = "p_is_ride_accepted";
     public static String P_LOCATION_FROM = "p_location_from";
     public static String P_LOCATION_TO = "p_location_to";
-    public static String P_NAME= "p_name";
+    public static String SEATS= "seats";
     public static String P_NETWORK = "p_network";
+    public static String NETWORK_MEMBERS = "network_members";
     public static String P_TRIP_PRICE = "p_trip_price";
     public static String P_TIME_FROM_LOCATION = "p_time_from_location";
 
@@ -40,6 +42,5 @@ public class FirebaseFields {
     public static String IMAGE_URI="image_uri";
 
 
-
-
+    public static String DRIVER_ROUTE="driver_route";
 }

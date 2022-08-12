@@ -44,7 +44,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         //set image of user setting the message
         //if (notifications.get(position).getType()!=2)
-       // Glide.with(mContext).load(notifications.get(position).getImageUri()).into(holder.notificationImage);
+       Glide.with(holder.itemView).load(notifications.get(position).getImageUri()).into(holder.notificationImage);
 
     }
 

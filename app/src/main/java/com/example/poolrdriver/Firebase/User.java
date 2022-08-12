@@ -39,6 +39,7 @@ public class User {
     Callback callback;
     Intent intent;
     Activity activity;
+    private String bio;
 
     public User(){
         user=FirebaseRepository.getSignedUpUser();
@@ -209,4 +210,5 @@ public class User {
         FirebaseInitVariables.mAuth.signOut();
     }
 
+    public String getBio(){ return bio;}
 }

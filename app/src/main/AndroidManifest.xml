@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PoolrDriver">
         <activity
+            android:name=".PassengerProfile"
+            android:exported="false" />
+        <activity
             android:name=".price_split"
             android:exported="false" />
         <activity

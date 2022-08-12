@@ -4,6 +4,8 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
 
 import android.hardware.lights.LightsManager;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
@@ -17,7 +19,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Passenger {
+public class Passenger implements Parcelable {
     private  String username;
     private Uri profilePic;
     private ArrayList<Reviews> reviews;
@@ -28,7 +30,27 @@ public class Passenger {
     String userDetailsPath,reviewsPath;
 
 
-     public Uri getProfilePic() {return profilePic;}
+    protected Passenger(Parcel in) {
+        username = in.readString();
+        profilePic = in.readParcelable(Uri.class.getClassLoader());
+        rating = in.readDouble();
+        userDetailsPath = in.readString();
+        reviewsPath = in.readString();
+    }
+
+    public static final Creator<Passenger> CREATOR = new Creator<Passenger>() {
+        @Override
+        public Passenger createFromParcel(Parcel in) {
+            return new Passenger(in);
+        }
+
+        @Override
+        public Passenger[] newArray(int size) {
+            return new Passenger[size];
+        }
+    };
+
+    public Uri getProfilePic() {return profilePic;}
 
      public void setProfilePic(Uri profilePic) {
          this.profilePic = profilePic;
@@ -115,4 +137,19 @@ public class Passenger {
 
     public  String getPhoneNumber() {return String.valueOf(snapshot.get(FirebaseFields.PHONE_NUMBER));}
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeParcelable(profilePic, flags);
+        dest.writeDouble(rating);
+        dest.writeString(userDetailsPath);
+        dest.writeString(reviewsPath);
+    }
+
+    public String getBio() {return String.valueOf(snapshot.get(FirebaseFields.BIO));}
 }

@@ -7,11 +7,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.provider.MediaStore;
+import android.telecom.Call;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -26,9 +29,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.poolrdriver.R;
+import com.example.poolrdriver.onLocationPressedActivity;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.Task;
 
 public abstract class AppSystem {
     private static final int PICK_IMAGE = 100;
+    private static final int REQUEST_CODE = 1001;
+    private FusedLocationProviderClient fusedLocationProviderClient;
     public static  void redirectActivity(Activity activity, Class nextActivity){Intent intent=new Intent(activity, nextActivity);activity.startActivity(intent);}
 
     public static void displayError(Activity activity,Context mContext, Exception e){
@@ -78,7 +93,50 @@ public abstract class AppSystem {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         activity.startActivityForResult(gallery, PICK_IMAGE);
     }
+    public static void requestGps(Activity activity) {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
 
+        LocationServices.getSettingsClient(activity)
+                .checkLocationSettings(builder.build())
+                .addOnCompleteListener(task -> promptUserForGps(task,activity));
+    }
+    public static void getMyDefaultLocation(Activity activity,com.example.poolrdriver.Firebase.Callback callback) {
+       FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+        if (ActivityCompat.checkSelfPermission(
+                activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            return;
+        }
+
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(location -> {if (location != null) callback.onSuccess(location);});
+    }
+
+
+    public static void promptUserForGps(Task<LocationSettingsResponse> task,Activity activity) {
+        try {task.getResult(ApiException.class);}
+        catch (ApiException exception) {
+            switch (exception.getStatusCode()) {
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    // Location settings are not satisfied. But could be fixed by showing the user a dialog.
+                    try {
+                        // Cast to a resolvable exception.
+                        ResolvableApiException resolvable = (ResolvableApiException) exception;
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        resolvable.startResolutionForResult(
+                                activity,
+                                LocationRequest.PRIORITY_HIGH_ACCURACY);
+                    } catch (IntentSender.SendIntentException | ClassCastException ignored) {}
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE: break;
+            }
+        }
+    }
 
 }
 

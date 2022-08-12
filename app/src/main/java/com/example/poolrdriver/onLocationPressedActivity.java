@@ -1,53 +1,50 @@
 package com.example.poolrdriver;
 
+import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
 import static com.example.poolrdriver.Firebase.GoogleMaps.getLocationFromAddress;
 import static com.example.poolrdriver.Firebase.GoogleMaps.getUrl;
 import static com.example.poolrdriver.util.AppSystem.createDialog;
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
+import static com.example.poolrdriver.util.AppSystem.getMyDefaultLocation;
+import static com.example.poolrdriver.util.AppSystem.requestGps;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.poolrdriver.DirectionHelpers.FetchURL;
 import com.example.poolrdriver.DirectionHelpers.TaskLoadedCallback;
+import com.example.poolrdriver.Firebase.Callback;
+import com.example.poolrdriver.Firebase.FirebaseConstants;
+import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.AutoSuggestionsAdapter;
+import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.classes.dateFormat;
 import com.example.poolrdriver.classes.private_rides;
+import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.util.LoadingDialog;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.internal.location.zzz;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
 import java.sql.Time;
@@ -61,7 +58,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private AutoCompleteTextView destination,source;
     private String DateOfTravel;
     private String TimeOfTravel;
-    private  TextView datePicked,timePicked,confirmDate,confirmTime,timeFrom,timeTo;
+    private  TextView datePicked,timePicked,confirmDate,confirmTime,timeFrom,timeTo,privacy;
     Button confirm,btnEveryoneVisibility,btnMyContactsVisibility,post;
     CalendarView calendarView;
     android.widget.TimePicker timePicker;
@@ -69,74 +66,51 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private LoadingDialog loadingDialog;
     LatLng sourcePoint, destinationPoint;
     private final List<MarkerOptions> markerOptionsList = new ArrayList<>();
+    TabLayout seatsOffered;
+    TimePickerObject time;
+    Trips trip;
     private PolylineOptions polylineOptions;
     String locationFromString, locationToString;
     private static final String SOURCE_DEFAULT_TEXT = "My location";
+    private static final String PRIVACY="Everyone";
+    private static final String TRIP_EXTRA="trip";
     private static final String TAG ="locationSearch" ;
     Location currentLocation;
-    private static final int REQUEST_CODE = 1001;
-
-    private FusedLocationProviderClient fusedLocationProviderClient;
     private Context mContext;
-    private ArrayList<private_rides> chosenRides;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_location_pressed);
         initializeData();
-        getMyDefaultLocation();
-        requestGps();
+        initializeGpsData();
         setListeners();
     }
 
+    private void initializeGpsData() {
+        requestGps(this);
+        getMyDefaultLocation(this, new Callback() {
+            @Override
+            public void onSuccess(Object object) {currentLocation=(Location) object;}
 
+            @Override
+            public void onError(Object object) {}});
+    }
 
     private void setViews() {
         //define views
-        TimePicker=findViewById(R.id.edittext_time_picker2);
-        GroupPicker=findViewById(R.id.who_to_post_to);
+        TimePicker=findViewById(R.id.time_picker_post_rides);
+        privacy=findViewById(R.id.who_to_post_to);
         timeFrom=findViewById(R.id.textViewTimeChosenFrom);
         timeTo=findViewById(R.id.textViewTimeChosenTo);
         post=findViewById(R.id.btn_post_ride);
         loadingDialog=new LoadingDialog(this);
-
         source = findViewById(R.id.locationWhereFrom);
         destination = findViewById(R.id.locationWhereTo);
+        seatsOffered=findViewById(R.id.seats_offered);
 
     }
 
-
-
-    private void requestGps() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        LocationServices.getSettingsClient(onLocationPressedActivity.this).checkLocationSettings(builder.build()).addOnCompleteListener(task -> {promptUserForGps(task);});
-    }
-
-    private void promptUserForGps(Task<LocationSettingsResponse> task) {
-        try {task.getResult(ApiException.class);}
-        catch (ApiException exception) {
-            switch (exception.getStatusCode()) {
-                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    // Location settings are not satisfied. But could be fixed by showing the user a dialog.
-                    try {
-                        // Cast to a resolvable exception.
-                        ResolvableApiException resolvable = (ResolvableApiException) exception;
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        resolvable.startResolutionForResult(
-                                onLocationPressedActivity.this,
-                                LocationRequest.PRIORITY_HIGH_ACCURACY);
-                    } catch (IntentSender.SendIntentException | ClassCastException ignored) {}
-                    break;
-                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE: break;
-            }
-        }
-    }
 
     private void setAdapters() {
         destination.setAdapter(new AutoSuggestionsAdapter(getApplicationContext(), android.R.layout.simple_list_item_1));
@@ -144,19 +118,20 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         destination.requestFocus();
     }
 
-
     private void setListeners() {
-        TimePicker.setOnClickListener(v14 -> {DateOfTravel="today"; TimeOfTravel="now";showDialogLayout(R.layout.bottom_sheet_layout_time);});
-        GroupPicker.setOnClickListener(v -> { showDialogLayout(R.layout.bottom_sheet_layout_trip_visibility);});
+        TimePicker.setOnClickListener(v14 -> {
+            DateOfTravel="today"; TimeOfTravel="now";
+            showDialogLayout(R.layout.bottom_sheet_layout_time);}
+        );
+
+        privacy.setOnClickListener(v -> { showDialogLayout(R.layout.bottom_sheet_layout_trip_visibility);});
         post.setOnClickListener(v ->setPostDetails());
-
     }
-
 
     private void setPostDetails() {
         loadingDialog.startLoadingAlertDialog();
         getTripDetails();
-        getPolylineValues();
+        
 
     }
 
@@ -165,74 +140,106 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         initializeUIText();
     }
 
+
     private void getTextFromUI() {
+        if (source.getText().toString().isEmpty())
+            locationFromString= source.getHint().toString();
+        else locationFromString=source.getText().toString();
 
-        locationFromString= source.getHint().toString();
         locationToString  = destination.getText().toString();
-
     }
 
 
     private void initializeUIText() {
-
-
         if (locationFromString.equals(SOURCE_DEFAULT_TEXT)) {
-            try {getMyDefaultLocation();} catch (Exception exception) {exception.printStackTrace();}
+            try {getMyDefaultLocation(this, new Callback() {
+                @Override
+                public void onSuccess(Object object) {
+                    currentLocation=(Location)object;
+                    setDefaultLocationLatLong();
+                    setDefaultLocationString();
+                    getPolylineValues();
+                }
+                
+                @Override
+                public void onError(Object object) {
 
-            //todo:fix gps issue
-            sourcePoint = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-            Geocoder geocoder = new Geocoder(onLocationPressedActivity.this, Locale.getDefault());
-
-            try {geocoder.getFromLocation(sourcePoint.latitude, sourcePoint.longitude, 1);}
-            catch (IOException e) {e.printStackTrace();}
+                }
+            });} catch (Exception exception) {exception.printStackTrace();}
 
         }
-        else { String sourceDestination = source.getText().toString();sourcePoint = getLocationFromAddress(sourceDestination,mContext);}
-
+        else {sourcePoint = getLocationFromAddress(locationToString,mContext);getPolylineValues();}
         destinationPoint = getLocationFromAddress(locationToString,mContext);
-
-
+        
     }
 
-    private void initializeData() {setViews();setValues();setAdapters();}
+    private void setDefaultLocationString() {
+        Geocoder geocoder = new Geocoder(onLocationPressedActivity.this, Locale.getDefault());
+        try {
+            List<Address> addresses=  geocoder.getFromLocation(sourcePoint.latitude, sourcePoint.longitude, 1);
+            for (Address address:addresses) locationFromString=address.toString();
+        }
+        catch (IOException e) {e.printStackTrace();}
+    }
+
+    private void setDefaultLocationLatLong() {
+        //get Adress 
+        sourcePoint = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+    }
+
+    private void initializeData() {
+        setViews();
+        setValues();
+        setAdapters();
+        getUserNetworks();
+    }
+
+    private void getUserNetworks() {
+        String path= FirebaseConstants.NETWORKS;
+        getDocumentsFromQueryInCollection(createArrayQuery(createCollectionReference(path), FirebaseFields.NETWORK_MEMBERS,new User().getUID()), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                //todo: set privacy depending on networks in(if networks exist)
+                //trip.setNetworkID((QuerySnapshot) object);
+                //network exists
+
+            }
+
+            @Override
+            public void onError(Object object) {
+                Toast.makeText(onLocationPressedActivity.this, "error ", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void setValues() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        //todo dates from mainpage
-       // BestTimeForTrip = getIntent().getExtras().getParcelable("chosenDate");
-
-        chosenRides = new ArrayList<>();
+       trip =new Trips();
+        setDefaultDate();
         mContext=getApplicationContext();
-       // user=new User();
+    }
 
-        boolean isDestinationPreset = getIntent().getBooleanExtra("isDestinationSelected", false);
-        if (isDestinationPreset) destination.setText( getIntent().getExtras().getString("destinationAdress"));
+    private void setDefaultDate() {
+        setDefaultDateUI();
+        setDefaultDateBackend();
 
     }
 
 
 
-
-    private void getMyDefaultLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            return;
-        }
-
-        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(location -> {if (location != null) currentLocation = location;});
+    private void setDefaultDateUI() {
+        Calendar calendar=Calendar.getInstance();
+        setTime(calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
     }
+
+    private void setDefaultDateBackend() {
+        time=new TimePickerObject();
+        time.setDefaultCalendarDateAndTime();
+    }
+
 
     private void getPolylineValues() {
-
-        MarkerOptions place1 = new MarkerOptions().position(sourcePoint);
-        MarkerOptions place2 = new MarkerOptions().position(destinationPoint);
-
-        markerOptionsList.add(place1);
-        markerOptionsList.add(place2);
-
+        markerOptionsList.add(new MarkerOptions().position(sourcePoint));
+        markerOptionsList.add( new MarkerOptions().position(destinationPoint));
         new FetchURL(onLocationPressedActivity.this)
                 .execute(getUrl(sourcePoint,destinationPoint,"driving"),"driving");
     }
@@ -277,16 +284,15 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private void setDialogOnClickListeners(Dialog dialog, int layout) {
         if (layout == R.layout.bottom_sheet_layout_time) {
             confirm.setOnClickListener(v -> {TimePicker.setText("Leaving on " + DateOfTravel + " at " + TimeOfTravel);dialog.dismiss();});
-            datePicked.setOnClickListener(v -> {setDefaultDays();showDialogLayout(R.layout.date_picler_ui_screen);});
-            timePicked.setOnClickListener(v -> {setDefaultDays();showDialogLayout(R.layout.time_picker_ui_screen);});
+            datePicked.setOnClickListener(v -> showDialogLayout(R.layout.date_picler_ui_screen));
+            timePicked.setOnClickListener(v -> showDialogLayout(R.layout.time_picker_ui_screen));
         }
 
         if (layout == R.layout.date_picler_ui_screen) {
 
             calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-
                 DateOfTravel = dayOfMonth + "/" + month + "/" + year;datePicked.setText(DateOfTravel);
-                chosenTempDate.setYear(String.valueOf(year));chosenTempDate.setMonth(String.valueOf(month));chosenTempDate.setDay(String.valueOf(dayOfMonth));
+                time.setCalendarDate(dayOfMonth,month,year);
             });
 
             confirmDate.setOnClickListener(v ->dialog.dismiss());
@@ -294,35 +300,28 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
 
         if (layout==R.layout.time_picker_ui_screen){
 
-
-            timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
-                //time from and to setup
-                if(minute<10 && hourOfDay>0){timeFrom.setText((hourOfDay-1)+":"+(60-(10-minute))+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
-                else if (minute<10 && hourOfDay==0){timeFrom.setText(23+":"+(60-(10-minute))+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
-                else if (minute>=50 && hourOfDay>0){timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText((hourOfDay+1)+":"+((minute+10)-60)+"hrs");}
-                else if(minute>=50 && hourOfDay==23){timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText(00+":"+((minute+10)-60)+"hrs");}
-                else {timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
-
-
-
-                TimeOfTravel= hourOfDay+":"+minute+"hrs"; timePicked.setText(TimeOfTravel);
-                chosenTempDate.setHour(String.valueOf(hourOfDay));chosenTempDate.setMinute(String.valueOf(minute));
-            });
-
-           confirmTime.setOnClickListener(v -> dialog.dismiss());
+            timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> setTime(hourOfDay,minute));
+            confirmTime.setOnClickListener(v -> dialog.dismiss());
         }
 
     }
 
-    private void setDefaultDays(){
-        Calendar calendar = Calendar.getInstance();
-        chosenDate.setDay(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        chosenDate.setHour(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)));
-        chosenDate.setMinute( String.valueOf(calendar.get(Calendar.MINUTE)));
-        chosenDate.setMonth( String.valueOf( calendar.get(Calendar.MONTH)));
-        chosenDate.setYear( String.valueOf(calendar.get(Calendar.YEAR)));
+    @SuppressLint("SetTextI18n")
+    private void setTime(int hourOfDay, int minute) {
+        //time from and to setup
+        if(minute<10 && hourOfDay>0){timeFrom.setText((hourOfDay - 1) + ":" + (60 - (10 - minute)) + "hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
+        else if (minute<10 && hourOfDay==0){timeFrom.setText(23+":"+(60-(10-minute))+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
+        else if (minute>=50 && hourOfDay>0 && hourOfDay!=23){timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText((hourOfDay+1)+":"+((minute+10)-60)+"hrs");}
+        else if(minute>=50 && hourOfDay==23){timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText(00+":"+((minute+10)-60)+"hrs");}
+        else {timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
+
+        timePicked.setText( hourOfDay+":"+minute+"hrs");
+        time.setCalendarTime(hourOfDay, minute);
 
     }
+
+
+
 
     @Override
     public void onTaskDone(Object... values) {
@@ -330,16 +329,22 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     }
 
     private void postRides() {
-        //create the intent
-        Intent next = new Intent(getApplicationContext(), price_split.class);
-        next.putExtra("markerOptionsplace1",markerOptionsList.get(0));
-        next.putExtra("markerOptionsplace2",markerOptionsList.get(1));
-        next.putExtra("location_from",locationFromString);
-        next.putExtra("location_to",locationToString);
-       // next.putExtra("routes", (Parcelable) chosenRides);
-        next.putExtra("polyline",polylineOptions);
-        Log.d(TAG, "postRides: "+polylineOptions.getPoints());
+        
 
+        trip.setDriverRoute(polylineOptions.getPoints());
+        trip.setDriverSource(locationFromString);
+        trip.setDriverDestination(locationToString);
+        trip.setDriverUid(new User().getUID());
+        trip.setRidePublic(privacy.getText().toString().equals(PRIVACY));
+        trip.setSeats(getSeatsChosen());
+        trip.setDate(time);
+
+
+        Intent next = new Intent(getApplicationContext(), price_split.class);
+        next.putExtra("trip", (Parcelable) trip);
         startActivity(next);
+        
     }
+
+    private int getSeatsChosen() {return seatsOffered.getSelectedTabPosition()+1;}
 }
