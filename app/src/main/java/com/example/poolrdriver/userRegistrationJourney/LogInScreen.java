@@ -1,5 +1,6 @@
 package com.example.poolrdriver.userRegistrationJourney;
 
+import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.app.AlertDialog;
@@ -25,6 +26,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.poolrdriver.Firebase.Callback;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.MapsActivity;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.util.LoadingDialog;
@@ -103,6 +106,18 @@ public class LogInScreen extends AppCompatActivity {
         if (TextUtils.isEmpty(password)) {mpassword.setError("Password is required");return;}
         if (password.length() < 8) {mpassword.setError("Password must be more than 8 characters");return;}
         //user authentication
+        signInUser(email, password, new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                signInWithEmailAndPassword();
+            }
+
+            @Override
+            public void onError(Object object) {
+                mpassword.setError("wrong password input");
+            }
+        });
+
     }
 
     private void getInputData() {

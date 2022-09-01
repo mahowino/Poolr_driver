@@ -25,6 +25,7 @@ import com.example.poolrdriver.adapters.MyTripsAdapter;
 import com.example.poolrdriver.classes.Notifications;
 import com.example.poolrdriver.classes.SignedUpDriver;
 import com.example.poolrdriver.classes.Trips;
+import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class My_trips extends AppCompatActivity {
     RecyclerView upcomingTrips;
-    private List<Trips> tripsList;
+    private List<TripModel> tripsList;
     private TextView viewPastTrips;
     private String network_trips_path,public_trips_path;
 
@@ -64,24 +65,23 @@ public class My_trips extends AppCompatActivity {
         viewPastTrips=findViewById(R.id.lnk_view_past_trips);
 
         //public trips
-        public_trips_path=FirebaseConstants.PUBLIC_RIDES+"/"+new User().getUID() +"/"+FirebaseConstants.TRIPS;
+        public_trips_path=FirebaseConstants.RIDES;
 
         //network trips
-        network_trips_path=FirebaseConstants.NETWORKS+"/"+new User().getUID() +"/"+FirebaseConstants.TRIPS;
+        network_trips_path=FirebaseConstants.NETWORKS;
     }
 
     private void getPostsDataFromDriver() {
 
 
-        getDocumentsInCollection(createCollectionReference(network_trips_path), new Callback() {
+        getDocumentsFromQueryInCollection(createQuery(createCollectionReference(network_trips_path),FirebaseFields.DRIVER,new User().getUID()), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
                 if(task.isSuccessful()) {
                     for (DocumentSnapshot snapshot:task.getResult()) {
-                        Trips trip=snapshot.toObject(Trips.class);
-                        trip.setRidePublic(false);
-                        tripsList.add(snapshot.toObject(Trips.class));
+                        Log.d("tag", "onSuccess: "+snapshot.get(FirebaseFields.DRIVER).toString());
+                        tripsList.add(setUpTripObject(new Trips(snapshot)));
                     }
                     getPublicTripsFromDatabase();
                 }
@@ -94,15 +94,15 @@ public class My_trips extends AppCompatActivity {
     }
 
     private void getPublicTripsFromDatabase() {
-        getDocumentsInCollection(createCollectionReference(public_trips_path), new Callback() {
+        Log.d("tag", "onSuccess: "+new User().getUID());
+        getDocumentsFromQueryInCollection(createQuery(createCollectionReference(public_trips_path),FirebaseFields.DRIVER,new User().getUID()), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
                 if(task.isSuccessful()) {
                     for (DocumentSnapshot snapshot:task.getResult()) {
-                        Trips trip=snapshot.toObject(Trips.class);
-                        trip.setRidePublic(true);
-                        tripsList.add(snapshot.toObject(Trips.class));
+                        Log.d("tag", "onSuccess: "+snapshot.get(FirebaseFields.DRIVER).toString());
+                        tripsList.add(setUpTripObject(new Trips(snapshot)));
                     }
                     initializeRecyclerView();
                 }
@@ -111,6 +111,20 @@ public class My_trips extends AppCompatActivity {
             @Override
             public void onError(Object object) {Log.d(TAG.TAG, "onFailure: "+((Exception)object).getMessage());}
         });
+    }
+
+
+    private TripModel setUpTripObject(Trips trip) {
+        TripModel tripModel=new TripModel();
+        tripModel.setDriverUid(trip.getDriverUid());
+        tripModel.setDriverSource(trip.getDriverSource());
+        tripModel.setDriverDestination(trip.getDriverDestination());
+        tripModel.setPrivacy(trip.isRidePublic());
+        tripModel.setTripPrice(trip.getTripPrice());
+        tripModel.setSeats(trip.getSeats());
+
+
+        return tripModel;
     }
 
 

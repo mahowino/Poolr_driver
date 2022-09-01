@@ -17,15 +17,19 @@ import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.PassengersAdapter;
 import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.classes.Trips;
+import com.example.poolrdriver.models.TripModel;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class My_trips_expanded extends AppCompatActivity {
     TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,no_of_requests,no_passengers_booked;
     Button btnRequests;
-    Trips trip;
+    TripModel trip;
     User user;
 
     List<Passenger> passengers;
@@ -49,8 +53,11 @@ public class My_trips_expanded extends AppCompatActivity {
         FirebaseRepository.getDocumentsInCollection(createCollectionReference(userDetailsPath), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                snapshot=(QuerySnapshot) object;
-                displayPassengers();
+                snapshot=((Task<QuerySnapshot>) object).getResult();
+                if (snapshot!=null)
+                    displayPassengers();
+                else
+                    displayNoPassengers();
             }
 
             @Override
@@ -67,6 +74,7 @@ public class My_trips_expanded extends AppCompatActivity {
     private void displayNoPassengers() {
         passengersList.setVisibility(View.INVISIBLE);
         no_passengers_booked.setVisibility(View.VISIBLE);
+        no_of_passengers.setText("none");
 
 
     }
@@ -75,13 +83,14 @@ public class My_trips_expanded extends AppCompatActivity {
         passengersList.setVisibility(View.VISIBLE);
         no_passengers_booked.setVisibility(View.INVISIBLE);
         displayAdapter();
+
     }
 
     private void displayAdapter() {
         PassengersAdapter adapter=new PassengersAdapter(this,passengers);
         passengersList.setAdapter(adapter);
         passengersList.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
-
+        no_of_passengers.setText(passengers.size());
     }
 
     private boolean arePassengersAvailable() {
@@ -97,12 +106,11 @@ public class My_trips_expanded extends AppCompatActivity {
     private void setTextData() {
         source.setText(trip.getDriverSource());
         destination.setText(trip.getDriverDestination());
-        departure_time.setText(SimpleDateFormat.getInstance().format(trip.getDate()));
-        privacy.setText(trip.getPrivacy());
-        no_of_passengers.setText(trip.getNumberOfRequests());
-        no_of_seats_offered.setText(trip.getSeats());
-        cash_to_be_paid.setText(trip.getTripPrice());
-        no_of_requests.setText(trip.getNumberOfRequests());
+        departure_time.setText(SimpleDateFormat.getInstance().format(new Date()));//trip.getTimePickerObject().getDate()
+        privacy.setText("trip.isPrivacy()");
+        no_of_seats_offered.setText(String.valueOf(trip.getSeats()));
+        cash_to_be_paid.setText(String.valueOf(trip.getTripPrice()));
+        //no_of_requests.setText(trip.getNumberOfRequests());
 
     }
 
@@ -126,16 +134,17 @@ public class My_trips_expanded extends AppCompatActivity {
         no_of_requests=findViewById(R.id.requests_no_expanded);
         passengersList=findViewById(R.id.passengers_list);
         no_passengers_booked=findViewById(R.id.no_passengers_booked_label);
+        passengers=new ArrayList<>();
     }
 
     private void getValues() {
         trip=getIntent().getParcelableExtra(CHOSEN_TRIP);
         user=getIntent().getParcelableExtra(USER_ACCOUNT);
 
-        if (trip.isRidePublic())
-            userDetailsPath= FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.POSTED_RIDES+"/"+trip.getTripUID()+"/"+FirebaseConstants.BOOKINGS;
+        if (trip.isPrivacy())
+            userDetailsPath= FirebaseConstants.NETWORKS+"/"+trip.getNetworkId()+"/"+FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
         else
-            userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripUID()+"/"+FirebaseConstants.BOOKINGS;
+            userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
 
     }
 }

@@ -6,6 +6,7 @@ import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 
 import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Map;
 
 public class FirebaseRepository {
+
     static boolean isSuccessful;
 
 
@@ -55,6 +57,9 @@ public class FirebaseRepository {
 
     public static void createNewUser(String email, String password, Callback callback) {
         FirebaseInitVariables.mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> runTaskValidation(task, callback));
+    }
+    public static void signInUser(String email, String password, Callback callback) {
+        FirebaseInitVariables.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
 
     public static DocumentReference createDocumentReference(String path, String documentRef) {

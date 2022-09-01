@@ -52,11 +52,12 @@ public abstract class GoogleSignIn {
         }
         return accountSign;
     }
+
     private static void authenticateGoogleAccountWithFirebase(String idToken, Callback callback){
 
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         FirebaseInitVariables.mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(callback::onError)
+                .addOnCompleteListener(callback::onSuccess)
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
 
     }

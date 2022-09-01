@@ -22,6 +22,8 @@ public class FirebaseFields {
     public static String P_IS_RIDE_ACCEPTED = "p_is_ride_accepted";
     public static String P_LOCATION_FROM = "p_location_from";
     public static String P_LOCATION_TO = "p_location_to";
+    public static String LOCATION_TO_GEOPOINT = "location_to_geopoint";
+    public static String LOCATION_FROM_GEOPOINT = "location_from_geopoint";
     public static String SEATS= "seats";
     public static String P_NETWORK = "p_network";
     public static String NETWORK_MEMBERS = "network_members";
@@ -42,5 +44,8 @@ public class FirebaseFields {
     public static String IMAGE_URI="image_uri";
 
 
+    //map
     public static String DRIVER_ROUTE="driver_route";
+    public static String LATITUDE="latitude";
+    public static String LONGTITUDE="longitude";
 }

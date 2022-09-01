@@ -18,11 +18,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,16 +37,20 @@ import com.example.poolrdriver.Firebase.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.AutoSuggestionsAdapter;
+import com.example.poolrdriver.classes.Network;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.classes.dateFormat;
 import com.example.poolrdriver.classes.private_rides;
 import com.example.poolrdriver.models.TimePickerObject;
+import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.util.LoadingDialog;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
@@ -55,20 +62,22 @@ import java.util.Locale;
 
 public class onLocationPressedActivity extends AppCompatActivity implements TaskLoadedCallback {
     private EditText TimePicker,GroupPicker;
+    Spinner networks_spinner ;
     private AutoCompleteTextView destination,source;
     private String DateOfTravel;
     private String TimeOfTravel;
     private  TextView datePicked,timePicked,confirmDate,confirmTime,timeFrom,timeTo,privacy;
-    Button confirm,btnEveryoneVisibility,btnMyContactsVisibility,post;
+    Button confirm,btnEveryoneVisibility,btnMyNetworksVisibility,post;
     CalendarView calendarView;
     android.widget.TimePicker timePicker;
     private dateFormat chosenDate,chosenTempDate;
+    private boolean isTripPublic;
     private LoadingDialog loadingDialog;
     LatLng sourcePoint, destinationPoint;
     private final List<MarkerOptions> markerOptionsList = new ArrayList<>();
     TabLayout seatsOffered;
     TimePickerObject time;
-    Trips trip;
+    TripModel trip;
     private PolylineOptions polylineOptions;
     String locationFromString, locationToString;
     private static final String SOURCE_DEFAULT_TEXT = "My location";
@@ -77,6 +86,8 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private static final String TAG ="locationSearch" ;
     Location currentLocation;
     private Context mContext;
+    private List<Network> networks;
+    public static TextView txtNetwork_spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +119,8 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         source = findViewById(R.id.locationWhereFrom);
         destination = findViewById(R.id.locationWhereTo);
         seatsOffered=findViewById(R.id.seats_offered);
+        networks_spinner = findViewById(R.id.network_spinner);
+        txtNetwork_spinner=findViewById(R.id.txt_network_spinner);
 
     }
 
@@ -158,6 +171,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
                     currentLocation=(Location)object;
                     setDefaultLocationLatLong();
                     setDefaultLocationString();
+                    destinationPoint = getLocationFromAddress(locationToString,mContext);
                     getPolylineValues();
                 }
                 
@@ -168,9 +182,12 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
             });} catch (Exception exception) {exception.printStackTrace();}
 
         }
-        else {sourcePoint = getLocationFromAddress(locationToString,mContext);getPolylineValues();}
-        destinationPoint = getLocationFromAddress(locationToString,mContext);
-        
+        else {
+            sourcePoint = getLocationFromAddress(locationFromString,mContext);
+            destinationPoint = getLocationFromAddress(locationToString,mContext);
+            getPolylineValues();
+        }
+
     }
 
     private void setDefaultLocationString() {
@@ -199,9 +216,8 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         getDocumentsFromQueryInCollection(createArrayQuery(createCollectionReference(path), FirebaseFields.NETWORK_MEMBERS,new User().getUID()), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                //todo: set privacy depending on networks in(if networks exist)
-                //trip.setNetworkID((QuerySnapshot) object);
-                //network exists
+                QuerySnapshot snapshot=((Task<QuerySnapshot>) object).getResult();
+                getNetworks(snapshot);
 
             }
 
@@ -212,10 +228,56 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         });
     }
 
+    private void getNetworks(QuerySnapshot querysnapshot) {
+        for (DocumentSnapshot snapshot:querysnapshot)
+            networks.add(snapshot.toObject(Network.class));
+
+        setUpPrivacyOptions();
+
+
+    }
+
+    private void setUpPrivacyOptions() {
+        setUpPrivacyAdapter(populateArrayList());
+
+    }
+
+    private void setUpNoVisiblePrivacyAdapter() {
+        networks_spinner.setVisibility(View.GONE);
+        txtNetwork_spinner.setVisibility(View.GONE);
+    }
+
+    private void setUpVisiblePrivacyAdapter() {
+        networks_spinner.setVisibility(View.VISIBLE);
+        txtNetwork_spinner.setVisibility(View.VISIBLE);
+        networks_spinner.setSelection(0);
+    }
+
+    private void setUpPrivacyAdapter(List<String> Networks) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, Networks);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        networks_spinner.setAdapter(adapter);
+
+    }
+
+    private List<String> populateArrayList() {
+        List<String> Networks =  new ArrayList<>();
+        Networks.add("all");
+        for (Network network:networks)
+            Networks.add(network.getNetworkName());
+        return Networks;
+    }
+
     private void setValues() {
-       trip =new Trips();
-        setDefaultDate();
-        mContext=getApplicationContext();
+       trip =new TripModel();
+       networks=new ArrayList<>();
+       mContext=getApplicationContext();
+       isTripPublic=true;
+       setDefaultDate();
+
     }
 
     private void setDefaultDate() {
@@ -227,17 +289,20 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
 
 
     private void setDefaultDateUI() {
+        time=new TimePickerObject();
         Calendar calendar=Calendar.getInstance();
-        setTime(calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
+        setTime(calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),false);
     }
 
     private void setDefaultDateBackend() {
-        time=new TimePickerObject();
+
         time.setDefaultCalendarDateAndTime();
     }
 
 
     private void getPolylineValues() {
+        Log.d(TAG, "postRides: "+ sourcePoint);
+        Log.d(TAG, "postRides: "+ destinationPoint);
         markerOptionsList.add(new MarkerOptions().position(sourcePoint));
         markerOptionsList.add( new MarkerOptions().position(destinationPoint));
         new FetchURL(onLocationPressedActivity.this)
@@ -260,10 +325,24 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         }
         else if(layout==R.layout.bottom_sheet_layout_trip_visibility) {
             btnEveryoneVisibility=dialog.findViewById(R.id.btn_select_everyone);
-            btnMyContactsVisibility= dialog.findViewById(R.id.btn_select_contacts);
+            btnMyNetworksVisibility= dialog.findViewById(R.id.btn_select_contacts);
 
-            btnEveryoneVisibility.setOnClickListener(v -> {GroupPicker.setText("Visible to Everyone");dialog.dismiss();});
-            btnMyContactsVisibility.setOnClickListener(v -> {GroupPicker.setText("Visible to my contacts");dialog.dismiss();});
+            if (networks.size()<=1)btnMyNetworksVisibility.setVisibility(View.GONE);
+            else btnMyNetworksVisibility.setVisibility(View.VISIBLE);
+
+
+            btnEveryoneVisibility.setOnClickListener(v -> {
+                isTripPublic=true;
+                setUpNoVisiblePrivacyAdapter();
+                privacy.setText("Visible to Everyone");
+                dialog.dismiss();});
+
+            btnMyNetworksVisibility.setOnClickListener(v -> {
+                isTripPublic=false;
+                setUpVisiblePrivacyAdapter();
+                privacy.setText("Visible to my networks");
+                dialog.dismiss();
+            });
 
         }
         else {
@@ -300,14 +379,14 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
 
         if (layout==R.layout.time_picker_ui_screen){
 
-            timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> setTime(hourOfDay,minute));
+            timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> setTime(hourOfDay,minute,true));
             confirmTime.setOnClickListener(v -> dialog.dismiss());
         }
 
     }
 
     @SuppressLint("SetTextI18n")
-    private void setTime(int hourOfDay, int minute) {
+    private void setTime(int hourOfDay, int minute, boolean isFromDialog) {
         //time from and to setup
         if(minute<10 && hourOfDay>0){timeFrom.setText((hourOfDay - 1) + ":" + (60 - (10 - minute)) + "hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
         else if (minute<10 && hourOfDay==0){timeFrom.setText(23+":"+(60-(10-minute))+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
@@ -315,7 +394,10 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         else if(minute>=50 && hourOfDay==23){timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText(00+":"+((minute+10)-60)+"hrs");}
         else {timeFrom.setText(hourOfDay+":"+(minute-10)+"hrs");timeTo.setText((hourOfDay)+":"+(minute+10)+"hrs");}
 
-        timePicked.setText( hourOfDay+":"+minute+"hrs");
+        if (isFromDialog){
+            timePicked.setText( hourOfDay+":"+minute+"hrs");
+            TimeOfTravel=hourOfDay+":"+minute+"hrs";
+        }
         time.setCalendarTime(hourOfDay, minute);
 
     }
@@ -325,25 +407,47 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
 
     @Override
     public void onTaskDone(Object... values) {
-        loadingDialog.dismissDialog();polylineOptions=(PolylineOptions) values[0];postRides();
+        loadingDialog.dismissDialog();polylineOptions=(PolylineOptions) values[0];trip.setDriverRoute(polylineOptions);postRides();
     }
 
     private void postRides() {
-        
 
-        trip.setDriverRoute(polylineOptions.getPoints());
+        Intent next = new Intent(getApplicationContext(), price_split.class);
+
+        Log.d(TAG, "postRides: "+ polylineOptions.getPoints());
         trip.setDriverSource(locationFromString);
         trip.setDriverDestination(locationToString);
         trip.setDriverUid(new User().getUID());
-        trip.setRidePublic(privacy.getText().toString().equals(PRIVACY));
+        trip.setPrivacy(isTripPublic);
+        trip.setDestinationpoint(destinationPoint);
+        trip.setSourcepoint(sourcePoint);
+
+        if (!isTripPublic && networks_spinner.getSelectedItemPosition()!=0)
+           trip.setNetworkId(networks.get(networks_spinner.getSelectedItemPosition()).getNetworkUID());
+        else if (networks_spinner.getSelectedItemPosition()==0)
+            trip.setNetworks((ArrayList<Network>) networks);
+
+
+
         trip.setSeats(getSeatsChosen());
-        trip.setDate(time);
+        trip.setTimePickerObject(time);
 
 
-        Intent next = new Intent(getApplicationContext(), price_split.class);
-        next.putExtra("trip", (Parcelable) trip);
+        next.putExtra("POLYLINE",polylineOptions);
+        next.putExtra("destinationPoint",destinationPoint);
+        next.putExtra("sourcePoint",sourcePoint);
+        next.putExtra("trip",(Parcelable) trip);
         startActivity(next);
         
+    }
+
+    private GeoPoint convertLatLongToGeopoint(LatLng Point) {
+        double latitude = Point.latitude;
+        double longitude = Point.longitude;
+        GeoPoint gp = new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
+
+
+        return gp;
     }
 
     private int getSeatsChosen() {return seatsOffered.getSelectedTabPosition()+1;}

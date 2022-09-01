@@ -65,6 +65,9 @@
             android:name=".NotificationsActivity"
             android:exported="false" />
         <activity
+            android:name=".My_trips_expanded"
+            android:exported="false" />
+        <activity
             android:name=".wallet"
             android:exported="false" />
         <activity

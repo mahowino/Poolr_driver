@@ -47,17 +47,16 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/linearLayout9"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout22"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout20"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+                app:layout_constraintTop_toBottomOf="@+id/TripStatus">
 
                 <TextView
                     android:id="@+id/textView31"
@@ -111,7 +110,7 @@
                 android:id="@+id/TripStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="2 passengers requested"
                 android:textColor="@color/purple_500"
@@ -122,11 +121,11 @@
                 android:id="@+id/linearLayout20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
                 android:orientation="vertical"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout21"
-                app:layout_constraintTop_toBottomOf="@+id/TripStatus">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
 
                 <TextView
                     android:id="@+id/textView108"
@@ -174,7 +173,7 @@
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/TripStatus">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
 
                 <TextView
                     android:id="@+id/textView110"
@@ -186,7 +185,7 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/seats_booked"
+                    android:id="@+id/seats"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_alternates"
@@ -219,30 +218,8 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/linearLayout22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout20">
-
-                <TextView
-                    android:id="@+id/viewDetailsOnTrip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cancel trip"
-                    android:textColor="@color/red" />
-
-            </LinearLayout>
-
             <Button
-                android:id="@+id/btn_authorize_payment"
+                android:id="@+id/btn_view_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -256,6 +233,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout21"
                 app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/btn_cancel_trip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:text="Cancel trip"
+                android:textColor="@color/red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout20" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

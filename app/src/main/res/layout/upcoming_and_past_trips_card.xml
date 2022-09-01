@@ -218,7 +218,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout20">
 
                 <TextView
-                    android:id="@+id/viewDetailsOnTrip"
+                    android:id="@+id/btn_cancel_trip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -228,7 +228,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_authorize_payment"
+                android:id="@+id/btn_view_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
