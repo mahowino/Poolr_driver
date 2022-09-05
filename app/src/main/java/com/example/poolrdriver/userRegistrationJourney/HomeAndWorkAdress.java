@@ -69,7 +69,7 @@ public class HomeAndWorkAdress extends AppCompatActivity {
         workAdress.setOnItemClickListener((parent, view, position, id) -> {
 
         });
-        skip.setOnClickListener(v -> {redirectActivity(HomeAndWorkAdress.this, HomePageActivity.class);});
+        skip.setOnClickListener(v -> {redirectActivity(HomeAndWorkAdress.this, MapsActivity.class);});
         finish.setOnClickListener(v -> {loadingDialog.startLoadingAlertDialog();updateDataInDatabase();});
     }
 
