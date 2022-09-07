@@ -40,6 +40,9 @@ public class FirebaseRepository {
     public static void setDocument(Map map, CollectionReference reference, final Callback callback) {
         reference.document().set(map).addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
+    public static void deleteDocument(DocumentReference reference, Callback callback){
+        reference.delete().addOnCompleteListener(task -> runTaskValidation(task,callback));
+    }
 
 
     public static void getDocumentsInCollection(CollectionReference collectionReference, final Callback callback) {

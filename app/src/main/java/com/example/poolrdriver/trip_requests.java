@@ -24,6 +24,7 @@ import com.example.poolrdriver.adapters.RequestsAdapter;
 import com.example.poolrdriver.classes.Notifications;
 import com.example.poolrdriver.databinding.RequestCardBinding;
 import com.example.poolrdriver.models.Requests;
+import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,11 +38,13 @@ public class trip_requests extends AppCompatActivity {
 
     RecyclerView requestsView;
     private List<Requests> tripRequest;
+    TripModel trip;
     ImageView no_requests_image;
     TextView no_requests_text;
     boolean is_request_available;
     boolean isNetworkTrip;
     String tripId;
+    private final String CHOSEN_TRIP="chosen_trip";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,8 @@ public class trip_requests extends AppCompatActivity {
         no_requests_image=findViewById(R.id.no_requests_image);
         no_requests_text=findViewById(R.id.no_requests_text);
         is_request_available=false;
-        tripId=getIntent().getExtras().getString("tridID");
+        trip=getIntent().getParcelableExtra(CHOSEN_TRIP);
+        Log.d("rides", "initializeVariables: "+trip.getTripID());
         isNetworkTrip=getIntent().getBooleanExtra("isNetworkTrip",false);
     }
 
@@ -67,12 +71,14 @@ public class trip_requests extends AppCompatActivity {
     private void getRequestsFromFirebase(boolean isNetworkTrip) {
         //query
         String path;
-        if (isNetworkTrip)
-            path= FirebaseConstants.RIDES+"/"+tripId+"/"+FirebaseConstants.REQUESTS;
+        if (!isNetworkTrip)
+            path= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.REQUESTS;
+
         else {
             //get from network
             String networkId=getIntent().getExtras().getString("networkID");
-            path= FirebaseConstants.NETWORKS+"/"+networkId+"/"+FirebaseConstants.RIDES+"/"+tripId+"/"+FirebaseConstants.REQUESTS;
+            path= FirebaseConstants.NETWORKS+"/"+networkId+"/"+FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.REQUESTS;
+
         }
         getTrip(path);
     }
@@ -83,6 +89,7 @@ public class trip_requests extends AppCompatActivity {
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>)object;
                 for (DocumentSnapshot snapshot:task.getResult())
+
                     if (snapshot.exists()){createNotification(snapshot);is_request_available=true;}
 
                 if (is_request_available)initializeRecyclerView();
@@ -96,7 +103,7 @@ public class trip_requests extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"error getting notifications",Toast.LENGTH_SHORT).show();
             }
         });
-
+        Log.d("rides", "initializeVariables: "+path);
     }
 
     private void initializeNoNotificationView() {
@@ -109,12 +116,17 @@ public class trip_requests extends AppCompatActivity {
 
         Requests requests=new Requests();
 
+        //trip date can be gotten from trip object
+        requests.setTripDate(trip.getTimePickerObject().getDate());
         requests.setTripPrice(Double.parseDouble(String.valueOf(snapshot.get(FirebaseFields.P_TRIP_PRICE))));
         requests.setLocationFrom(String.valueOf(snapshot.get(FirebaseFields.P_LOCATION_FROM)));
         requests.setLocationTo(String.valueOf(snapshot.get(FirebaseFields.P_LOCATION_TO)));
         requests.setSeats(Integer.parseInt(String.valueOf(snapshot.get(FirebaseFields.SEATS))));
-        requests.setPassengerUID(String.valueOf(snapshot.get(FirebaseFields.DRIVER)));
-        requests.setTripUID(snapshot.getId());
+        requests.setPassengerUID(String.valueOf(snapshot.get(FirebaseConstants.PASSENGERS)));
+        requests.setTripUID(String.valueOf(snapshot.get(FirebaseFields.TRIP_ID)));
+        requests.setSourceGeopoint(snapshot.getGeoPoint(FirebaseFields.LOCATION_FROM_GEOPOINT));
+        requests.setDestinationGeopoint(snapshot.getGeoPoint(FirebaseFields.LOCATION_TO_GEOPOINT));
+        requests.setRequestID(snapshot.getId());
 
         tripRequest.add(requests);
 
@@ -126,7 +138,7 @@ public class trip_requests extends AppCompatActivity {
         requestsView.setVisibility(View.VISIBLE);
 
         //RecyclerView initializations
-        RequestsAdapter adapter=new RequestsAdapter(getApplicationContext(),tripRequest);
+        RequestsAdapter adapter=new RequestsAdapter(trip_requests.this,tripRequest);
         requestsView.setAdapter(adapter);
         requestsView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }

@@ -57,7 +57,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
 
     private void getNotificationFromFirebase() {
-        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.REQUESTS;
+        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.NOTIFICATIONS;
 
         getDocumentsInCollection(createCollectionReference(path), new Callback() {
             @Override
@@ -88,8 +88,9 @@ public class NotificationsActivity extends AppCompatActivity {
 
     private void createNotification(DocumentSnapshot snapshot) {
         String message=snapshot.getString(FirebaseFields.MESSAGE);
-        int type=Integer.parseInt((String) snapshot.get(FirebaseFields.TYPE));
-        Notifications notification=new Notifications(message,type);
+        String title=snapshot.getString(FirebaseFields.TITLE);
+       // int type=Integer.parseInt((String) snapshot.get(FirebaseFields.TYPE));
+        Notifications notification=new Notifications(message,1,title);
 
         //if notification requires picture, get from database
         if (snapshot.getString(FirebaseFields.IMAGE_URI)!=null)

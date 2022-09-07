@@ -42,6 +42,5 @@ public abstract class FirebaseConstants {
     public static final String FAIL ="fail";
 
 
-
-
+    public static final String REQUESTS_REJECTED ="rejected_requests" ;
 }

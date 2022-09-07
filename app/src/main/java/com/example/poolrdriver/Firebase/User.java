@@ -177,6 +177,8 @@ public class User {
         map.put(FirebaseFields.FULL_NAMES, getName());
         map.put(FirebaseFields.EMAIL, getEmail());
         map.put(FirebaseFields.PHONE_NUMBER,getPhoneNumber());
+        map.put(FirebaseFields.CASH,0);
+
 
         return map;
     }

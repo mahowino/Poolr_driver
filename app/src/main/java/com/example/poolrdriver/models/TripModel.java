@@ -29,6 +29,38 @@ public class TripModel implements Parcelable {
 
     public TripModel(){}
 
+    protected TripModel(Parcel in) {
+        seats = in.readInt();
+        if (in.readByte() == 0) {
+            tripPrice = null;
+        } else {
+            tripPrice = in.readLong();
+        }
+        passengers = in.createTypedArrayList(Passenger.CREATOR);
+        driverSource = in.readString();
+        driverDestination = in.readString();
+        driverUid = in.readString();
+        privacy = in.readByte() != 0;
+        driverRoute = in.readParcelable(PolylineOptions.class.getClassLoader());
+        networkId = in.readString();
+        tripID = in.readString();
+        driverRouteList = in.createTypedArrayList(LatLng.CREATOR);
+        sourceGeopoint = in.readParcelable(LatLng.class.getClassLoader());
+        destinationGeopoint = in.readParcelable(LatLng.class.getClassLoader());
+    }
+
+    public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
+        @Override
+        public TripModel createFromParcel(Parcel in) {
+            return new TripModel(in);
+        }
+
+        @Override
+        public TripModel[] newArray(int size) {
+            return new TripModel[size];
+        }
+    };
+
     public LatLng getSourcePoint() {
         return sourceGeopoint;
     }
@@ -45,34 +77,6 @@ public class TripModel implements Parcelable {
         this.destinationGeopoint = destinationPoint;
     }
 
-    protected TripModel(Parcel in) {
-        seats = in.readInt();
-        if (in.readByte() == 0) {
-            tripPrice = null;
-        } else {
-            tripPrice = in.readLong();
-        }
-        passengers = in.createTypedArrayList(Passenger.CREATOR);
-        driverSource = in.readString();
-        driverDestination = in.readString();
-        driverUid = in.readString();
-        privacy = in.readByte() != 0;
-        driverRoute = in.readParcelable(PolylineOptions.class.getClassLoader());
-        networkId = in.readString();
-        driverRouteList = in.createTypedArrayList(LatLng.CREATOR);
-    }
-
-    public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
-        @Override
-        public TripModel createFromParcel(Parcel in) {
-            return new TripModel(in);
-        }
-
-        @Override
-        public TripModel[] newArray(int size) {
-            return new TripModel[size];
-        }
-    };
 
     public Long getTripPrice() {
         return tripPrice;
@@ -178,6 +182,16 @@ public class TripModel implements Parcelable {
         this.driverRouteList = driverRouteList;
     }
 
+
+
+    public String getTripID() {
+        return tripID;
+    }
+
+    public void setTripID(String tripID) {
+        this.tripID = tripID;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -199,15 +213,9 @@ public class TripModel implements Parcelable {
         dest.writeByte((byte) (privacy ? 1 : 0));
         dest.writeParcelable(driverRoute, flags);
         dest.writeString(networkId);
+        dest.writeString(tripID);
         dest.writeTypedList(driverRouteList);
-    }
-
-
-    public String getTripID() {
-        return tripID;
-    }
-
-    public void setTripID(String tripID) {
-        this.tripID = tripID;
+        dest.writeParcelable(sourceGeopoint, flags);
+        dest.writeParcelable(destinationGeopoint, flags);
     }
 }

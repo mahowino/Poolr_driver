@@ -1,7 +1,9 @@
 package com.example.poolrdriver.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +23,11 @@ import java.util.List;
 public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderView> {
     private List<TripModel> tripsList;
     private Context mContext;
-
-    public MyTripsAdapter(List<TripModel> tripsList, Context mContext) {
+    private Activity activity;
+    public MyTripsAdapter(List<TripModel> tripsList, Context mContext, Activity activity) {
         this.tripsList=tripsList;
         this.mContext=mContext;
+        this.activity=activity;
     }
 
     @NonNull
@@ -43,15 +46,13 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
 
     private void setListeners(holderView holder,TripModel tripModel) {
 
-        holder.actionButton.setOnClickListener(v -> {
-            //cancel trip screen
-        });
+
         holder.viewMore.setOnClickListener(v -> {
 
-            Intent myTrips=new Intent(mContext, My_trips_expanded.class);
+            Intent myTrips=new Intent(activity, My_trips_expanded.class);
+            Log.d("tag", "setUpTripObject: "+tripModel.getTripID());
             myTrips.putExtra("chosen_trip",tripModel);
-            myTrips.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(myTrips);
+            activity.startActivity(myTrips);
 
         });
     }
@@ -74,7 +75,7 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
     }
 
     public class holderView extends RecyclerView.ViewHolder {
-        TextView seatsOffered,driverDestination,driverSource,driverSourceTime,tripPrivacy,actionButton,tripPrice;
+        TextView seatsOffered,driverDestination,driverSource,driverSourceTime,tripPrivacy,tripPrice;
         Button viewMore;
         public holderView(@NonNull View itemView) {
             super(itemView);
@@ -89,7 +90,6 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
             driverDestination=itemView.findViewById(R.id.TripDestination);
             tripPrivacy=itemView.findViewById(R.id.privacy_setting);
             tripPrice=itemView.findViewById(R.id.CashPaid);
-            actionButton=itemView.findViewById(R.id.btn_cancel_trip);
             viewMore=itemView.findViewById(R.id.btn_view_more);
         }
 

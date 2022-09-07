@@ -1,9 +1,11 @@
 package com.example.poolrdriver;
 
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
+import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import com.example.poolrdriver.adapters.PassengersAdapter;
 import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.TripModel;
+import com.example.poolrdriver.userRegistrationJourney.CancelTrip;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 public class My_trips_expanded extends AppCompatActivity {
-    TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,no_of_requests,no_passengers_booked;
+    TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,no_of_requests,no_passengers_booked,cancel;
     Button btnRequests;
     TripModel trip;
     User user;
@@ -103,13 +106,14 @@ public class My_trips_expanded extends AppCompatActivity {
 
     private void setListeners() {
         btnRequests.setOnClickListener(v -> viewSentRequests());
+        cancel.setOnClickListener(v -> redirectActivity(My_trips_expanded.this, CancelTrip.class));
     }
 
     private void viewSentRequests() {
-        Intent intent=new Intent(getApplicationContext(),trip_requests.class);
-        intent.putExtra("tridID",trip.getTripID());
-        intent.putExtra("isNetworkTrip",false);
+        Intent intent=new Intent(My_trips_expanded.this,trip_requests.class);
+        intent.putExtra(CHOSEN_TRIP,trip);
         startActivity(intent);
+
     }
 
     private void setTextData() {
@@ -143,17 +147,19 @@ public class My_trips_expanded extends AppCompatActivity {
         no_of_requests=findViewById(R.id.requests_no_expanded);
         passengersList=findViewById(R.id.passengers_list);
         no_passengers_booked=findViewById(R.id.no_passengers_booked_label);
+        cancel=findViewById(R.id.txt_cancel_trip);
         passengers=new ArrayList<>();
     }
 
     private void getValues() {
-        trip=getIntent().getParcelableExtra(CHOSEN_TRIP);
+        trip=getIntent().getExtras().getParcelable(CHOSEN_TRIP);
         user=getIntent().getParcelableExtra(USER_ACCOUNT);
-
+        Log.d("trip", "getValues: "+trip.getTripID());
         if (trip.isPrivacy())
             userDetailsPath= FirebaseConstants.NETWORKS+"/"+trip.getNetworkId()+"/"+FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
         else
             userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
+
 
     }
 }

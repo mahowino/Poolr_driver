@@ -12,13 +12,22 @@ public class Notifications {
      *  type 3: notification user is going the same way
      */
 
-    private String Message;
+    private String message,Title;
     private int type;
     private Uri imageUri;
 
-    public Notifications(String message, int type) {
-        Message = message;
+    public Notifications(String message, int type,String Title) {
+        this.message = message;
+        this.Title=Title;
         this.type = type;
+    }
+
+    public String getTitle() {
+        return Title;
+    }
+
+    public void setTitle(String title) {
+        Title = title;
     }
 
     public Uri getImageUri() {
@@ -30,11 +39,11 @@ public class Notifications {
     }
 
     public String getMessage() {
-        return Message;
+        return message;
     }
 
     public void setMessage(String message) {
-        Message = message;
+        message = message;
     }
 
     public int getType() {

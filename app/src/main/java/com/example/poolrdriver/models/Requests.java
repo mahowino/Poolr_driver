@@ -7,13 +7,39 @@ import java.util.Date;
 
 public class Requests {
     LatLng source,destination;
+    GeoPoint sourceGeopoint,destinationGeopoint;
+
+    public GeoPoint getSourceGeopoint() {
+        return sourceGeopoint;
+    }
+
+    public GeoPoint getDestinationGeopoint() {
+        return destinationGeopoint;
+    }
+
+    public void setSourceGeopoint(GeoPoint sourceGeopoint) {
+        this.sourceGeopoint = sourceGeopoint;
+    }
+
+    public void setDestinationGeopoint(GeoPoint destinationGeopoint) {
+        this.destinationGeopoint = destinationGeopoint;
+    }
+
     String LocationFrom,LocationTo;
-    String driverUID,tripUID;
+    String passengerUID,tripUID,requestID;
     Date tripDate;
     int seats;
     String userSource,userDestination;
     double distanceFromSource,distanceToDestination;
     double tripPrice;
+
+    public String getRequestID() {
+        return requestID;
+    }
+
+    public void setRequestID(String requestID) {
+        this.requestID = requestID;
+    }
 
     public Requests() {
     }
@@ -59,11 +85,11 @@ public class Requests {
     }
 
     public String getPassengerUID() {
-        return driverUID;
+        return passengerUID;
     }
 
     public void setPassengerUID(String driverUID) {
-        this.driverUID = driverUID;
+        this.passengerUID = driverUID;
     }
 
     public String getTripUID() {

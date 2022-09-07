@@ -122,6 +122,11 @@ public class My_trips extends AppCompatActivity {
         tripModel.setPrivacy(trip.isRidePublic());
         tripModel.setTripPrice(trip.getTripPrice());
         tripModel.setSeats(trip.getSeats());
+        tripModel.setTripID(trip.getTripID());
+
+       // tripModel.setSourcepoint(trip.getTripSourceGeopoint());
+       // tripModel.setDestinationpoint(trip.getTripDestinationGeopoint());
+
 
 
         return tripModel;
@@ -130,7 +135,7 @@ public class My_trips extends AppCompatActivity {
 
     private void initializeRecyclerView() {
 
-        MyTripsAdapter adapter=new MyTripsAdapter(tripsList,getApplicationContext());
+        MyTripsAdapter adapter=new MyTripsAdapter(tripsList,getApplicationContext(),My_trips.this);
         upcomingTrips.setAdapter(adapter);
         upcomingTrips.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
 

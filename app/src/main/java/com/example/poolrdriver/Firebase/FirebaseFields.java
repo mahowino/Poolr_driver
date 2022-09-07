@@ -2,6 +2,7 @@ package com.example.poolrdriver.Firebase;
 
 public class FirebaseFields {
 
+    public static final String TRIP_ID = "trip_id";
     //user ID
     public static String UID="uid";
 
@@ -28,6 +29,7 @@ public class FirebaseFields {
     public static String P_NETWORK = "p_network";
     public static String NETWORK_MEMBERS = "network_members";
     public static String P_TRIP_PRICE = "p_trip_price";
+    public static String TRiP_DATE = "trip_date";
     public static String P_TIME_FROM_LOCATION = "p_time_from_location";
 
 
@@ -40,6 +42,7 @@ public class FirebaseFields {
     public static String ARRIVALTIME= "arrival_time";
     public static String DEPARTURETIME= "departure_time";
     public static String MESSAGE="message";
+    public static String TITLE="title";
     public static String TYPE="type";
     public static String IMAGE_URI="image_uri";
 
