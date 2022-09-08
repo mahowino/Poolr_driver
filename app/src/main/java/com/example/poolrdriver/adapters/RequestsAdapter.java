@@ -126,17 +126,9 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
         setDocument(createRequestMap(requests), createCollectionReference(Path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                Toast.makeText(context,"rider has been successfully accepted",Toast.LENGTH_LONG).show();
-                String path= FirebaseConstants.RIDES+"/"+requests.getTripUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
-                String path2= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
-                //todo:add to passenger collection called upcoming trips;
-                deleteRequestFromDatabase(path);
-                deleteRequestFromDatabase(path2);
-                //displayNotificationOnPHone()
-                Notifications notification=new Notifications("Your trip request has been accepted",1,"Trip Accepted");
-                showNotification(requests,notification);
+                String path3=FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.TRIPS+"/"+requests.getTripUID();
+                setTripOnDatabase(path3,requests);
 
-                redirect();
             }
 
             @Override
@@ -160,6 +152,29 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
                 //displayNotificationOnPHone()
                 Notifications notification=new Notifications("Your trip request has been rejected",1,"Trip Rejected");
                 showNotification(requests,notification);
+                redirect();
+            }
+
+            @Override
+            public void onError(Object object) {
+                Toast.makeText(context,"Error accepting request",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private void setTripOnDatabase(String path, Requests requests) {
+        setDocument(createRequestMap(requests), createDocumentReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                //todo:convert to batch write
+                Toast.makeText(context,"rider has been successfully accepted",Toast.LENGTH_LONG).show();
+                String path= FirebaseConstants.RIDES+"/"+requests.getTripUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
+                String path2= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
+                deleteRequestFromDatabase(path);
+                deleteRequestFromDatabase(path2);
+                //displayNotificationOnPHone()
+                Notifications notification=new Notifications("Your trip request has been accepted",1,"Trip Accepted");
+                showNotification(requests,notification);
+
                 redirect();
             }
 
@@ -212,8 +227,8 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
         Map<String,Object> map=new HashMap<>();
 
         //FOR PASSENGER
-        map.put(FirebaseFields.P_LOCATION_FROM, requests.getUserSource());
-        map.put(FirebaseFields.P_LOCATION_TO,requests.getUserDestination());
+        map.put(FirebaseFields.P_LOCATION_FROM, requests.getLocationFrom());
+        map.put(FirebaseFields.P_LOCATION_TO,requests.getLocationTo());
         map.put(FirebaseFields.LOCATION_TO_GEOPOINT,requests.getDestinationGeopoint());
         map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,requests.getSourceGeopoint());
         map.put(FirebaseFields.SEATS,requests.getSeats());

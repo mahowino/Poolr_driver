@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.poolrdriver.PassengerProfile;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.Passenger;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -57,8 +58,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
 
     private void callPassenger(Passenger passenger) {
         String number=passenger.getPhoneNumber();
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:"+number));
+        Intent callIntent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+number));
         context.startActivity(callIntent);
     }
 
@@ -76,7 +76,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
     public class HolderView extends RecyclerView.ViewHolder {
         TextView passengerName,passengerRating,passengerSource,passengerDestination;
         ImageView passengerDisplayPicture;
-        Button callPassenger;
+        FloatingActionButton callPassenger;
         CardView passengerCard;
         public HolderView(@NonNull View itemView) {
             super(itemView);

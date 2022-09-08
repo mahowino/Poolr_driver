@@ -117,7 +117,7 @@ public class trip_requests extends AppCompatActivity {
         Requests requests=new Requests();
 
         //trip date can be gotten from trip object
-        requests.setTripDate(trip.getTimePickerObject().getDate());
+        //requests.setTripDate(trip.getTimePickerObject().getDate());
         requests.setTripPrice(Double.parseDouble(String.valueOf(snapshot.get(FirebaseFields.P_TRIP_PRICE))));
         requests.setLocationFrom(String.valueOf(snapshot.get(FirebaseFields.P_LOCATION_FROM)));
         requests.setLocationTo(String.valueOf(snapshot.get(FirebaseFields.P_LOCATION_TO)));

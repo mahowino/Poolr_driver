@@ -11,6 +11,7 @@ import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -25,7 +26,7 @@ public class Passenger implements Parcelable {
     private ArrayList<Reviews> reviews;
     private double rating;
     DocumentSnapshot snapshot;
-    QuerySnapshot reviewSnapshot;
+    Task<QuerySnapshot> reviewSnapshot;
     StorageReference reference;
     String userDetailsPath,reviewsPath;
 
@@ -56,7 +57,9 @@ public class Passenger implements Parcelable {
          this.profilePic = profilePic;
      }
 
-    public double getRating() {return Double.parseDouble(String.valueOf(snapshot.get(FirebaseFields.RATING)));}
+    public double getRating() {return 5.00;
+        //return Double.parseDouble(String.valueOf(snapshot.get(FirebaseFields.RATING)));
+    }
 
     public Passenger(String username) {
          initializeVariables();
@@ -101,7 +104,7 @@ public class Passenger implements Parcelable {
     private void getReviewsFromFirebase() {
         FirebaseRepository.getDocumentsInCollection(createCollectionReference(reviewsPath), new Callback() {
             @Override
-            public void onSuccess(Object object) {reviewSnapshot=(QuerySnapshot) object;}
+            public void onSuccess(Object object) {reviewSnapshot=(Task<QuerySnapshot>) object;}
 
             @Override
             public void onError(Object object) {}
@@ -119,7 +122,7 @@ public class Passenger implements Parcelable {
     }
 
     public List<Reviews> getReviews() {
-         List<DocumentSnapshot> reviewSnapshotDocuments =reviewSnapshot.getDocuments();
+         List<DocumentSnapshot> reviewSnapshotDocuments =reviewSnapshot.getResult().getDocuments();
          List<Reviews> reviews=new ArrayList<>();
          for (DocumentSnapshot snapshot:reviewSnapshotDocuments){
           reviews.add(snapshot.toObject(Reviews.class));

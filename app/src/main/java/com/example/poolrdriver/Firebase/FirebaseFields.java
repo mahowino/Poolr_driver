@@ -3,6 +3,10 @@ package com.example.poolrdriver.Firebase;
 public class FirebaseFields {
 
     public static final String TRIP_ID = "trip_id";
+    public static final String PROMOTION_CODE = "promotion_code";
+    public static final String PROMOTION_AMOUNT="promotion_amount";
+    public static final String UPDATE_TIME = "update_time";
+    public static final String IS_PROMOTION_USED = "is_promotion_used";
     //user ID
     public static String UID="uid";
 
@@ -18,6 +22,12 @@ public class FirebaseFields {
     public static String RATING="rating";
     public static String BIO="bio";
 
+    //NETWORKS
+    public static String NETWORK_NAME = "network_name";
+    public static String NETWORK_TRAVEL_ADMIN = "network_travel_admin";
+    public static String NETWORK_UID = "network_uid";
+    public static String NETWORK_MEMBERS = "network_members";
+
 
     //ride requests
     public static String P_IS_RIDE_ACCEPTED = "p_is_ride_accepted";
@@ -27,7 +37,7 @@ public class FirebaseFields {
     public static String LOCATION_FROM_GEOPOINT = "location_from_geopoint";
     public static String SEATS= "seats";
     public static String P_NETWORK = "p_network";
-    public static String NETWORK_MEMBERS = "network_members";
+
     public static String P_TRIP_PRICE = "p_trip_price";
     public static String TRiP_DATE = "trip_date";
     public static String P_TIME_FROM_LOCATION = "p_time_from_location";

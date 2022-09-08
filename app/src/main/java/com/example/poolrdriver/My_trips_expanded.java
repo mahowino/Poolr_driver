@@ -95,7 +95,7 @@ public class My_trips_expanded extends AppCompatActivity {
         PassengersAdapter adapter=new PassengersAdapter(this,passengers);
         passengersList.setAdapter(adapter);
         passengersList.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
-        no_of_passengers.setText(passengers.size());
+        no_of_passengers.setText(passengers.size()+" passengers");
     }
 
     private boolean arePassengersAvailable() {
@@ -156,7 +156,8 @@ public class My_trips_expanded extends AppCompatActivity {
         user=getIntent().getParcelableExtra(USER_ACCOUNT);
         Log.d("trip", "getValues: "+trip.getTripID());
         if (trip.isPrivacy())
-            userDetailsPath= FirebaseConstants.NETWORKS+"/"+trip.getNetworkId()+"/"+FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
+            userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
+            //userDetailsPath= FirebaseConstants.NETWORKS+"/"+trip.getNetworkId()+"/"+FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
         else
             userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;
 

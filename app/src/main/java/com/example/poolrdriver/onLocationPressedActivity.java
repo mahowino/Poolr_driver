@@ -102,7 +102,22 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         requestGps(this);
         getMyDefaultLocation(this, new Callback() {
             @Override
-            public void onSuccess(Object object) {currentLocation=(Location) object;}
+            public void onSuccess(Object object) {
+                currentLocation=(Location) object;
+                //put current location as source
+                Geocoder geocoder;
+                List<Address> addresses;
+                geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                try {
+                    addresses = geocoder.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
+                    source.setText(addresses.get(0).getAddressLine(0));
+                    destination.requestFocus();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
 
             @Override
             public void onError(Object object) {}});
@@ -128,7 +143,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private void setAdapters() {
         destination.setAdapter(new AutoSuggestionsAdapter(getApplicationContext(), android.R.layout.simple_list_item_1));
         source.setAdapter(new AutoSuggestionsAdapter(getApplicationContext(), android.R.layout.simple_list_item_1));
-        destination.requestFocus();
+
     }
 
     private void setListeners() {
@@ -155,38 +170,23 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
 
 
     private void getTextFromUI() {
-        if (source.getText().toString().isEmpty())
-            locationFromString= source.getHint().toString();
-        else locationFromString=source.getText().toString();
-
-        locationToString  = destination.getText().toString();
+       locationFromString=source.getText().toString();
+       locationToString  = destination.getText().toString();
     }
 
 
     private void initializeUIText() {
-        if (locationFromString.equals(SOURCE_DEFAULT_TEXT)) {
-            try {getMyDefaultLocation(this, new Callback() {
-                @Override
-                public void onSuccess(Object object) {
-                    currentLocation=(Location)object;
-                    setDefaultLocationLatLong();
-                    setDefaultLocationString();
-                    destinationPoint = getLocationFromAddress(locationToString,mContext);
-                    getPolylineValues();
-                }
-                
-                @Override
-                public void onError(Object object) {
+      try {
+          sourcePoint = getLocationFromAddress(locationFromString,mContext);
+          destinationPoint = getLocationFromAddress(locationToString,mContext);
+          getPolylineValues();
+      }
+      catch (Exception e){
+          e.printStackTrace();
+          Toast.makeText(mContext, "write a valid address", Toast.LENGTH_SHORT).show();
+      }
 
-                }
-            });} catch (Exception exception) {exception.printStackTrace();}
 
-        }
-        else {
-            sourcePoint = getLocationFromAddress(locationFromString,mContext);
-            destinationPoint = getLocationFromAddress(locationToString,mContext);
-            getPolylineValues();
-        }
 
     }
 
@@ -212,11 +212,12 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     }
 
     private void getUserNetworks() {
-        String path= FirebaseConstants.NETWORKS;
-        getDocumentsFromQueryInCollection(createArrayQuery(createCollectionReference(path), FirebaseFields.NETWORK_MEMBERS,new User().getUID()), new Callback() {
+        String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.NETWORKS;
+        getDocumentsInCollection(createCollectionReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 QuerySnapshot snapshot=((Task<QuerySnapshot>) object).getResult();
+
                 getNetworks(snapshot);
 
             }
@@ -229,8 +230,15 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     }
 
     private void getNetworks(QuerySnapshot querysnapshot) {
-        for (DocumentSnapshot snapshot:querysnapshot)
-            networks.add(snapshot.toObject(Network.class));
+
+        for (DocumentSnapshot snapshot:querysnapshot){
+            Network network=new Network();
+            network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
+            network.setNetworkUID(snapshot.getId());
+            network.setNetworkTravelAdminUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN)));
+            networks.add(network);
+        }
+
 
         setUpPrivacyOptions();
 
@@ -260,6 +268,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         networks_spinner.setAdapter(adapter);
+        //setUpVisibilityOfDialog
 
     }
 
@@ -268,6 +277,8 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         Networks.add("all");
         for (Network network:networks)
             Networks.add(network.getNetworkName());
+        Toast.makeText(onLocationPressedActivity.this, "size is "+Networks.size(), Toast.LENGTH_SHORT).show();
+
         return Networks;
     }
 
@@ -327,7 +338,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
             btnEveryoneVisibility=dialog.findViewById(R.id.btn_select_everyone);
             btnMyNetworksVisibility= dialog.findViewById(R.id.btn_select_contacts);
 
-            if (networks.size()<=1)btnMyNetworksVisibility.setVisibility(View.GONE);
+            if (networks.size()==0)btnMyNetworksVisibility.setVisibility(View.GONE);
             else btnMyNetworksVisibility.setVisibility(View.VISIBLE);
 
 
@@ -428,7 +439,6 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
             trip.setNetworks((ArrayList<Network>) networks);
 
 
-
         trip.setSeats(getSeatsChosen());
         trip.setTimePickerObject(time);
 
@@ -441,14 +451,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         
     }
 
-    private GeoPoint convertLatLongToGeopoint(LatLng Point) {
-        double latitude = Point.latitude;
-        double longitude = Point.longitude;
-        GeoPoint gp = new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
 
-
-        return gp;
-    }
 
     private int getSeatsChosen() {return seatsOffered.getSelectedTabPosition()+1;}
 }
