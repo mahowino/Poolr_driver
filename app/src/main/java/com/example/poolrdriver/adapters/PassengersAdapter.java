@@ -1,5 +1,6 @@
 package com.example.poolrdriver.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.poolrdriver.PassengerProfile;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.Passenger;
+import com.example.poolrdriver.models.Requests;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -26,10 +28,14 @@ import java.util.List;
 public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.HolderView> {
     Context context;
     List<Passenger> passengers;
-    private final String PASSENGER="passenger";
-    public PassengersAdapter(Context context, List<Passenger> passengers) {
+    List<Requests> requests;
+    private final String PASSENGER="chosen_passenger";
+    Activity activity;
+    public PassengersAdapter(Context context, List<Passenger> passengers,List<Requests> requests, Activity activity) {
         this.context=context;
         this.passengers=passengers;
+        this.activity=activity;
+        this.requests=requests;
     }
 
     @NonNull
@@ -41,7 +47,8 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
     @Override
     public void onBindViewHolder(@NonNull PassengersAdapter.HolderView holder, int position) {
         Passenger passenger=passengers.get(position);
-        setTexts(passenger,holder);
+        Requests request=requests.get(position);
+        setTexts(passenger,holder,request);
         setListener(passenger,holder);
     }
 
@@ -52,8 +59,8 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
 
     private void openPassengerProfile(Passenger passenger) {
         Intent intent=new Intent(context.getApplicationContext(), PassengerProfile.class);
-        intent.putExtra(PASSENGER,passenger);
-        context.startActivity(intent);
+        intent.putExtra(PASSENGER,passenger.getUsername());
+        activity.startActivity(intent);
     }
 
     private void callPassenger(Passenger passenger) {
@@ -62,9 +69,12 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
         context.startActivity(callIntent);
     }
 
-    private void setTexts(Passenger passenger,HolderView holderView) {
+    private void setTexts(Passenger passenger,HolderView holderView,Requests requests) {
         holderView.passengerName.setText(passenger.getNames());
         holderView.passengerRating.setText(String.valueOf(passenger.getRating()));
+        holderView.passengerSource.setText(requests.getLocationFrom());
+        holderView.passengerDestination.setText(requests.getLocationTo());
+        holderView.seats_requested.setText("seats: "+requests.getSeats());
         Glide.with(context).load(passenger.getProfilePic()).into(holderView.passengerDisplayPicture);
     }
 
@@ -74,7 +84,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
     }
 
     public class HolderView extends RecyclerView.ViewHolder {
-        TextView passengerName,passengerRating,passengerSource,passengerDestination;
+        TextView passengerName,passengerRating,passengerSource,passengerDestination,seats_requested;
         ImageView passengerDisplayPicture;
         FloatingActionButton callPassenger;
         CardView passengerCard;
@@ -90,6 +100,7 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Ho
             passengerDisplayPicture=itemView.findViewById(R.id.passenger_DP);
             callPassenger=itemView.findViewById(R.id.btn_call_passenger);
             passengerCard=itemView.findViewById(R.id.call_card);
+            seats_requested=itemView.findViewById(R.id.passenger_booked_seat_no);
         }
     }
 

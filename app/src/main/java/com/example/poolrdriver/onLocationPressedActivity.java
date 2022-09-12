@@ -185,24 +185,10 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
           e.printStackTrace();
           Toast.makeText(mContext, "write a valid address", Toast.LENGTH_SHORT).show();
       }
-
-
-
+      loadingDialog.dismissDialog();
     }
 
-    private void setDefaultLocationString() {
-        Geocoder geocoder = new Geocoder(onLocationPressedActivity.this, Locale.getDefault());
-        try {
-            List<Address> addresses=  geocoder.getFromLocation(sourcePoint.latitude, sourcePoint.longitude, 1);
-            for (Address address:addresses) locationFromString=address.toString();
-        }
-        catch (IOException e) {e.printStackTrace();}
-    }
 
-    private void setDefaultLocationLatLong() {
-        //get Adress 
-        sourcePoint = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-    }
 
     private void initializeData() {
         setViews();
@@ -234,7 +220,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         for (DocumentSnapshot snapshot:querysnapshot){
             Network network=new Network();
             network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
-            network.setNetworkUID(snapshot.getId());
+            network.setNetworkUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_UID)));
             network.setNetworkTravelAdminUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN)));
             networks.add(network);
         }
@@ -434,9 +420,15 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         trip.setSourcepoint(sourcePoint);
 
         if (!isTripPublic && networks_spinner.getSelectedItemPosition()!=0)
-           trip.setNetworkId(networks.get(networks_spinner.getSelectedItemPosition()).getNetworkUID());
-        else if (networks_spinner.getSelectedItemPosition()==0)
-            trip.setNetworks((ArrayList<Network>) networks);
+           trip.setNetworkId(networks.get(networks_spinner.getSelectedItemPosition()-1).getNetworkUID());
+        else if (networks_spinner.getSelectedItemPosition()==0){
+            ArrayList<String> networkIDS=new ArrayList<>();
+            for (Network network:networks)
+                networkIDS.add(network.getNetworkUID());
+
+            next.putStringArrayListExtra("networks",networkIDS);
+        }
+
 
 
         trip.setSeats(getSeatsChosen());
@@ -447,6 +439,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         next.putExtra("destinationPoint",destinationPoint);
         next.putExtra("sourcePoint",sourcePoint);
         next.putExtra("trip",(Parcelable) trip);
+
         startActivity(next);
         
     }

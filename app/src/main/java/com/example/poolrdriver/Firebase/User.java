@@ -157,6 +157,17 @@ public class User {
     public void setProfilePic(Uri profilePic) {
         UserProfileChangeRequest.Builder request=new UserProfileChangeRequest.Builder();
         request.setPhotoUri(profilePic);
+        updateUserProfile(request, new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+
+            }
+
+            @Override
+            public void onError(Object object) {
+
+            }
+        });
     }
 
     private void updateUserProfile(UserProfileChangeRequest.Builder request, Callback callback) {

@@ -31,6 +31,10 @@ public class Passenger implements Parcelable {
     String userDetailsPath,reviewsPath;
 
 
+    public String getUsername() {
+        return username;
+    }
+
     protected Passenger(Parcel in) {
         username = in.readString();
         profilePic = in.readParcelable(Uri.class.getClassLoader());
@@ -67,7 +71,7 @@ public class Passenger implements Parcelable {
      }
      public Passenger(DocumentSnapshot snapshot){
          this.snapshot=snapshot;
-         username=String.valueOf(snapshot.get(FirebaseFields.UID));
+         username=snapshot.getId();
          initializeVariables();
          getReviewsFromFirebase();
          getProfilePictureFromFirestore();

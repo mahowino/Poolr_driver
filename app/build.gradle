@@ -56,6 +56,11 @@ dependencies {
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
     implementation "com.ncorti:slidetoact:0.9.0"
+    // This library is used for crop image feature
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+// This library is used for loading the
+// cropped image into ImageView.
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
 
     // Add the dependency for the Firebase SDK for Google Analytics

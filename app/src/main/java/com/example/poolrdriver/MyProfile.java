@@ -6,9 +6,12 @@ import static com.example.poolrdriver.util.AppSystem.openGallery;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,7 +40,20 @@ public class MyProfile extends AppCompatActivity {
     User user;
 
     private static final int PICK_IMAGE = 100;
-    TextView names,email,phoneNumber,homeAdress,workAdress,bio;
+    TextView names,email,phoneNumber,homeAdress,workAdress,bio,editBio;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setProfilePicture();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setProfilePicture();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +68,10 @@ public class MyProfile extends AppCompatActivity {
     }
 
     private void setOnclickListeners() {
-        profilepicture.setOnClickListener(v -> openGallery(MyProfile.this));
+        profilepicture.setOnClickListener(v -> redirectActivity(MyProfile.this, ChangeProfilePicture.class));
         homeAdress.setOnClickListener(v -> redirectActivity(MyProfile.this, HomeAndWorkAdress.class));
         workAdress.setOnClickListener(v -> redirectActivity(MyProfile.this,HomeAndWorkAdress.class));
+        editBio.setOnClickListener(v -> redirectActivity(MyProfile.this,AddBio.class));
     }
 
     private void updateUserData() {
@@ -65,8 +83,28 @@ public class MyProfile extends AppCompatActivity {
         setProfilePicture();
     }
 
-    private void setProfilePicture() {if(user.getProfilePic()!=null){
-        Glide.with(this).load(user.getProfilePic()).into(profilepicture);}}
+    private void setProfilePicture() {
+        if(user.getProfilePic()!=null){
+
+        Picasso.with(this).load(user.getProfilePic())
+                .resize(100, 100)
+                .into(profilepicture, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) profilepicture.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                        profilepicture.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+                        profilepicture.setImageResource(R.drawable.user_male);
+                    }
+
+                });
+    }}
 
     private void initializeVariables() {
         //declarations
@@ -78,6 +116,7 @@ public class MyProfile extends AppCompatActivity {
         homeAdress= findViewById(R.id.home_location_profile_page);
         workAdress= findViewById(R.id.work_location_profile_page);
         phoneNumber= findViewById(R.id.phone_number_profile_page);
+        editBio=findViewById(R.id.txtBtnEditBio);
 
     }
 

@@ -1,13 +1,44 @@
 package com.example.poolrdriver.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Date;
 
-public class Requests {
+public class Requests implements Parcelable {
     LatLng source,destination;
     GeoPoint sourceGeopoint,destinationGeopoint;
+
+    protected Requests(Parcel in) {
+        source = in.readParcelable(LatLng.class.getClassLoader());
+        destination = in.readParcelable(LatLng.class.getClassLoader());
+        LocationFrom = in.readString();
+        LocationTo = in.readString();
+        passengerUID = in.readString();
+        tripUID = in.readString();
+        requestID = in.readString();
+        seats = in.readInt();
+        userSource = in.readString();
+        userDestination = in.readString();
+        distanceFromSource = in.readDouble();
+        distanceToDestination = in.readDouble();
+        tripPrice = in.readDouble();
+    }
+
+    public static final Creator<Requests> CREATOR = new Creator<Requests>() {
+        @Override
+        public Requests createFromParcel(Parcel in) {
+            return new Requests(in);
+        }
+
+        @Override
+        public Requests[] newArray(int size) {
+            return new Requests[size];
+        }
+    };
 
     public GeoPoint getSourceGeopoint() {
         return sourceGeopoint;
@@ -146,5 +177,27 @@ public class Requests {
 
     public void setTripPrice(double tripPrice) {
         this.tripPrice = tripPrice;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(source, flags);
+        dest.writeParcelable(destination, flags);
+        dest.writeString(LocationFrom);
+        dest.writeString(LocationTo);
+        dest.writeString(passengerUID);
+        dest.writeString(tripUID);
+        dest.writeString(requestID);
+        dest.writeInt(seats);
+        dest.writeString(userSource);
+        dest.writeString(userDestination);
+        dest.writeDouble(distanceFromSource);
+        dest.writeDouble(distanceToDestination);
+        dest.writeDouble(tripPrice);
     }
 }

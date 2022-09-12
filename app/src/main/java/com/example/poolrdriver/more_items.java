@@ -4,6 +4,8 @@ package com.example.poolrdriver;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +24,7 @@ import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.userRegistrationJourney.LogInScreen;
 import com.example.poolrdriver.util.LoadingDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 public class more_items extends Fragment implements View.OnClickListener {
     CardView schedule;
@@ -42,9 +47,41 @@ public class more_items extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        setProfile();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setProfile();
+    }
+
     private void setProfile() {
         name.setText((user.getName()));
-        if(user.getProfilePic()!=null)Glide.with(this).load(user.getProfilePic()).into(profilePic);
+        if(user.getProfilePic()!=null){
+
+            Picasso.with(getContext()).load(user.getProfilePic())
+                    .resize(80, 80)
+                    .into(profilePic, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Bitmap imageBitmap = ((BitmapDrawable) profilePic.getDrawable()).getBitmap();
+                            RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getContext().getResources(), imageBitmap);
+                            imageDrawable.setCircular(true);
+                            imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                            profilePic.setImageDrawable(imageDrawable);
+                        }
+
+                        @Override
+                        public void onError() {
+                            profilePic.setImageResource(R.drawable.user_male);
+                        }
+
+                    });
+        }
     }
 
     private void setListeners() {

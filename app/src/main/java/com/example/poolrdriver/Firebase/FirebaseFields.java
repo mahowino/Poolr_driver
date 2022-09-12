@@ -7,7 +7,17 @@ public class FirebaseFields {
     public static final String PROMOTION_AMOUNT="promotion_amount";
     public static final String UPDATE_TIME = "update_time";
     public static final String IS_PROMOTION_USED = "is_promotion_used";
+    public static final String PASSENGER_BOOKING_FEE="passenger_booking_fee";
     //user ID
+
+    public static final String IS_TRIP_NETWORK = "is_trip_network";
+    public static final String PASSENGER_IDS="passenger_ids";
+    public static final String START_LOCATION = "start_locaion";
+    public static final String END_LOCATION = "is_promotion_used";
+    public static final String TRIP_CASH_PAID = "is_promotion_used";
+    public static final String LUGGAGE = "luggage";
+
+
     public static String UID="uid";
 
     //USER DETAILS

@@ -21,6 +21,7 @@ public class TripModel implements Parcelable {
     private ArrayList<Network> networks;
     private String driverSource,driverDestination,driverUid;
     private boolean privacy;
+    private String luggage;
     private PolylineOptions driverRoute;
     private TimePickerObject timePickerObject;
     private String networkId,tripID;
@@ -28,6 +29,31 @@ public class TripModel implements Parcelable {
     private LatLng sourceGeopoint,destinationGeopoint;
 
     public TripModel(){}
+
+
+    public String getLuggage() {
+        return luggage;
+    }
+
+    public void setLuggage(String luggage) {
+        this.luggage = luggage;
+    }
+
+    public LatLng getSourceGeopoint() {
+        return sourceGeopoint;
+    }
+
+    public void setSourceGeopoint(LatLng sourceGeopoint) {
+        this.sourceGeopoint = sourceGeopoint;
+    }
+
+    public LatLng getDestinationGeopoint() {
+        return destinationGeopoint;
+    }
+
+    public void setDestinationGeopoint(LatLng destinationGeopoint) {
+        this.destinationGeopoint = destinationGeopoint;
+    }
 
     protected TripModel(Parcel in) {
         seats = in.readInt();
@@ -44,6 +70,7 @@ public class TripModel implements Parcelable {
         driverRoute = in.readParcelable(PolylineOptions.class.getClassLoader());
         networkId = in.readString();
         tripID = in.readString();
+        luggage=in.readString();
         driverRouteList = in.createTypedArrayList(LatLng.CREATOR);
         sourceGeopoint = in.readParcelable(LatLng.class.getClassLoader());
         destinationGeopoint = in.readParcelable(LatLng.class.getClassLoader());
@@ -214,6 +241,7 @@ public class TripModel implements Parcelable {
         dest.writeParcelable(driverRoute, flags);
         dest.writeString(networkId);
         dest.writeString(tripID);
+        dest.writeString(luggage);
         dest.writeTypedList(driverRouteList);
         dest.writeParcelable(sourceGeopoint, flags);
         dest.writeParcelable(destinationGeopoint, flags);

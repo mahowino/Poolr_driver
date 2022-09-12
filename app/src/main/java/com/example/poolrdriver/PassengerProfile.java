@@ -1,5 +1,7 @@
 package com.example.poolrdriver;
 
+import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,17 +14,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.poolrdriver.Firebase.Callback;
+import com.example.poolrdriver.Firebase.FirebaseConstants;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.adapters.ReviewAdapter;
 import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.classes.Reviews;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PassengerProfile extends AppCompatActivity {
     TextView passengerName,bio,noReviews,noBio,rating;
     List<Reviews> reviews;
     Passenger passenger;
+    String passengerID;
     RecyclerView reviewRecyclerView;
     ImageView passengerProfilePicture;
     FloatingActionButton btnCall;
@@ -34,8 +43,7 @@ public class PassengerProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_profile);
         initializeViews();
-        setUpProfile();
-        setUpReviews();
+
         setOnClickListeners();
 
 
@@ -47,8 +55,7 @@ public class PassengerProfile extends AppCompatActivity {
 
     private void callSpecificUser() {
         String number=passenger.getPhoneNumber();
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:"+number));
+        Intent callIntent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+number));
         startActivity(callIntent);
     }
 
@@ -99,8 +106,28 @@ public class PassengerProfile extends AppCompatActivity {
     }
 
     private void getExtraDataFromIntent() {
-        passenger=getIntent().getParcelableExtra(CHOSEN_PASSENGER);
-        reviews=passenger.getReviews();
+        passengerID=getIntent().getExtras().getString(CHOSEN_PASSENGER);
+        getPassengerInformation();
+
+    }
+
+    private void getPassengerInformation() {
+        String path= FirebaseConstants.PASSENGERS+"/"+passengerID;
+        getDocument(createDocumentReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                Task<DocumentSnapshot> task=(Task<DocumentSnapshot>)object;
+                passenger=new Passenger(task.getResult());
+                //reviews=passenger.getReviews();
+                setUpProfile();
+                setUpReviews();
+            }
+
+            @Override
+            public void onError(Object object) {
+
+            }
+        });
     }
 
     private void initializeViews() {
@@ -119,6 +146,7 @@ public class PassengerProfile extends AppCompatActivity {
         reviewRecyclerView=findViewById(R.id.viewReviews);
         passengerProfilePicture=findViewById(R.id.imgPassengerProfilePicture);
         btnCall=findViewById(R.id.btn_callPassengerSelected);
+        reviews=new ArrayList<>();
 
     }
 }

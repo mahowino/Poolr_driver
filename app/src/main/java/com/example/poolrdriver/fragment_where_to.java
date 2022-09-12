@@ -37,6 +37,17 @@ public class fragment_where_to extends Fragment {
     public fragment_where_to() {
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getWalletData();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getWalletData();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,7 +97,7 @@ public class fragment_where_to extends Fragment {
 
         wallet.setOnClickListener(v -> redirectActivity(getActivity(),wallet.class));
 
-        trips.setOnClickListener(v -> redirectActivity(getActivity(),My_trips.class));
+        trips.setOnClickListener(v -> redirectActivity(getActivity(),choose_trip_to_display.class));
     }
 
     private void initializeVariables(View view) {

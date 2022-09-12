@@ -17,7 +17,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/montserrat_alternates"
-            android:text="My Trips"
+            android:text="Network Trips"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -44,10 +44,10 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icons8_carpool_64px" />
+            app:srcCompat="@drawable/icons8_group_64px" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/upcomingtripsRecyclerView"
+            android:id="@+id/upcomingtripsRecyclerViewNetwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
@@ -60,14 +60,14 @@
             tools:listitem="@layout/upcoming_and_past_trips_card" />
 
         <TextView
-            android:id="@+id/lnk_view_past_trips"
+            android:id="@+id/lnk_view_past_tripsNetwork"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="view past trips"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/upcomingtripsRecyclerView"
+            app:layout_constraintBottom_toTopOf="@+id/upcomingtripsRecyclerViewNetwork"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="check out where i am going"
+            android:text="Imara daima network"
             android:textColor="@color/body_text_color"
             android:textSize="16sp"
             android:textStyle="bold"

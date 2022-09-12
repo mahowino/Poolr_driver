@@ -6,6 +6,8 @@ import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
@@ -14,8 +16,10 @@ import com.example.poolrdriver.Firebase.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.classes.Network;
 import com.example.poolrdriver.models.TripModel;
+import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.GeoPoint;
 import com.ncorti.slidetoact.SlideToActView;
 
@@ -30,8 +34,13 @@ public class price_split extends AppCompatActivity {
 
     SlideToActView  post_ride;
     TripModel trip;
+    TextView max_amount;
+    TabLayout amount_of_luggage;
+    EditText priceToPay;
+    Long maxPrice;
     private static final String TRIP_EXTRA="trip";
     private final String documentID=generateRandomId();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +57,56 @@ public class price_split extends AppCompatActivity {
     }
 
     private void postTrip() {
+        getLuggage();
         getSetPrice();
 
-        if (trip.isPrivacy()) postTripOnPublicTrips();
-        else postTripOnNetworkTrips();
+    }
 
-        redirectActivity(price_split.this,MapsActivity.class);
+    private void getLuggage() {
+        int tab=amount_of_luggage.getSelectedTabPosition();
+        switch (tab){
+            case 0:
+                trip.setLuggage("none");
+                break;
+            case 2:
+                trip.setLuggage("small");
+                break;
+            case 3:
+                trip.setLuggage("medium");
+                break;
+            case 4:
+                trip.setLuggage("large");
+                break;
+        }
+
     }
 
 
     private void getSetPrice() {
+        Long priceInput=Long.valueOf(priceToPay.getText().toString().trim());
+        if (priceInput>maxPrice){
+            Toast.makeText(getApplicationContext(), "You cannot charge above the legal carpool limit", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            trip.setTripPrice(Long.valueOf(String.valueOf(priceInput)));
+
+            if (trip.isPrivacy()) postTripOnPublicTrips();
+            else postTripOnNetworkTrips();
+
+            redirectActivity(price_split.this,MapsActivity.class);
+        }
 
     }
 
     private void initializeData() {
         post_ride = findViewById(R.id.post_ride_confirm);
         trip=getIntent().getParcelableExtra(TRIP_EXTRA);
+        max_amount=findViewById(R.id.txt_maximum_to_charge);
+        priceToPay=findViewById(R.id.editTextPriceToPay);
+        amount_of_luggage=findViewById(R.id.tab_LuggageAllowed);
+        double tripDistance= mathsUtil.getDistanceFromUserPoints(trip.getSourcePoint(),trip.getDestinationpoint());
+        maxPrice=Math.round(tripDistance*FirebaseConstants.FIXED_RATE_PER_KILOMETER);
+        max_amount.setText("KSH "+maxPrice);
     }
     private void postTripOnPublicTrips(){
         String path= FirebaseConstants.RIDES+"/"+documentID;
@@ -72,21 +115,6 @@ public class price_split extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                // Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
-                getRouteData();
-            }
-
-            @Override
-            public void onError(Object object) {
-                Toast.makeText(price_split.this, "error ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-    private void postTripRoute(Map map){
-        String path= FirebaseConstants.RIDES+"/"+documentID+"/"+FirebaseFields.DRIVER_ROUTE;
-        setDocument(map, createCollectionReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
 
             }
 
@@ -99,15 +127,15 @@ public class price_split extends AppCompatActivity {
     }
     private void postTripOnNetworkTrips() {
 
-        List<Network> networks=trip.getNetworks();
-        if (networks==null)postTripOnFirebaseNetwork(trip.getNetworkId());
+        List<String> networkIDS=getIntent().getStringArrayListExtra("networks");
+        if (networkIDS==null)postTripOnFirebaseNetwork(trip.getNetworkId());
         else
-            for (Network network:networks)
-                postTripOnFirebaseNetwork(network.getNetworkUID());
+            for (String networkID:networkIDS)
+                postTripOnFirebaseNetwork(networkID);
     }
 
     private void postTripOnFirebaseNetwork(String networkUID) {
-        String path= FirebaseConstants.NETWORKS+"/"+networkUID;
+        String path= FirebaseConstants.NETWORKS+"/"+networkUID+"/"+FirebaseConstants.RIDES;
         setDocument(getMapData(), createCollectionReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
@@ -138,23 +166,18 @@ public class price_split extends AppCompatActivity {
         map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,sourceGeopoint);
         map.put(FirebaseFields.SEATS,trip.getSeats());
         map.put(FirebaseFields.P_TRIP_PRICE, trip.getTripPrice());
+        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
+        map.put(FirebaseFields.LUGGAGE,trip.getLuggage());
         map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
         map.put(FirebaseFields.DRIVER,trip.getDriverUid());
         map.put(FirebaseFields.DEPARTURETIME,new Date());
+        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
+
+        //when putting price, add passenger booking fee to the trip cost.
 
         return map;
     }
-    private void getRouteData(){
-        List<LatLng> driverRouteList =((PolylineOptions)getIntent().getExtras().get("POLYLINE")).getPoints();
 
-        for (LatLng latLng:driverRouteList){
-        Map<String, Object> map = new HashMap<>();
-        map.put(FirebaseFields.LATITUDE,latLng.latitude);
-        map.put(FirebaseFields.LONGTITUDE,latLng.longitude);
-        postTripRoute(map);
-        }
-        Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
-    }
 
     private String generateRandomId(){
         final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
