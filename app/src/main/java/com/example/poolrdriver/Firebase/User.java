@@ -44,12 +44,13 @@ public class User {
     public User(){
         user=FirebaseRepository.getSignedUpUser();
 
-        if (user!=null)
-            getHomeAndWorkAddressFromFirebase();
 
     }
 
 
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
 
     private void getHomeAndWorkAddressFromFirebase() {
         String path=FirebaseConstants.PASSENGERS+"/"+getUID();
@@ -65,6 +66,7 @@ public class User {
                     Log.d("error","document is "+task.getResult().getString(FirebaseFields.HOME_ADRESS));
                     setHomeAdress(task.getResult().getString(FirebaseFields.HOME_ADRESS));
                     setWorkAdress(task.getResult().getString(FirebaseFields.WORK_ADRESS));
+                    setBio(task.getResult().getString(FirebaseFields.BIO));
 
                 }
 

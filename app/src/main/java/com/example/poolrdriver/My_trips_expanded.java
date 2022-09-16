@@ -36,6 +36,7 @@ import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.Requests;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.userRegistrationJourney.CancelTrip;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 public class My_trips_expanded extends AppCompatActivity {
-    TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,no_of_requests,no_passengers_booked,cancel;
+    TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,luggage,no_passengers_booked,cancel;
     Button btnRequests;
     TripModel trip;
     User user;
@@ -122,6 +123,7 @@ public class My_trips_expanded extends AppCompatActivity {
     }
 
     private void displayNoPassengers() {
+        startTrip.setVisibility(View.INVISIBLE);
         passengersList.setVisibility(View.INVISIBLE);
         no_passengers_booked.setVisibility(View.VISIBLE);
         no_of_passengers.setText("none");
@@ -130,6 +132,7 @@ public class My_trips_expanded extends AppCompatActivity {
     }
 
     private void displayPassengersAdapter() {
+        startTrip.setVisibility(View.VISIBLE);
         passengersList.setVisibility(View.VISIBLE);
         no_passengers_booked.setVisibility(View.INVISIBLE);
         displayAdapter();
@@ -137,6 +140,7 @@ public class My_trips_expanded extends AppCompatActivity {
     }
 
     private void displayAdapter() {
+
         PassengersAdapter adapter=new PassengersAdapter(this,passengers,booking_requests,My_trips_expanded.this);
         passengersList.setAdapter(adapter);
         passengersList.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
@@ -211,6 +215,35 @@ public class My_trips_expanded extends AppCompatActivity {
         GeoPoint sourceGeopoint=new GeoPoint(currentLocation.getLatitude(),currentLocation.getLongitude());
         map.put(FirebaseFields.START_LOCATION,sourceGeopoint);
         map.put(FirebaseFields.IS_TRIP_NETWORK,trip.isPrivacy());
+        ArrayList<String> passengersIds=new ArrayList<>();
+        for (Passenger passenger:passengers)
+            passengersIds.add(passenger.getUsername());
+
+        map.put(FirebaseConstants.PASSENGERS,passengersIds);
+        map.put(FirebaseFields.DRIVER, new User().getUID());
+        map.put(FirebaseFields.P_LOCATION_FROM, trip.getDriverSource());
+        map.put(FirebaseFields.P_LOCATION_TO,trip.getDriverDestination());
+        map.put(FirebaseFields.IS_TRIP_ACTIVE,true);
+
+        LatLng source=((LatLng)getIntent().getExtras().get("sourcePoint"));
+        LatLng destination=((LatLng)getIntent().getExtras().get("destinationPoint"));
+
+        GeoPoint sourceGeopointDriver=new GeoPoint(source.latitude,source.longitude);
+        GeoPoint destinationGeopointDriver=new GeoPoint(destination.latitude,destination.longitude);
+
+        map.put(FirebaseFields.LOCATION_TO_GEOPOINT,destinationGeopointDriver);
+        map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,sourceGeopointDriver);
+        map.put(FirebaseFields.SEATS,trip.getSeats());
+        map.put(FirebaseFields.P_TRIP_PRICE, trip.getTripPrice());
+        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
+        map.put(FirebaseFields.LUGGAGE,trip.getLuggage());
+        map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
+        map.put(FirebaseFields.DRIVER,trip.getDriverUid());
+        map.put(FirebaseFields.DEPARTURETIME,new Date());
+
+
+
+
         return map;
         // for end trip
         // String IS_TRIP_NETWORK = "is_trip_network";
@@ -273,8 +306,12 @@ public class My_trips_expanded extends AppCompatActivity {
                 setNotification();
                 Intent intent=new Intent(My_trips_expanded.this,OngoingTrip.class);
                 intent.putExtra(CHOSEN_TRIP,trip);
-                intent.putParcelableArrayListExtra(PASSENGERS,(ArrayList<Passenger>) passengers);
-                intent.putExtra(LOCATIONS,(ArrayList<Requests>)booking_requests);
+                ArrayList<String> passengersIds=new ArrayList<>();
+                for (Passenger passenger:passengers)
+                    passengersIds.add(passenger.getUsername());
+
+                intent.putStringArrayListExtra(PASSENGERS, passengersIds);
+
                 startActivity(intent);
 
             }
@@ -308,8 +345,13 @@ public class My_trips_expanded extends AppCompatActivity {
         source.setText(trip.getDriverSource());
         destination.setText(trip.getDriverDestination());
         departure_time.setText(SimpleDateFormat.getInstance().format(new Date()));//trip.getTimePickerObject().getDate()
-        privacy.setText("trip.isPrivacy()");
+        if (!trip.isPrivacy())
+            privacy.setText("network");
+        else
+            privacy.setText("Everyone");
+
         no_of_seats_offered.setText(String.valueOf(trip.getSeats()));
+        luggage.setText(trip.getLuggage());
         cash_to_be_paid.setText(String.valueOf(trip.getTripPrice()));
 
         //no_of_requests.setText(trip.getNumberOfRequests());
@@ -333,7 +375,7 @@ public class My_trips_expanded extends AppCompatActivity {
         no_of_seats_offered=findViewById(R.id.seats_booked_expanded);
         cash_to_be_paid=findViewById(R.id.CashPaid_expanded);
         btnRequests=findViewById(R.id.btn_viewRequests);
-        no_of_requests=findViewById(R.id.requests_no_expanded);
+        luggage=findViewById(R.id.luggage);
         passengersList=findViewById(R.id.passengers_list);
         no_passengers_booked=findViewById(R.id.no_passengers_booked_label);
         cancel=findViewById(R.id.txt_cancel_trip);

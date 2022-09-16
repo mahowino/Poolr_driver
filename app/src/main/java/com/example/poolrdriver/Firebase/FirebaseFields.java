@@ -16,6 +16,7 @@ public class FirebaseFields {
     public static final String END_LOCATION = "is_promotion_used";
     public static final String TRIP_CASH_PAID = "is_promotion_used";
     public static final String LUGGAGE = "luggage";
+    public static final String IS_TRIP_ACTIVE = "is_trip_active";
 
 
     public static String UID="uid";
@@ -71,4 +72,10 @@ public class FirebaseFields {
     public static String DRIVER_ROUTE="driver_route";
     public static String LATITUDE="latitude";
     public static String LONGTITUDE="longitude";
+
+    //REVIEWS
+    public static String REVIEWER_UID="driver_route";
+    public static String REVIEWER_NAME="reviewer_name";
+    public static String REVIEWER_CONTENT="review_content";
+    public static String REVIEWER_RATING="review_rating";
 }

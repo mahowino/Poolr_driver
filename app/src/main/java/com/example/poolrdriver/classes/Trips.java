@@ -40,9 +40,13 @@ public class Trips  {
         return Boolean.TRUE.equals(snapshot.getBoolean(FirebaseFields.PRIVACY));
     }
 
+    public Long getPassengerBookingFee(){return snapshot.getLong(FirebaseFields.PASSENGER_BOOKING_FEE);}
 
     public String getPrivacy() {
         return String.valueOf(snapshot.get(FirebaseFields.PRIVACY));
+    }
+    public String getLuggage() {
+        return String.valueOf(snapshot.get(FirebaseFields.LUGGAGE));
     }
 
     public int getSeats() {

@@ -34,6 +34,7 @@ public class price_split extends AppCompatActivity {
 
     SlideToActView  post_ride;
     TripModel trip;
+    String Luggage;
     TextView max_amount;
     TabLayout amount_of_luggage;
     EditText priceToPay;
@@ -66,16 +67,16 @@ public class price_split extends AppCompatActivity {
         int tab=amount_of_luggage.getSelectedTabPosition();
         switch (tab){
             case 0:
-                trip.setLuggage("none");
+                Luggage="none";
+                break;
+            case 1:
+                Luggage="small";
                 break;
             case 2:
-                trip.setLuggage("small");
+                Luggage="medium";
                 break;
             case 3:
-                trip.setLuggage("medium");
-                break;
-            case 4:
-                trip.setLuggage("large");
+                Luggage="large";
                 break;
         }
 
@@ -88,7 +89,7 @@ public class price_split extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "You cannot charge above the legal carpool limit", Toast.LENGTH_SHORT).show();
         }
         else {
-            trip.setTripPrice(Long.valueOf(String.valueOf(priceInput)));
+            trip.setTripPrice((Long.parseLong(String.valueOf(priceInput))/ trip.getSeats()));
 
             if (trip.isPrivacy()) postTripOnPublicTrips();
             else postTripOnNetworkTrips();
@@ -166,12 +167,12 @@ public class price_split extends AppCompatActivity {
         map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,sourceGeopoint);
         map.put(FirebaseFields.SEATS,trip.getSeats());
         map.put(FirebaseFields.P_TRIP_PRICE, trip.getTripPrice());
-        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
-        map.put(FirebaseFields.LUGGAGE,trip.getLuggage());
+        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,Math.ceil(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT/ trip.getSeats()));
+        map.put(FirebaseFields.LUGGAGE,Luggage);
         map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
         map.put(FirebaseFields.DRIVER,trip.getDriverUid());
         map.put(FirebaseFields.DEPARTURETIME,new Date());
-        map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
+
 
         //when putting price, add passenger booking fee to the trip cost.
 

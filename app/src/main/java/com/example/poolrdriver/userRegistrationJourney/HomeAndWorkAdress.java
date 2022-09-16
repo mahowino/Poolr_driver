@@ -99,7 +99,7 @@ public class HomeAndWorkAdress extends AppCompatActivity {
                         new User().getUID()), SetOptions.merge(), new Callback() {
                     @Override
                     public void onSuccess(Object object) {
-                        redirectActivity(HomeAndWorkAdress.this, HomePageActivity.class);
+                        redirectActivity(HomeAndWorkAdress.this, MapsActivity.class);
                         loadingDialog.dismissDialog();
                     }
 

@@ -1,5 +1,6 @@
 package com.example.poolrdriver.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -57,11 +58,12 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
         });
     }
 
-    private void setViewsText(TripModel trip,holderView holder) {
-        holder.seatsOffered.setText(String.valueOf(trip.getSeats()));
+    @SuppressLint("SetTextI18n")
+    private void setViewsText(TripModel trip, holderView holder) {
+        holder.seatsOffered.setText(trip.getSeats()+" Seats");
         holder.driverSource.setText(trip.getDriverSource());
         holder.driverDestination.setText(trip.getDriverDestination());
-        holder.tripPrice.setText(String.valueOf(trip.getTripPrice()));
+        holder.tripPrice.setText("KSH " + trip.getTripPrice()+" per seat");
 
         if (!trip.isPrivacy())
             holder.tripPrivacy.setText("network");

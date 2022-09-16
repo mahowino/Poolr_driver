@@ -151,6 +151,8 @@ public class My_trips extends AppCompatActivity {
         tripModel.setTripPrice(trip.getTripPrice());
         tripModel.setSeats(trip.getSeats());
         tripModel.setTripID(trip.getTripID());
+        tripModel.setPassengerBookingFee(trip.getPassengerBookingFee());
+        tripModel.setLuggage(trip.getLuggage());
 
        // tripModel.setSourcepoint(trip.getTripSourceGeopoint());
        // tripModel.setDestinationpoint(trip.getTripDestinationGeopoint());

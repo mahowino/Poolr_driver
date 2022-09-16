@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -76,9 +77,11 @@ public class MyProfile extends AppCompatActivity {
 
     private void updateUserData() {
         names.setText(user.getName());
-        bio.setText(user.getBio());
+
         email.setText(user.getEmail());
         getHomeAndWorkAddressFromFirebase();
+        bio.setVisibility(View.VISIBLE);
+        bio.setText(user.getBio());
         phoneNumber.setText(user.getPhoneNumber());
         setProfilePicture();
     }
@@ -184,6 +187,7 @@ public class MyProfile extends AppCompatActivity {
     private void setUIForAddresses(DocumentSnapshot snapshot) {
         homeAdress.setText(snapshot.getString(FirebaseFields.HOME_ADRESS));
         workAdress.setText(snapshot.getString(FirebaseFields.WORK_ADRESS));
+        bio.setText(snapshot.getString(FirebaseFields.BIO));
     }
 
 }

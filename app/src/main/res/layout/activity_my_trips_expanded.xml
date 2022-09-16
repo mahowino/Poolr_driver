@@ -208,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_alternates"
-                    android:text="Cash paid"
+                    android:text="Price per seat"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
@@ -232,16 +232,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Requests"
+                    android:text="luggage"
                     android:textColor="@color/black"
                     tools:layout_editor_absoluteX="42dp"
                     tools:layout_editor_absoluteY="712dp" />
 
                 <TextView
-                    android:id="@+id/requests_no_expanded"
+                    android:id="@+id/luggage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="5" />
+                    android:text="none" />
             </LinearLayout>
 
             <LinearLayout

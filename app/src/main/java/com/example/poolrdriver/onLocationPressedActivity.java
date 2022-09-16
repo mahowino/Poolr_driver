@@ -184,8 +184,9 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
       catch (Exception e){
           e.printStackTrace();
           Toast.makeText(mContext, "write a valid address", Toast.LENGTH_SHORT).show();
+          loadingDialog.dismissDialog();
       }
-      loadingDialog.dismissDialog();
+
     }
 
 
@@ -263,7 +264,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         Networks.add("all");
         for (Network network:networks)
             Networks.add(network.getNetworkName());
-        Toast.makeText(onLocationPressedActivity.this, "size is "+Networks.size(), Toast.LENGTH_SHORT).show();
+
 
         return Networks;
     }

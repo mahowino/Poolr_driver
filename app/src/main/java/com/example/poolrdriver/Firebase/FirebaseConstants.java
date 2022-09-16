@@ -14,7 +14,7 @@ public abstract class FirebaseConstants {
 
     public static double FIXED_RATE_PER_KILOMETER =44.92;
 
-    public static double FIXED_RATE_PASSENGER_CUT =0.05;
+    public static double FIXED_RATE_PASSENGER_CUT =0.07;
 
     public static double FIXED_RATE_DRIVER_CUT =0.07;
 

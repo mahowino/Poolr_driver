@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class OngoingTrip extends AppCompatActivity {
 
-    ArrayList<Passenger> passengers;
+    ArrayList<String> passengers;
     List<Requests> requests;
     TripModel trip;
     TextView source,destination,driverName;
@@ -111,44 +111,31 @@ public class OngoingTrip extends AppCompatActivity {
 
         if (mathsUtil.getDistanceFromUserPoints(source,tripSource)<1
             && mathsUtil.getDistanceFromUserPoints(destination,tripDestination)<1){
-            price=trip.getTripPrice();
+            pricePerSeat=trip.getTripPrice();
 
         }
         else {
             distance=mathsUtil.getDistanceFromUserPoints(source,destination);
-            price=distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER;
+            pricePerSeat=(distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER/trip.getSeats());
 
         }
+        price=pricePerSeat*trip.getSeats();
+
         chargeBookingFee(price);
     }
 
     private void chargeBookingFee(double price) {
          booking_fee=price*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
          double driverFee=price-booking_fee;
-      //   setUpDriverWallet(driverFee);
-
-        //Sort for network trips as well
-        String path=FirebaseConstants.RIDES+ "/"+trip.getTripID();
-
-        getDocument(createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-                Task<DocumentSnapshot> task=(Task<DocumentSnapshot>)object;
-                passengerCut=task.getResult().getDouble(FirebaseFields.PASSENGER_BOOKING_FEE);
-
-                booking_fee=booking_fee+passengerCut;
-                postBookingFee();
-            }
-
-            @Override
-            public void onError(Object object) {
-
-            }
-        });
-        //get trip passenger booking fee
+        booking_fee=booking_fee+trip.getPassengerBookingFee();
+        postBookingFee();
+        chargePassengerForTrip();
+        updateDriversWallet(driverFee);
 
     }
-    private void getWalletData(double price){
+
+
+    private void updateDriversWallet(double price){
         String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+ "/"+FirebaseConstants.DRIVER_WALLET;
         getDocumentsInCollection(createCollectionReference(path), new Callback() {
             @Override
@@ -166,11 +153,12 @@ public class OngoingTrip extends AppCompatActivity {
         });
     }
     private void setUpDriverWallet(String walletUid,double price) {
-        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+ "/"+FirebaseConstants.PASSENGER_WALLET+"/"+walletUid;
+        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+ "/"+FirebaseConstants.DRIVER_WALLET+"/"+walletUid;
         setDocument(createWallet(price), createDocumentReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-
+                redirectActivity(OngoingTrip.this,reviewActivity.class);
+                //trip ended successfully
             }
 
             @Override
@@ -209,15 +197,15 @@ public class OngoingTrip extends AppCompatActivity {
             }
         });
 
-        chargePassengerForTrip();
+
     }
 
     private void chargePassengerForTrip() {
-        for (Passenger passengers:passengers) {
-            getWalletData(passengers.getUsername());
-            updateTrips(passengers.getUsername());
+        for (String passenger:passengers) {
+            getWalletData(passenger);
+            updateTrips(passenger);
         }
-        redirectActivity(OngoingTrip.this,reviewActivity.class);
+
     }
 
     private void updateTrips(String passengerID) {
@@ -344,10 +332,8 @@ public class OngoingTrip extends AppCompatActivity {
 
     private void getIntentData() {
         trip=getIntent().getExtras().getParcelable(CHOSEN_TRIP);
-        requests=getIntent().getParcelableArrayListExtra(LOCATIONS);
-        passengers=getIntent().getParcelableArrayListExtra(PASSENGERS);
+        passengers=getIntent().getStringArrayListExtra(PASSENGERS);
         endTrip=findViewById(R.id.end_trip_slider);
-
         source.setText(trip.getDriverSource());
         destination.setText(trip.getDriverDestination());
         driverName.setText(new User().getName());

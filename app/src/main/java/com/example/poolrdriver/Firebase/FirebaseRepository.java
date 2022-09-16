@@ -19,6 +19,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseRepository {
@@ -119,8 +120,16 @@ public class FirebaseRepository {
         DocumentReference documentReference = createDocumentReference(FirebaseConstants.PASSENGERS, user.getUID());
         user.createUserInFirebase(user.getMapDetails(), documentReference, activity);
 
-    }
+        DocumentReference driverWalletReference=createDocumentReference(FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.DRIVER_WALLET+"/"+user.getUID());
+        //create new wallet on start
 
+        user.createUserInFirebase(updateNewWallet(),driverWalletReference,activity);
+    }
+    private static Map updateNewWallet() {
+        Map<String,Object> map=new HashMap<>();
+        map.put(FirebaseFields.CASH,0);
+        return map;
+    }
     private static void updateSignedUpUserDetails(DocumentReference reference, Activity activity) {
         setDocument(new User().getMapDetails(), reference, new Callback() {
             @Override
