@@ -20,8 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.poolrdriver.ChangeProfilePicture;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
+import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.SignedUpDriver;
 import com.example.poolrdriver.util.LoadingDialog;
@@ -183,8 +186,10 @@ public class verifyOTP extends AppCompatActivity  {
     }
 
     private void redirectHomeAndWorkAdressPage(){
+        User user=new User() ;
+        FirebaseRepository.addUserToFirebaseDatabase(user,verifyOTP.this);
         Toast.makeText(getApplicationContext(),"Code successfully verified  ",Toast.LENGTH_LONG).show();
-        Intent intent =new Intent(verifyOTP.this,  HomeAndWorkAdress.class);
+        Intent intent =new Intent(verifyOTP.this,  ChangeProfilePicture.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

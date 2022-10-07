@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class ChangeProfilePicture extends AppCompatActivity {
     private static final int STORAGE_REQUEST = 200;
     private static final int IMAGEPICK_GALLERY_REQUEST = 300;
     private static final int IMAGE_PICKCAMERA_REQUEST = 400;
+    private Button confirmProfilePicture;
     String cameraPermission[];
     String storagePermission[];
     Uri imageuri;
@@ -68,11 +70,14 @@ public class ChangeProfilePicture extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setListeners() {
         profilepicture.setOnClickListener(v -> showImagePicDialog());
+        confirmProfilePicture.setOnClickListener(v -> redirectActivity(ChangeProfilePicture.this,AddBio.class));
     }
 
     private void initializeVariables() {
         user=new User();
         profilepicture=findViewById(R.id.imgDriverProfilePicture_tap_to_change);
+        confirmProfilePicture=findViewById(R.id.btnConfirmProfilePic);
+        // allowing permissions of gallery and camera
         // allowing permissions of gallery and camera
         cameraPermission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};

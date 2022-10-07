@@ -21,6 +21,7 @@ import com.example.poolrdriver.adapters.MyTripsAdapter;
 import com.example.poolrdriver.classes.Network;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.TripModel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -154,9 +155,10 @@ public class My_trips extends AppCompatActivity {
         tripModel.setPassengerBookingFee(trip.getPassengerBookingFee());
         tripModel.setLuggage(trip.getLuggage());
 
-       // tripModel.setSourcepoint(trip.getTripSourceGeopoint());
-       // tripModel.setDestinationpoint(trip.getTripDestinationGeopoint());
-
+        LatLng point=new LatLng(trip.getTripStartGeopoint().getLatitude(),trip.getTripStartGeopoint().getLongitude());
+        tripModel.setSourcePoint(point);
+        LatLng destination=new LatLng(trip.getTripEndGeopoint().getLatitude(),trip.getTripEndGeopoint().getLongitude());
+        tripModel.setDestinationpoint(destination);
 
 
         return tripModel;

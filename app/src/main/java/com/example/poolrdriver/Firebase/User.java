@@ -191,9 +191,16 @@ public class User {
         map.put(FirebaseFields.EMAIL, getEmail());
         map.put(FirebaseFields.PHONE_NUMBER,getPhoneNumber());
         map.put(FirebaseFields.CASH,0);
+        map.put(FirebaseFields.RATING,5);
 
 
         return map;
+    }
+    public void setNameInDB(String name, Callback callback){
+        UserProfileChangeRequest.Builder request=new UserProfileChangeRequest.Builder();
+        request.setDisplayName(name);
+        updateUserProfile(request, callback);
+
     }
     public void createUserInFirebase(Map<String,Object> map,DocumentReference reference, Activity activity) {
         this.activity=activity;

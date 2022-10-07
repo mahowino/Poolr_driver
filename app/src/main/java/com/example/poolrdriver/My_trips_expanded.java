@@ -6,7 +6,6 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocument;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.setDocument;
 import static com.example.poolrdriver.util.AppSystem.getMyDefaultLocation;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
-import static com.example.poolrdriver.util.AppSystem.requestGps;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.poolrdriver.Firebase.Callback;
@@ -32,7 +29,6 @@ import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.PassengersAdapter;
 import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.Requests;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.userRegistrationJourney.CancelTrip;
@@ -51,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 public class My_trips_expanded extends AppCompatActivity {
+    private static final String STARTING_LOCATION = "starting_location";
     TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,luggage,no_passengers_booked,cancel;
     Button btnRequests;
     TripModel trip;
@@ -211,6 +208,7 @@ public class My_trips_expanded extends AppCompatActivity {
 
     }
     private Map<String,Object> createOngoingTrip() {
+        //source and destinations not showing
         Map<String,Object> map=new HashMap<>();
         GeoPoint sourceGeopoint=new GeoPoint(currentLocation.getLatitude(),currentLocation.getLongitude());
         map.put(FirebaseFields.START_LOCATION,sourceGeopoint);
@@ -225,14 +223,10 @@ public class My_trips_expanded extends AppCompatActivity {
         map.put(FirebaseFields.P_LOCATION_TO,trip.getDriverDestination());
         map.put(FirebaseFields.IS_TRIP_ACTIVE,true);
 
-        LatLng source=((LatLng)getIntent().getExtras().get("sourcePoint"));
-        LatLng destination=((LatLng)getIntent().getExtras().get("destinationPoint"));
-
-        GeoPoint sourceGeopointDriver=new GeoPoint(source.latitude,source.longitude);
-        GeoPoint destinationGeopointDriver=new GeoPoint(destination.latitude,destination.longitude);
-
-        map.put(FirebaseFields.LOCATION_TO_GEOPOINT,destinationGeopointDriver);
-        map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,sourceGeopointDriver);
+        GeoPoint locationFromGeopoint=new GeoPoint(trip.getSourceGeopoint().latitude,trip.getSourceGeopoint().longitude);
+        GeoPoint locationToGeopoint=new GeoPoint(trip.getDestinationGeopoint().latitude,trip.getDestinationGeopoint().longitude);
+        map.put(FirebaseFields.LOCATION_TO_GEOPOINT,locationToGeopoint);
+        map.put(FirebaseFields.LOCATION_FROM_GEOPOINT,locationFromGeopoint);
         map.put(FirebaseFields.SEATS,trip.getSeats());
         map.put(FirebaseFields.P_TRIP_PRICE, trip.getTripPrice());
         map.put(FirebaseFields.PASSENGER_BOOKING_FEE,(trip.getTripPrice()*FirebaseConstants.FIXED_RATE_PASSENGER_CUT));
@@ -305,7 +299,10 @@ public class My_trips_expanded extends AppCompatActivity {
                 }
                 setNotification();
                 Intent intent=new Intent(My_trips_expanded.this,OngoingTrip.class);
+                LatLng point=new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                trip.setSourcePoint(point);
                 intent.putExtra(CHOSEN_TRIP,trip);
+                intent.putExtra(STARTING_LOCATION,currentLocation);
                 ArrayList<String> passengersIds=new ArrayList<>();
                 for (Passenger passenger:passengers)
                     passengersIds.add(passenger.getUsername());

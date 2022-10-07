@@ -34,13 +34,10 @@ import com.example.poolrdriver.DirectionHelpers.TaskLoadedCallback;
 import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
-import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.AutoSuggestionsAdapter;
 import com.example.poolrdriver.classes.Network;
-import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.classes.dateFormat;
-import com.example.poolrdriver.classes.private_rides;
 import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.util.LoadingDialog;
@@ -50,11 +47,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -418,7 +413,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         trip.setDriverUid(new User().getUID());
         trip.setPrivacy(isTripPublic);
         trip.setDestinationpoint(destinationPoint);
-        trip.setSourcepoint(sourcePoint);
+        trip.setSourcePoint(sourcePoint);
 
         if (!isTripPublic && networks_spinner.getSelectedItemPosition()!=0)
            trip.setNetworkId(networks.get(networks_spinner.getSelectedItemPosition()-1).getNetworkUID());

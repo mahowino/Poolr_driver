@@ -12,16 +12,17 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
-import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.databinding.ActivityMapsBinding;
 import com.example.poolrdriver.models.TripModel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MapsActivity extends FragmentActivity{
 
@@ -53,40 +54,47 @@ public class MapsActivity extends FragmentActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.ONGOING_TRIP;
-        collectionReference= FirebaseRepository.createCollectionReference(path);
-        collectionReference.addSnapshotListener((value, error) -> {
-            if (error != null) {
-                Log.d("error", "Listen failed.", error);
-                return;
-            }
+        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        if(user!=null){
+            String path= FirebaseConstants.PASSENGERS+"/"+user.getUid()+"/"+FirebaseConstants.ONGOING_TRIP;
+            collectionReference= FirebaseRepository.createCollectionReference(path);
+            collectionReference.addSnapshotListener((value, error) -> {
+                if (error != null) {
+                    Log.d("error", "Listen failed.", error);
+                    return;
+                }
 
-            //get Time
+                //get Time
 
-            for (DocumentSnapshot snapshot:value){
-                //check how you store transaction time in your database
+                for (DocumentSnapshot snapshot:value){
+                    //check how you store transaction time in your database
 
-                if (snapshot.exists()){
-                    boolean isTripOn=snapshot.getBoolean(FirebaseFields.IS_TRIP_ACTIVE);
-                    ArrayList<String> passengers;
+                    if (snapshot.exists()){
+                        boolean isTripOn=snapshot.getBoolean(FirebaseFields.IS_TRIP_ACTIVE);
+                        ArrayList<String> passengers;
 
-                    if(isTripOn){
-                        passengers= (ArrayList<String>) snapshot.get(FirebaseConstants.PASSENGERS);
-                        Intent intent=new Intent(getApplicationContext(),OngoingTrip.class);
-                        TripModel trip=setUpTripObject(new Trips(snapshot));
-                        intent.putExtra(CHOSEN_TRIP,trip);
-                        intent.putStringArrayListExtra(PASSENGERS,passengers);
-                        //put extra a trip object from snapshot
-                        startActivity(intent);
+                        if(isTripOn){
+                            passengers= (ArrayList<String>) snapshot.get(FirebaseConstants.PASSENGERS);
+                            Intent intent=new Intent(getApplicationContext(),OngoingTrip.class);
+                            TripModel trip=setUpTripObject(new Trips(snapshot));
+                            intent.putExtra(CHOSEN_TRIP,trip);
+                            intent.putStringArrayListExtra(PASSENGERS,passengers);
+                            //put extra a trip object from snapshot
+                            startActivity(intent);
+                        }
                     }
+
+
+
                 }
 
 
+            });
 
-            }
-
-
-        });
+        }
+        else{
+            
+        }
 
 
     }
@@ -101,7 +109,11 @@ public class MapsActivity extends FragmentActivity{
         tripModel.setTripID(trip.getTripID());
         tripModel.setPassengerBookingFee(trip.getPassengerBookingFee());
 
-        // tripModel.setSourcepoint(trip.getTripSourceGeopoint());
+        LatLng point=new LatLng(trip.getTripStartGeopoint().getLatitude(),trip.getTripStartGeopoint().getLongitude());
+        tripModel.setSourcePoint(point);
+        //todo:continue from here
+        LatLng destination=new LatLng(trip.getTripEndGeopoint().getLatitude(),trip.getTripEndGeopoint().getLongitude());
+        tripModel.setDestinationpoint(destination);
         // tripModel.setDestinationpoint(trip.getTripDestinationGeopoint());
 
 

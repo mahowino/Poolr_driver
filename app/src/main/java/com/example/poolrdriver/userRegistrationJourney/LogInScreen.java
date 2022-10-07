@@ -84,10 +84,11 @@ public class LogInScreen extends AppCompatActivity {
             if (!isPasswordVisible) setPasswordTransformation(null,getResources().getDrawable(R.drawable.password_visible),true);
             else setPasswordTransformation(PasswordTransformationMethod.getInstance(),getResources().getDrawable(R.drawable.password_invisible),false);
         });
-        mlogin.setOnClickListener(v -> {validateInput();signInWithEmailAndPassword();});
+        mlogin.setOnClickListener(v -> {validateInput();});
     }
 
     private void signInWithEmailAndPassword() {
+
         Toast.makeText(LogInScreen.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(getApplicationContext(), MapsActivity.class));
         loadingDialog.dismissDialog();
@@ -102,9 +103,9 @@ public class LogInScreen extends AppCompatActivity {
     }
 
     private void validate() {
-        if (TextUtils.isEmpty(email)) {memail.setError("Email is required");return;}
-        if (TextUtils.isEmpty(password)) {mpassword.setError("Password is required");return;}
-        if (password.length() < 8) {mpassword.setError("Password must be more than 8 characters");return;}
+        if (TextUtils.isEmpty(email)) {memail.setError("Email is required");loadingDialog.dismissDialog();return;}
+        if (TextUtils.isEmpty(password)) {mpassword.setError("Password is required");loadingDialog.dismissDialog();return;}
+        if (password.length() < 8) {mpassword.setError("Password must be more than 8 characters");loadingDialog.dismissDialog();return;}
         //user authentication
         signInUser(email, password, new Callback() {
             @Override
@@ -115,6 +116,7 @@ public class LogInScreen extends AppCompatActivity {
             @Override
             public void onError(Object object) {
                 mpassword.setError("wrong password input");
+                loadingDialog.dismissDialog();
             }
         });
 

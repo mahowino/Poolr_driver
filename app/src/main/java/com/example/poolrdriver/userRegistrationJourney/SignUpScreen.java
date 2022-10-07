@@ -239,14 +239,26 @@ public class SignUpScreen extends AppCompatActivity {
             public void onSuccess(Object object) {
                 user=new User(); user.setEmail(userLogInAttempt.email, new Callback() {
                     @Override
-                    public void onSuccess(Object object) {}
+                    public void onSuccess(Object object) {
+                        user.setNameInDB(userLogInAttempt.name, new Callback() {
+                                    @Override
+                                    public void onSuccess(Object object) {
+                                        addUserToFirebaseDatabase(user,SignUpScreen.this);
+                                        redirectActivity(SignUpScreen.this,verifyPhoneNumberScreen.class);
+                                    }
+
+                                    @Override
+                                    public void onError(Object object) {
+
+                                    }
+                                });
+
+                    }
 
                     @Override
                     public void onError(Object object) {}});
 
-                user.setName(userLogInAttempt.name);
-                addUserToFirebaseDatabase(user,SignUpScreen.this);
-                redirectActivity(SignUpScreen.this,verifyPhoneNumberScreen.class);}
+              }
 
             @Override
             public void onError(Object object) {Toast.makeText(SignUpScreen.this, "error logging in", Toast.LENGTH_SHORT).show();}

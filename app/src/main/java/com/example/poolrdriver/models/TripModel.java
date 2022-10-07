@@ -26,6 +26,7 @@ public class TripModel implements Parcelable {
     private String networkId,tripID;
     private LatLng sourceGeopoint,destinationGeopoint;
 
+
     public TripModel(){}
 
     protected TripModel(Parcel in) {
@@ -104,7 +105,7 @@ public class TripModel implements Parcelable {
         return sourceGeopoint;
     }
 
-    public void setSourcepoint(LatLng sourcePoint) {
+    public void setSourcePoint(LatLng sourcePoint) {
         this.sourceGeopoint = sourcePoint;
     }
 

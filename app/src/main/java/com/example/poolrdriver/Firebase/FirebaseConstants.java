@@ -3,7 +3,7 @@ package com.example.poolrdriver.Firebase;
 public abstract class FirebaseConstants {
     public static  final String PASSENGERS = "passengers";
 
-    public static  final String ADMIN = "admin";
+    public static  final String ADMIN = "Admin";
 
     public static  final String PASSENGER_WALLET = "passenger_wallet";
 
@@ -23,6 +23,9 @@ public abstract class FirebaseConstants {
     public static  final String ONGOING_TRIP = "ongoing_trip";
 
     public static  final String RIDES = "rides";
+
+
+    public static final String PLEDGED_FUNDS_WALLET = "pledged_funded_wallet";
 
     public static  final String PUBLIC_RIDES = "public_rides";
 

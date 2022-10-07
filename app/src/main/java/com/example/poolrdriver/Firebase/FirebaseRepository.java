@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
@@ -116,14 +117,15 @@ public class FirebaseRepository {
         return isSuccessful;
     }
 
+
     public static void addUserToFirebaseDatabase(User user, Activity activity) {
         DocumentReference documentReference = createDocumentReference(FirebaseConstants.PASSENGERS, user.getUID());
-        user.createUserInFirebase(user.getMapDetails(), documentReference, activity);
-
+        DocumentReference passWalletReference=createDocumentReference(FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.PASSENGER_WALLET+"/"+user.getUID());
         DocumentReference driverWalletReference=createDocumentReference(FirebaseConstants.PASSENGERS+"/"+user.getUID()+"/"+FirebaseConstants.DRIVER_WALLET+"/"+user.getUID());
-        //create new wallet on start
 
+        user.createUserInFirebase(user.getMapDetails(), documentReference, activity);
         user.createUserInFirebase(updateNewWallet(),driverWalletReference,activity);
+        user.createUserInFirebase(updateNewWallet(),passWalletReference,activity);
     }
     private static Map updateNewWallet() {
         Map<String,Object> map=new HashMap<>();
@@ -152,7 +154,23 @@ public class FirebaseRepository {
 
     }
 
+    public static WriteBatch createSetBatch(DocumentReference reference, WriteBatch batch, Map<String,Object> map){
+        return batch.set(reference,map);
+
+    }
+    public static WriteBatch createDeleteBatch(DocumentReference reference, WriteBatch batch,Map<String,Object> map){
+        return batch.delete(reference);
+
+    }
+    public static void submitBatch(WriteBatch batch, Callback callback){
+        batch.commit()
+                .addOnSuccessListener(command -> callback.onSuccess(true))
+                .addOnFailureListener(callback::onError);
+    }
+
     public static void setDocument(Map details, DocumentReference documentReference, SetOptions merge, Callback callback) {
         documentReference.set(details,merge).addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
+
+
 }

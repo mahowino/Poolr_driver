@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         splashScreenDisplay.start();
     }
+
     private void load_splashscreen(FirebaseUser user){
 
         //running of thread
@@ -109,6 +110,5 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) notificationManager.createNotificationChannel(channel);
 
     }
-
 
 }

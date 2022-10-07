@@ -86,6 +86,13 @@ public class Trips  {
             return driverRouteList;
     }
 
+    public GeoPoint getTripStartGeopoint(){
+        return snapshot.getGeoPoint(FirebaseFields.LOCATION_FROM_GEOPOINT);
+    }
+    public GeoPoint getTripEndGeopoint(){
+        return snapshot.getGeoPoint(FirebaseFields.LOCATION_TO_GEOPOINT);
+    }
+
 
 
 }

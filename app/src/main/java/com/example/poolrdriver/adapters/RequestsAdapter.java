@@ -81,7 +81,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
     private void setTexts(Requests requests, RequestsAdapter.HolderView holderView) {
 
         holderView.passengerSource.setText(requests.getLocationFrom());
-        holderView.passengerDestination.setText(requests.getLocationFrom());
+        holderView.passengerDestination.setText(requests.getLocationTo());
     }
     private void setPassengerInformationFromDatabase(Requests requests, RequestsAdapter.HolderView holderView){
         String path= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID();
@@ -113,7 +113,8 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
                 .setIcon(R.drawable.icons8_bus_ticket_20px)
                 .setMessage("Are you sure you would like to request this ride?")
                 .setPositiveButton("yes", (dialog1, which) -> {
-                    String path= FirebaseConstants.RIDES+"/"+requests.getTripUID()+"/"+FirebaseConstants.BOOKINGS;
+                    //what of network trips?
+                    String path= FirebaseConstants.RIDES+"/"+requests.getTripUID()+"/"+FirebaseConstants.BOOKINGS+"/"+requests.getPassengerUID();
                     acceptPassenger(path,requests);
                 })
                 .setNegativeButton("no",(dialog1,which)->{
@@ -123,10 +124,10 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
     }
 
     private void acceptPassenger(String Path,Requests requests) {
-        setDocument(createRequestMap(requests), createCollectionReference(Path), new Callback() {
+        setDocument(createRequestMap(requests), createDocumentReference(Path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                String path3=FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.TRIPS+"/"+requests.getTripUID();
+                String path3=FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.TRIPS+"/"+requests.getPassengerUID();
                 setTripOnDatabase(path3,requests);
 
             }
@@ -139,7 +140,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
 
     }
     private void rejectPassenger(String path, Requests requests) {
-        setDocument(createRequestMap(requests), createCollectionReference(path), new Callback() {
+        setDocument(createRequestMap(requests), createDocumentReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Toast.makeText(context,"Trip has been successfully removed",Toast.LENGTH_LONG).show();

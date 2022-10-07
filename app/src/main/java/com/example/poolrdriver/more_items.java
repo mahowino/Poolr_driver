@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
@@ -69,10 +70,15 @@ public class more_items extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess() {
                             Bitmap imageBitmap = ((BitmapDrawable) profilePic.getDrawable()).getBitmap();
-                            RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getContext().getResources(), imageBitmap);
-                            imageDrawable.setCircular(true);
-                            imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
-                            profilePic.setImageDrawable(imageDrawable);
+                            try{
+                                RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getActivity().getResources(), imageBitmap);
+                                imageDrawable.setCircular(true);
+                                imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                                profilePic.setImageDrawable(imageDrawable);
+                            }catch (NullPointerException e){
+                                e.printStackTrace();
+                            }
+
                         }
 
                         @Override
