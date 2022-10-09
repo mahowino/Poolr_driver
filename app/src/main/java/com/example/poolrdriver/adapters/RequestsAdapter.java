@@ -145,7 +145,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
             public void onSuccess(Object object) {
                 Toast.makeText(context,"Trip has been successfully removed",Toast.LENGTH_LONG).show();
                 String path= FirebaseConstants.RIDES+"/"+requests.getTripUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
-                String path2= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
+                String path2= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.REQUESTS+"/"+requests.getRequestID();
                 //todo:add to passenger collection called rejected trips;
                // possibly ask for reason in future
                 deleteRequestFromDatabase(path);
@@ -255,7 +255,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
                 .setIcon(R.drawable.icons8_bus_ticket_20px)
                 .setMessage("Are you sure you would like to reject this ridee?")
                 .setPositiveButton("yes", (dialog1, which) -> {
-                    String path= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.REQUESTS_REJECTED;
+                    String path= FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.REQUESTS_REJECTED+"/"+requests.getTripUID();
                     rejectPassenger(path,requests);
                 })
                 .setNegativeButton("no",(dialog1,which)->{
