@@ -1,20 +1,71 @@
 package com.example.poolrdriver.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.lang.reflect.ParameterizedType;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TimePickerObject {
+public class TimePickerObject implements Parcelable {
     int hour,minute,day,month,year;
 
     public TimePickerObject() {
     }
 
-    public void setCalendarDate(int day,int month, int year){
+    public TimePickerObject(int hour,int minute,int day, int month, int year) {
+        this.hour=hour;
+        this.minute=minute;
         this.day=day;
         this.month=month;
         this.year=year;
     }
-    public void setCalendarTime(int minute,int hour){
+    protected TimePickerObject(Parcel in) {
+        hour = in.readInt();
+        minute = in.readInt();
+        day = in.readInt();
+        month = in.readInt();
+        year = in.readInt();
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public static final Creator<TimePickerObject> CREATOR = new Creator<TimePickerObject>() {
+        @Override
+        public TimePickerObject createFromParcel(Parcel in) {
+            return new TimePickerObject(in);
+        }
+
+        @Override
+        public TimePickerObject[] newArray(int size) {
+            return new TimePickerObject[size];
+        }
+    };
+
+    public void setCalendarDate(int day, int month, int year){
+        this.day=day;
+        this.month=month;
+        this.year=year;
+    }
+    public void setCalendarTime(int hour,int minute){
         this.minute=minute;
         this.hour=hour;
     }
@@ -23,7 +74,7 @@ public class TimePickerObject {
         this.month=Integer.parseInt(month);
         this.year=Integer.parseInt(year);
     }
-    public void setCalendarTime(String minute,String hour){
+    public void setCalendarTime(String hour ,String minute){
         this.minute=Integer.parseInt(minute);
         this.hour=Integer.parseInt(hour);
     }
@@ -36,6 +87,9 @@ public class TimePickerObject {
         calendar.set(Calendar.YEAR,year);
         return calendar.getTime();
     }
+    public Date getDate(boolean bool){
+        return new Date((year-1900),month,day,hour,minute,0);
+    }
 
     public void setDefaultCalendarDateAndTime() {
         Calendar calendar=Calendar.getInstance();
@@ -44,5 +98,19 @@ public class TimePickerObject {
         this.day=calendar.get(Calendar.DAY_OF_MONTH);
         this.month=calendar.get(Calendar.MONTH);
         this.year=calendar.get(Calendar.YEAR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(hour);
+        dest.writeInt(minute);
+        dest.writeInt(day);
+        dest.writeInt(month);
+        dest.writeInt(year);
     }
 }

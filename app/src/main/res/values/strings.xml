@@ -12,6 +12,19 @@
         <item>255</item>
         <item>256</item>
     </string-array>
+    <string-array name="spinner_colors">
+        <item>White</item>
+        <item>Black</item>
+        <item>Silver</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Gold</item>
+        <item>Red</item>
+        <item>Maroon</item>
+        <item>Orange</item>
+        <item>Blue</item>
+        <item>Purple</item>
+    </string-array>
     <string-array name="number_of_seats">
         <item>1 seat</item>
         <item>2 seats</item>
@@ -33,4 +46,7 @@
     <string name="sign_up_message">Sign up</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bio_text">A bio helps passengers to be able to know abit about you and to understand your values and morals in order to ensure they only request when they are in line with your morals</string>
+    <string name="profile_picture_text">Posting your profile picture will enable passengers to recognise you. Without it, your passengers can fall victim to imposters</string>
+    <string name="cash_text">Wallet balance:</string>
 </resources>

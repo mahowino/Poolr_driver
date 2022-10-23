@@ -48,7 +48,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:padding="8dp"
-        android:text="A profile picture hellps dricers and passengers to identify each other hence build trust. It increases your chance of getting a ride significantly."
+        android:text="@string/bio_text"
         android:textColor="@color/body_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

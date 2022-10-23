@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.poolrdriver.My_trips_expanded;
 import com.example.poolrdriver.R;
+import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 
 
@@ -50,9 +51,11 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
 
         holder.viewMore.setOnClickListener(v -> {
 
+            TimePickerObject object=tripModel.getTimePickerObject();
             Intent myTrips=new Intent(activity, My_trips_expanded.class);
             Log.d("tag", "setUpTripObject: "+tripModel.getTripID());
             myTrips.putExtra("chosen_trip",tripModel);
+            myTrips.putExtra("trip_time",object);
             activity.startActivity(myTrips);
 
         });
@@ -64,6 +67,13 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
         holder.driverSource.setText(trip.getDriverSource());
         holder.driverDestination.setText(trip.getDriverDestination());
         holder.tripPrice.setText("KSH " + trip.getTripPrice()+" per seat");
+        TimePickerObject object=trip.getTimePickerObject();
+        int day=object.getDay();
+        int month=object.getMonth();
+        int year=object.getYear();
+        int hour=object.getHour();
+        int minute= object.getMinute();
+        holder.driverSourceTime.setText(day+"/"+month+"/"+year+" at "+hour+":"+minute+" hours");
 
         if (!trip.isPrivacy())
             holder.tripPrivacy.setText("network");

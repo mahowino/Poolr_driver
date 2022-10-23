@@ -29,7 +29,7 @@ import com.squareup.picasso.Picasso;
 
 public class more_items extends Fragment implements View.OnClickListener {
     CardView schedule;
-    CardView logOut;
+    CardView profileCard;
     CardView DriverSettings;
     CardView myRequests;
     Button showProfile;
@@ -37,6 +37,7 @@ public class more_items extends Fragment implements View.OnClickListener {
     ImageView profilePic;
     FirebaseAuth auth;
     User user;
+    Button logOutBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +93,8 @@ public class more_items extends Fragment implements View.OnClickListener {
 
     private void setListeners() {
         schedule.setOnClickListener(this);
-        logOut.setOnClickListener(this);
+        profileCard.setOnClickListener(this);
+        logOutBtn.setOnClickListener(this);
         showProfile.setOnClickListener(v -> redirectActivity(getActivity(), MyProfile.class));
 
     }
@@ -102,11 +104,12 @@ public class more_items extends Fragment implements View.OnClickListener {
         //initializations
         showProfile=(Button)view.findViewById(R.id.buttonShowProfile);
         schedule=view.findViewById(R.id.card_calendar_schedule);
-        logOut=view.findViewById(R.id.card_log_out);
+        profileCard=view.findViewById(R.id.card_profile_pic);
         DriverSettings=view.findViewById(R.id.card_driver_section);
         myRequests=view.findViewById(R.id.card_my_requests);
         name=(TextView) view.findViewById(R.id.name_more);
         profilePic=(ImageView) view.findViewById(R.id.profile_pic_account);
+        logOutBtn=view.findViewById(R.id.btn_log_out);
 
         auth=FirebaseAuth.getInstance();
         user=new User();
@@ -121,7 +124,7 @@ public class more_items extends Fragment implements View.OnClickListener {
 
         if (id == R.id.card_calendar_schedule) {redirectActivity(getActivity(), wallet.class);dialog.dismissDialog();
 
-        } else if (id == R.id.card_log_out) {
+        } else if (id == R.id.btn_log_out) {
             new AlertDialog.Builder(getContext())
                     .setTitle("log out")
                     .setMessage("Are you sure you want to log out?")
@@ -133,8 +136,8 @@ public class more_items extends Fragment implements View.OnClickListener {
                     .show();
             dialog.dismissDialog();
 
-        } else if (id == R.id.card_my_requests) {//todo:set up requests page
-            dialog.dismissDialog();
+        } else if (id == R.id.card_profile_pic) {//todo:set up requests page
+            redirectActivity(getActivity(),MyProfile.class);dialog.dismissDialog();
         }
 
     }

@@ -196,10 +196,10 @@ public class SignUpScreen extends AppCompatActivity {
     private boolean validateUserInput() {
 
         //validation
-        if(TextUtils.isEmpty(userLogInAttempt.name)){ email.setError("Name is required"); return false; }
-        if(TextUtils.isEmpty(userLogInAttempt.email)){ email.setError("Email is required"); return false; }
-        if(TextUtils.isEmpty(userLogInAttempt.password)){ password.setError("Password is required"); return false;}
-        if (password.length()<8){ password.setError("Password must be more than 8 characters"); return false; }
+        if(TextUtils.isEmpty(userLogInAttempt.name)){ email.setError("Name is required");loading.setVisibility(View.INVISIBLE); return false; }
+        if(TextUtils.isEmpty(userLogInAttempt.email)){ email.setError("Email is required");loading.setVisibility(View.INVISIBLE); return false; }
+        if(TextUtils.isEmpty(userLogInAttempt.password)){ password.setError("Password is required");loading.setVisibility(View.INVISIBLE); return false;}
+        if (password.length()<8){ password.setError("Password must be more than 8 characters");loading.setVisibility(View.INVISIBLE); return false; }
 
         return true;
     }

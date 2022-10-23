@@ -18,6 +18,15 @@ public class FirebaseFields {
     public static final String LUGGAGE = "luggage";
     public static final String IS_TRIP_ACTIVE = "is_trip_active";
 
+    //car
+    public static final String CAR_TYPE = "car_type";
+    public static final String MAKE = "make";
+    public static final String MODEL = "model";
+    public static final String CAR_YEAR = "car_year";
+    public static final String NUMBER_PLATE = "number_plate";
+    public static final String COLOR = "color";
+
+
 
     public static String UID="uid";
 

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.poolrdriver.Car_details;
 import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
@@ -69,7 +70,7 @@ public class HomeAndWorkAdress extends AppCompatActivity {
         workAdress.setOnItemClickListener((parent, view, position, id) -> {
 
         });
-        skip.setOnClickListener(v -> {redirectActivity(HomeAndWorkAdress.this, MapsActivity.class);});
+        skip.setOnClickListener(v -> {redirectActivity(HomeAndWorkAdress.this, Car_details.class);});
         finish.setOnClickListener(v -> {loadingDialog.startLoadingAlertDialog();updateDataInDatabase();});
     }
 
@@ -99,7 +100,7 @@ public class HomeAndWorkAdress extends AppCompatActivity {
                         new User().getUID()), SetOptions.merge(), new Callback() {
                     @Override
                     public void onSuccess(Object object) {
-                        redirectActivity(HomeAndWorkAdress.this, MapsActivity.class);
+                        redirectActivity(HomeAndWorkAdress.this, Car_details.class);
                         loadingDialog.dismissDialog();
                     }
 
@@ -110,7 +111,6 @@ public class HomeAndWorkAdress extends AppCompatActivity {
                 });
 
     }
-
 
 
 }

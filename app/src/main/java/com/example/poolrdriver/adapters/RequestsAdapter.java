@@ -153,7 +153,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
                 //displayNotificationOnPHone()
                 Notifications notification=new Notifications("Your trip request has been rejected",1,"Trip Rejected");
                 showNotification(requests,notification);
-                redirect();
+
             }
 
             @Override

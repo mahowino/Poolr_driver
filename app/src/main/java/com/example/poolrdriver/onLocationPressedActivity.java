@@ -434,7 +434,8 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         next.putExtra("POLYLINE",polylineOptions);
         next.putExtra("destinationPoint",destinationPoint);
         next.putExtra("sourcePoint",sourcePoint);
-        next.putExtra("trip",(Parcelable) trip);
+        next.putExtra("trip", trip);
+        next.putExtra("time_picker",trip.getTimePickerObject());
 
         startActivity(next);
         

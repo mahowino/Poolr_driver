@@ -5,6 +5,7 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsIn
 
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,11 +22,19 @@ import androidx.fragment.app.Fragment;
 import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.classes.Trips;
+import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 
 public class fragment_where_to extends Fragment {
@@ -33,6 +42,7 @@ public class fragment_where_to extends Fragment {
     private ConstraintLayout wallet_view;
     private FloatingActionButton requests, wallet, trips;
     TextView amount;
+    private CollectionReference collectionReference;
 
     public fragment_where_to() {
     }
@@ -46,8 +56,38 @@ public class fragment_where_to extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        checkIfUserHasCarAdded();
         getWalletData();
     }
+
+    private void checkIfUserHasCarAdded() {
+        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        if(user!=null) {
+            String path = FirebaseConstants.DRIVERS + "/" + user.getUid() + "/" + FirebaseConstants.CARS;
+            collectionReference = FirebaseRepository.createCollectionReference(path);
+            getDocumentsInCollection(collectionReference, new Callback() {
+                @Override
+                public void onSuccess(Object object) {
+
+                    Task<QuerySnapshot> task = (Task<QuerySnapshot>) object;
+                    if (task.getResult().isEmpty()) {
+                        Intent intent = new Intent(getContext(), Car_details.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+
+                }
+
+                @Override
+                public void onError(Object object) {
+                    Log.d(TAG.TAG, "onFailure: failure " + ((Exception) object).getMessage());
+                }
+            });
+
+
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

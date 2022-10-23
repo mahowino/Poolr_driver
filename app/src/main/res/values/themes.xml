@@ -9,7 +9,7 @@
         <item name="colorSecondary">@color/purple_200</item>
         <item name="colorSecondaryVariant">@color/purple_500</item>
         <item name="colorOnSecondary">@color/black</item>
-        <item name="fontFamily">@font/montserrat_alternates</item>
+        <item name="fontFamily">@font/inter</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
@@ -30,5 +30,9 @@
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_up</item>
+    </style>
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#FF4081</item>  // you can change the color of the yearPiker dialog
+        <item name="android:textColorPrimary">#FF4081</item> // you can change the color of the yearPiker dialog
     </style>
 </resources>

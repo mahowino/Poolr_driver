@@ -30,6 +30,7 @@ import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.PassengersAdapter;
 import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.models.Requests;
+import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.userRegistrationJourney.CancelTrip;
 import com.google.android.gms.maps.model.LatLng;
@@ -56,7 +57,8 @@ public class My_trips_expanded extends AppCompatActivity {
     List<Passenger> passengers;
     private final String CHOSEN_TRIP="chosen_trip";
     private final String PASSENGERS="passengers";
-    private final String LOCATIONS="locations";
+    private final String TRIP_TIME="trip_time";
+    private TimePickerObject timePickerObject;
     private  String userDetailsPath;
     private final String  USER_ACCOUNT="signed_in_user";
     private QuerySnapshot snapshot;
@@ -341,7 +343,14 @@ public class My_trips_expanded extends AppCompatActivity {
     private void setTextData() {
         source.setText(trip.getDriverSource());
         destination.setText(trip.getDriverDestination());
-        departure_time.setText(SimpleDateFormat.getInstance().format(new Date()));//trip.getTimePickerObject().getDate()
+        int day=timePickerObject.getDay();
+        int month=timePickerObject.getMonth();
+        int year=timePickerObject.getYear();
+        int hour=timePickerObject.getHour();
+        int minute= timePickerObject.getMinute();
+        departure_time.setText(day+"/"+month+"/"+year+" at "+hour+":"+minute+" hours");
+
+        //departure_time.setText(SimpleDateFormat.getInstance().format(new Date()));//trip.getTimePickerObject().getDate()
         if (!trip.isPrivacy())
             privacy.setText("network");
         else
@@ -383,6 +392,7 @@ public class My_trips_expanded extends AppCompatActivity {
     private void getValues() {
         trip=getIntent().getExtras().getParcelable(CHOSEN_TRIP);
         user=getIntent().getParcelableExtra(USER_ACCOUNT);
+        timePickerObject=getIntent().getParcelableExtra(TRIP_TIME);
         Log.d("trip", "getValues: "+trip.getTripID());
         if (trip.isPrivacy())
             userDetailsPath= FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.poolrdriver">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -20,9 +21,19 @@
         android:allowBackup="true"
         android:icon="@drawable/squircle_padding"
         android:label="@string/app_name"
+        tools:replace="android:icon"
         android:roundIcon="@drawable/logo_round_padding"
         android:supportsRtl="true"
         android:theme="@style/Theme.PoolrDriver">
+        <activity
+            android:name=".Car_details_3"
+            android:exported="false" />
+        <activity
+            android:name=".CarDetail2"
+            android:exported="false" />
+        <activity
+            android:name=".Car_details"
+            android:exported="false" />
         <activity
             android:name=".reviewActivity"
             android:exported="false" />

@@ -154,12 +154,11 @@ public class My_trips extends AppCompatActivity {
         tripModel.setTripID(trip.getTripID());
         tripModel.setPassengerBookingFee(trip.getPassengerBookingFee());
         tripModel.setLuggage(trip.getLuggage());
-
         LatLng point=new LatLng(trip.getTripStartGeopoint().getLatitude(),trip.getTripStartGeopoint().getLongitude());
         tripModel.setSourcePoint(point);
         LatLng destination=new LatLng(trip.getTripEndGeopoint().getLatitude(),trip.getTripEndGeopoint().getLongitude());
         tripModel.setDestinationpoint(destination);
-
+        tripModel.setTimePickerObject(trip.getTimePickerObjectDate());
 
         return tripModel;
     }

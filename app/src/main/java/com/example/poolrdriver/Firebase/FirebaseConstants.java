@@ -11,6 +11,7 @@ public abstract class FirebaseConstants {
 
     public static final String ADMIN_WALLET = "admin_wallet";
 
+    public static final String CARS ="cars" ;
 
     public static double FIXED_RATE_PER_KILOMETER =44.92;
 

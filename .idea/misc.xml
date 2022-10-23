@@ -16,8 +16,11 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/drawable/ic_menu_camera.xml" value="0.33425925925925926" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/drawable/indicator_default.xml" value="0.23489583333333333" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/drawable/tab_selector.xml" value="0.2275" />
-        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_add_bio.xml" value="0.2" />
-        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_change_profile_picture.xml" value="0.31765711842667804" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_add_bio.xml" value="0.264" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_car_detail2.xml" value="0.24583155194527576" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_car_details.xml" value="0.264" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_car_details3.xml" value="0.22231722958529285" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_change_profile_picture.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_drop_offs.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_forgot_password.xml" value="0.3125" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_home_and_work_adress.xml" value="0.3125" />
@@ -30,7 +33,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_my_trips.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_my_trips_expanded.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_network_trips.xml" value="0.30611372381359553" />
-        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_on_location_pressed.xml" value="0.2" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_on_location_pressed.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_ongoing_trip.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_passenger_profile.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_passengers.xml" value="0.21376656690893545" />
@@ -40,7 +43,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_review.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_sign_up_screen.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_trip_requests.xml" value="0.26849080803762293" />
-        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_user_type_choice.xml" value="0.31765711842667804" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_user_type_choice.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_verify_otp.xml" value="0.3125" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_verify_phone_number.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/activity_verify_phone_number_screen.xml" value="0.3125" />
@@ -50,6 +53,8 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/booked_passenger_card.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/bottom_sheet_layout_time.xml" value="0.26403985507246375" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/bottom_sheet_layout_trip_visibility.xml" value="0.26403985507246375" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/car_type_layout_card.xml" value="0.31765711842667804" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/car_type_selector_ui.xml" value="0.31765711842667804" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/content_home_page.xml" value="0.33695652173913043" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/date_picler_ui_screen.xml" value="0.26403985507246375" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/fragment_home.xml" value="0.38697916666666665" />
@@ -59,6 +64,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/fragment_where_to.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/layout_walkthrough_screen.xml" value="0.33061594202898553" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/loading_dialog.xml" value="0.25317028985507245" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/month_year_picker_dialog.xml" value="0.31680205215904234" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/nav_header.xml" value="0.24909420289855072" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/nav_header_home_page.xml" value="0.33695652173913043" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/Poolrdriver2/app/src/main/res/layout/notification_card.xml" value="0.27447916666666666" />

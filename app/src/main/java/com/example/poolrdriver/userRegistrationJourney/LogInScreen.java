@@ -84,7 +84,7 @@ public class LogInScreen extends AppCompatActivity {
             if (!isPasswordVisible) setPasswordTransformation(null,getResources().getDrawable(R.drawable.password_visible),true);
             else setPasswordTransformation(PasswordTransformationMethod.getInstance(),getResources().getDrawable(R.drawable.password_invisible),false);
         });
-        mlogin.setOnClickListener(v -> {validateInput();});
+        mlogin.setOnClickListener(v -> validateInput());
     }
 
     private void signInWithEmailAndPassword() {

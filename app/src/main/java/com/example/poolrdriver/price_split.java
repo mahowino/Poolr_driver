@@ -15,6 +15,7 @@ import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.Firebase.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.classes.Network;
+import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,7 +40,10 @@ public class price_split extends AppCompatActivity {
     TabLayout amount_of_luggage;
     EditText priceToPay;
     Long maxPrice;
+    TimePickerObject date;
     private static final String TRIP_EXTRA="trip";
+    private static final String date_selected="time_picker";
+
     private final String documentID=generateRandomId();
 
 
@@ -85,11 +89,12 @@ public class price_split extends AppCompatActivity {
 
     private void getSetPrice() {
         Long priceInput=Long.valueOf(priceToPay.getText().toString().trim());
+
         if (priceInput>maxPrice){
             Toast.makeText(getApplicationContext(), "You cannot charge above the legal carpool limit", Toast.LENGTH_SHORT).show();
         }
         else {
-            trip.setTripPrice((Long.parseLong(String.valueOf(priceInput))/ trip.getSeats()));
+            trip.setTripPrice((Long.parseLong(String.valueOf(priceInput))));
 
             if (trip.isPrivacy()) postTripOnPublicTrips();
             else postTripOnNetworkTrips();
@@ -102,11 +107,14 @@ public class price_split extends AppCompatActivity {
     private void initializeData() {
         post_ride = findViewById(R.id.post_ride_confirm);
         trip=getIntent().getParcelableExtra(TRIP_EXTRA);
+        date=getIntent().getParcelableExtra(date_selected);
+
         max_amount=findViewById(R.id.txt_maximum_to_charge);
         priceToPay=findViewById(R.id.editTextPriceToPay);
         amount_of_luggage=findViewById(R.id.tab_LuggageAllowed);
         double tripDistance= mathsUtil.getDistanceFromUserPoints(trip.getSourcePoint(),trip.getDestinationpoint());
         maxPrice=Math.round(tripDistance*FirebaseConstants.FIXED_RATE_PER_KILOMETER);
+        maxPrice=maxPrice/trip.getSeats();
         max_amount.setText("KSH "+maxPrice);
     }
     private void postTripOnPublicTrips(){
@@ -116,7 +124,7 @@ public class price_split extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                // Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -140,7 +148,7 @@ public class price_split extends AppCompatActivity {
         setDocument(getMapData(), createCollectionReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -171,8 +179,7 @@ public class price_split extends AppCompatActivity {
         map.put(FirebaseFields.LUGGAGE,Luggage);
         map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
         map.put(FirebaseFields.DRIVER,trip.getDriverUid());
-        map.put(FirebaseFields.DEPARTURETIME,new Date());
-
+        map.put(FirebaseFields.DEPARTURETIME, date.getDate(true));
 
         //when putting price, add passenger booking fee to the trip cost.
 
