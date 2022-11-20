@@ -12,6 +12,10 @@
         <item>255</item>
         <item>256</item>
     </string-array>
+    <string-array name="network_rules">
+        <item>Accept on code</item>
+        <item>Accept on request</item>
+    </string-array>
     <string-array name="spinner_colors">
         <item>White</item>
         <item>Black</item>

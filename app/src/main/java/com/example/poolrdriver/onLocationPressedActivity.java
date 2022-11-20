@@ -17,7 +17,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,11 +31,12 @@ import android.widget.Toast;
 import com.example.poolrdriver.DirectionHelpers.FetchURL;
 import com.example.poolrdriver.DirectionHelpers.TaskLoadedCallback;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.AutoSuggestionsAdapter;
-import com.example.poolrdriver.classes.Network;
+import com.example.poolrdriver.models.CarTypes;
+import com.example.poolrdriver.models.Network;
 import com.example.poolrdriver.classes.dateFormat;
 import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
@@ -65,7 +65,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     Button confirm,btnEveryoneVisibility,btnMyNetworksVisibility,post;
     CalendarView calendarView;
     android.widget.TimePicker timePicker;
-    private dateFormat chosenDate,chosenTempDate;
+    CarTypes chosenCarForTrip;
     private boolean isTripPublic;
     private LoadingDialog loadingDialog;
     LatLng sourcePoint, destinationPoint;
@@ -83,6 +83,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
     private Context mContext;
     private List<Network> networks;
     public static TextView txtNetwork_spinner;
+    public static final String CAR_FOR_TRIP = "Car_for_trip";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,6 +270,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
        networks=new ArrayList<>();
        mContext=getApplicationContext();
        isTripPublic=true;
+       chosenCarForTrip=getIntent().getParcelableExtra(CAR_FOR_TRIP);
        setDefaultDate();
 
     }

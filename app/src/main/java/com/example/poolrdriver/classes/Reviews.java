@@ -14,7 +14,7 @@ public class Reviews {
     }
 
     Uri reviewerProfilePicture;
-    int rating;
+    float rating;
 
     public String getReviewerName() {
         return reviewerName;
@@ -32,11 +32,11 @@ public class Reviews {
         this.review = review;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 }

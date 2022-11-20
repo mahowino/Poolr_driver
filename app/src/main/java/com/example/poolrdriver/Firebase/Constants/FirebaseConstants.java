@@ -1,4 +1,4 @@
-package com.example.poolrdriver.Firebase;
+package com.example.poolrdriver.Firebase.Constants;
 
 public abstract class FirebaseConstants {
     public static  final String PASSENGERS = "passengers";
@@ -9,9 +9,11 @@ public abstract class FirebaseConstants {
 
     public static  final String TRANSACTIONS = "passengers";
 
-    public static final String ADMIN_WALLET = "admin_wallet";
+    public static final String ADMIN_WALLET = "wallet";
 
     public static final String CARS ="cars" ;
+
+    public static final String REVIEWS = "reviews";
 
     public static double FIXED_RATE_PER_KILOMETER =44.92;
 
@@ -30,7 +32,9 @@ public abstract class FirebaseConstants {
 
     public static  final String PUBLIC_RIDES = "public_rides";
 
-    public static final String NETWORKS = "networks";
+    public static final String NETWORKS = "Networks";
+
+    public static final String NETWORKSU = "Networks";
 
     public static final String DRIVERS = "drivers";
 

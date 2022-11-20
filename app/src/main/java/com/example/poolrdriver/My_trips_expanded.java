@@ -17,14 +17,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.PassengersAdapter;
@@ -33,6 +34,7 @@ import com.example.poolrdriver.models.Requests;
 import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.userRegistrationJourney.CancelTrip;
+import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,15 +42,18 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ncorti.slidetoact.SlideToActView;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class My_trips_expanded extends AppCompatActivity {
-    private static final String STARTING_LOCATION = "starting_location";
+    public static final String STARTING_LOCATION = "starting_location";
     TextView source,destination,departure_time,privacy,no_of_passengers,no_of_seats_offered,cash_to_be_paid,luggage,no_passengers_booked,cancel;
     Button btnRequests;
     TripModel trip;
@@ -131,7 +136,9 @@ public class My_trips_expanded extends AppCompatActivity {
     }
 
     private void displayPassengersAdapter() {
-        startTrip.setVisibility(View.VISIBLE);
+        if (isTripWithinTime())
+            startTrip.setVisibility(View.VISIBLE);
+
         passengersList.setVisibility(View.VISIBLE);
         no_passengers_booked.setVisibility(View.INVISIBLE);
         displayAdapter();
@@ -199,8 +206,19 @@ public class My_trips_expanded extends AppCompatActivity {
     }
 
     private void beginTrip() {
+
+
         getStartLocationSnapshot();
 
+    }
+
+    private boolean isTripWithinTime() {
+      Date currentDate= Calendar.getInstance().getTime();
+      Date tripDate=timePickerObject.getDate(true);
+      long diff=Math.abs(tripDate.getTime()-currentDate.getTime());
+      long timeInMinutes=TimeUnit.MILLISECONDS.toMinutes(diff);
+        Toast.makeText(this, " "+timeInMinutes, Toast.LENGTH_SHORT).show();
+      return timeInMinutes <15.0;
     }
 
     private void viewSentRequests() {
@@ -283,7 +301,7 @@ public class My_trips_expanded extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                 currentLocation=(Location) object;
-                String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+new User().getUID();
+                String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+trip.getTripID();
                 putStartLocationInDatabase(path);
             }
 
@@ -296,22 +314,12 @@ public class My_trips_expanded extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                 for (Passenger passenger:passengers){
-                    String path= FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+new User().getUID();
+                    String path= FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+trip.getTripID();
                     putStartLocationInPassengerDatabase(path);
                 }
                 setNotification();
-                Intent intent=new Intent(My_trips_expanded.this,OngoingTrip.class);
-                LatLng point=new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-                trip.setSourcePoint(point);
-                intent.putExtra(CHOSEN_TRIP,trip);
-                intent.putExtra(STARTING_LOCATION,currentLocation);
-                ArrayList<String> passengersIds=new ArrayList<>();
-                for (Passenger passenger:passengers)
-                    passengersIds.add(passenger.getUsername());
+                redirectToOngoingTripPage();
 
-                intent.putStringArrayListExtra(PASSENGERS, passengersIds);
-
-                startActivity(intent);
 
             }
 
@@ -320,6 +328,31 @@ public class My_trips_expanded extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void redirectToOngoingTripPage() {
+        Intent intent=new Intent(My_trips_expanded.this,OngoingTrip.class);
+        LatLng point=new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        trip.setStartingPoint(point);
+
+        if(mathsUtil.getDistanceFromUserPoints(point,trip.getSourcePoint())<1){
+            intent.putExtra(CHOSEN_TRIP,trip);
+            Bundle startingPoint = new Bundle();
+            startingPoint.putParcelable("start", point);
+
+            intent.putExtra(STARTING_LOCATION,startingPoint);
+            ArrayList<String> passengersIds=new ArrayList<>();
+            for (Passenger passenger:passengers)
+                passengersIds.add(passenger.getUsername());
+
+            intent.putStringArrayListExtra(PASSENGERS, passengersIds);
+
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(this, "You are not in the starting location, please start the trip there", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void setNotification() {
@@ -355,6 +388,11 @@ public class My_trips_expanded extends AppCompatActivity {
             privacy.setText("network");
         else
             privacy.setText("Everyone");
+
+        if (!isTripWithinTime())
+            startTrip.setVisibility(View.INVISIBLE);
+        //else
+          //  startTrip.setVisibility(View.VISIBLE);
 
         no_of_seats_offered.setText(String.valueOf(trip.getSeats()));
         luggage.setText(trip.getLuggage());

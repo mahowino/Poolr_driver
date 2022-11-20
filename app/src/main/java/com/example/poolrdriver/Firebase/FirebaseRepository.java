@@ -4,10 +4,11 @@ import static android.content.ContentValues.TAG;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.util.Log;
-import android.view.View;
 
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables;
 import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseRepository {
+
 
     static boolean isSuccessful;
 

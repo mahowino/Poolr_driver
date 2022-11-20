@@ -1,8 +1,6 @@
 package com.example.poolrdriver.Firebase;
 
 
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,10 +8,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-import com.example.poolrdriver.MainActivity;
-import com.example.poolrdriver.classes.SignedUpDriver;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables;
 import com.example.poolrdriver.classes.userLogInAttempt;
-import com.example.poolrdriver.verifyPhoneNumber;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -53,7 +51,7 @@ public class User {
     }
 
     private void getHomeAndWorkAddressFromFirebase() {
-        String path=FirebaseConstants.PASSENGERS+"/"+getUID();
+        String path= FirebaseConstants.PASSENGERS+"/"+getUID();
         FirebaseRepository.getDocument(FirebaseRepository.createDocumentReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {

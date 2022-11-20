@@ -10,10 +10,8 @@ import static com.example.poolrdriver.Firebase.GoogleSignIn.SignUserUpWithGoogle
 import static com.example.poolrdriver.Firebase.GoogleSignIn.getGoogleSignInAccount;
 import static com.example.poolrdriver.Firebase.GoogleSignIn.requestGoogleSignInPrompt;
 import static com.example.poolrdriver.Firebase.GoogleSignIn.setGoogleSignIn;
-import static com.example.poolrdriver.classes.userLogInAttempt.*;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -21,11 +19,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,40 +32,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.MapsActivity;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.userLogInAttempt;
-import com.example.poolrdriver.util.LoadingDialog;
-import com.example.poolrdriver.classes.SignedUpDriver;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignUpScreen extends AppCompatActivity {
 

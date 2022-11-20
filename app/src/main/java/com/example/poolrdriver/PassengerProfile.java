@@ -15,8 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseRepository;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.adapters.ReviewAdapter;
 import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.classes.Reviews;
@@ -118,7 +117,7 @@ public class PassengerProfile extends AppCompatActivity {
             public void onSuccess(Object object) {
                 Task<DocumentSnapshot> task=(Task<DocumentSnapshot>)object;
                 passenger=new Passenger(task.getResult());
-                //reviews=passenger.getReviews();
+                reviews=passenger.getReviews();
                 setUpProfile();
                 setUpReviews();
             }

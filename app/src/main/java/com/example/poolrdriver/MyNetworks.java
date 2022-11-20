@@ -15,11 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.Helpers.NetworksHelper;
 import com.example.poolrdriver.adapters.NetworksAdapter;
-import com.example.poolrdriver.classes.Network;
+import com.example.poolrdriver.models.Network;
+import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -83,19 +85,30 @@ public class MyNetworks extends AppCompatActivity {
 
     private void displaySchedule(Task<QuerySnapshot> task) {
 
-        for (DocumentSnapshot snapshot:task.getResult())
-        {
-            Network network=new Network();
-            network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
-            network.setNetworkUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_UID)));
-            network.setNetworkTravelAdminUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN)));
-            networks.add(network);
-            isNetworksThere=true;
+      for (DocumentSnapshot snapshot:task.getResult()){
 
-        }
-        if (isNetworksThere)
-            diplayAdapter();
-        else
-            displayNoNetworks();
+          if (snapshot.exists()){
+              Network network=new Network();
+              network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
+              network.setNetworkUID(snapshot.getId());
+              network.setNetworkTravelAdminUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN)));
+              network.setNetworkCode(String.valueOf(snapshot.get(FirebaseFields.NETWORK_CODE)));
+              network.setNetworkAcceptOnCode(snapshot.getBoolean(FirebaseFields.NETWORK_IS_ACCEPT_ON_CODE));
+              network.setHomeLocation(AppSystem.convertGeopointToLatLong(snapshot.getGeoPoint(FirebaseFields.NETWORK_HOME_LOCATION)));
+              network.setWorkLocation(AppSystem.convertGeopointToLatLong(snapshot.getGeoPoint(FirebaseFields.NETWORK_WORK_LOCATION)));
+              isNetworksThere=true;
+              networks.add(network);
+          }
     }
+
+      if (isNetworksThere)
+          diplayAdapter();
+      else
+          displayNoNetworks();
+    }
+
+
+
+
 }
+

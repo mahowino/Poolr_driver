@@ -2,34 +2,24 @@ package com.example.poolrdriver.userRegistrationJourney;
 
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.example.poolrdriver.Car_details;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
-import com.example.poolrdriver.HomePageActivity;
-import com.example.poolrdriver.MapsActivity;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.adapters.AutoSuggestionsAdapter;
 import com.example.poolrdriver.util.AppSystem;
 import com.example.poolrdriver.util.LoadingDialog;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;

@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.OngoingTripsAdapter;
 import com.example.poolrdriver.models.Requests;
@@ -54,7 +54,7 @@ public class OngoingTrip extends AppCompatActivity {
     private  String userDetailsPath;
     private double pricePerPassenger;
     private final String  USER_ACCOUNT="signed_in_user";
-    private SlideToActView endTrip;
+
     private String walletUid;
     private GeoPoint startLocation;
 
@@ -101,12 +101,14 @@ public class OngoingTrip extends AppCompatActivity {
 
     private void finishTrip() {
 
-        String ongoingTripPath=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+new User().getUID();
+        //checkIfTripWas an regular one
+        String ongoingTripPath=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.ONGOING_TRIP+"/"+trip.getTripID();
         String booking_on_trip=FirebaseConstants.RIDES+"/"+trip.getTripID();
 
         deleteFromDatabase(ongoingTripPath);
         deleteFromDatabase(booking_on_trip);
         updateTrips();
+
         Toast.makeText(this, "Trip successfully ended", Toast.LENGTH_SHORT).show();
         Intent intent=new Intent(OngoingTrip.this,MapsActivity.class);
         startActivity(intent);
@@ -188,9 +190,11 @@ public class OngoingTrip extends AppCompatActivity {
     private void getIntentData() {
         //HAS TO BE GOTTEN FROM DB;
         trip=getIntent().getExtras().getParcelable(CHOSEN_TRIP);
-        startLocation=new GeoPoint(trip.getSourcePoint().latitude,trip.getSourcePoint().longitude);
+        Bundle bundle = getIntent().getParcelableExtra(STARTING_LOCATION);
+        LatLng tempStartLocation=bundle.getParcelable("start");
+        startLocation=new GeoPoint(tempStartLocation.latitude,tempStartLocation.longitude);
         passengers=getIntent().getStringArrayListExtra(PASSENGERS);
-        endTrip=findViewById(R.id.end_trip_slider);
+
         source.setText(trip.getDriverSource());
         destination.setText(trip.getDriverDestination());
 

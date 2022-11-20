@@ -1,6 +1,5 @@
 package com.example.poolrdriver;
 
-import static android.content.ContentValues.TAG;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
 import static com.example.poolrdriver.util.AppSystem.createDialog;
 
@@ -8,32 +7,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
-import com.example.poolrdriver.Firebase.FirebaseRepository;
-import com.example.poolrdriver.Interfaces.ItemClickListener;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.adapters.CarTypeAdapter;
 import com.example.poolrdriver.models.CarTypes;
 import com.example.poolrdriver.util.LoadingDialog;
-import com.example.poolrdriver.util.MonthYearPickerDialog;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import java.util.ArrayList;

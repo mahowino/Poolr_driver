@@ -1,4 +1,4 @@
-package com.example.poolrdriver.Firebase;
+package com.example.poolrdriver.Firebase.Constants;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;

@@ -20,12 +20,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
-import com.example.poolrdriver.classes.Trips;
-import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,8 +31,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 
 
 public class fragment_where_to extends Fragment {
@@ -127,7 +123,7 @@ public class fragment_where_to extends Fragment {
     private void setListeners() {
         whereTo.setOnClickListener(v -> {
             //todo:get date of travel
-            redirectActivity(getActivity(),onLocationPressedActivity.class);
+            redirectActivity(getActivity(),MyCars.class);
             requireActivity().overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
         });
 

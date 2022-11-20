@@ -4,9 +4,7 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollecti
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createDocumentReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.deleteDocument;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocument;
-import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.setDocument;
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,28 +19,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.My_trips;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.TAG;
 import com.example.poolrdriver.classes.Notifications;
-import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.models.Requests;
-import com.example.poolrdriver.price_split;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +117,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.Holder
         setDocument(createRequestMap(requests), createDocumentReference(Path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-                String path3=FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.TRIPS+"/"+requests.getPassengerUID();
+                String path3=FirebaseConstants.PASSENGERS+"/"+requests.getPassengerUID()+"/"+FirebaseConstants.TRIPS+"/"+requests.getTripUID();
                 setTripOnDatabase(path3,requests);
 
             }

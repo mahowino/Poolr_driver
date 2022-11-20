@@ -14,11 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.MyTripsAdapter;
-import com.example.poolrdriver.classes.Network;
+import com.example.poolrdriver.models.Network;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class My_trips extends AppCompatActivity {
+    public static final String FROM_NETWORK ="from_network" ;
     RecyclerView upcomingTrips;
     private List<TripModel> tripsList;
     private TextView viewPastTrips;
@@ -101,8 +102,6 @@ public class My_trips extends AppCompatActivity {
     private void getPostsDataFromDriver() {
         //get user networks
 
-
-
         getDocumentsFromQueryInCollection(createQuery(createCollectionReference(network_trips_path),FirebaseFields.DRIVER,new User().getUID()), new Callback() {
             @Override
             public void onSuccess(Object object) {
@@ -112,7 +111,9 @@ public class My_trips extends AppCompatActivity {
                         Log.d("tag", "onSuccess: "+snapshot.get(FirebaseFields.DRIVER).toString());
                         tripsList.add(setUpTripObject(new Trips(snapshot)));
                     }
+                    if (!getIntent().getBooleanExtra(FROM_NETWORK,false))
                     getPublicTripsFromDatabase();
+                    else  initializeRecyclerView();
                 }
             }
 

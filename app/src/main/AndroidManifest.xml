@@ -21,10 +21,25 @@
         android:allowBackup="true"
         android:icon="@drawable/squircle_padding"
         android:label="@string/app_name"
-        tools:replace="android:icon"
         android:roundIcon="@drawable/logo_round_padding"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PoolrDriver">
+        android:theme="@style/Theme.PoolrDriver"
+        tools:replace="android:icon">
+        <activity
+            android:name=".MyCars"
+            android:exported="false" />
+        <activity
+            android:name=".NetworkViewMembers"
+            android:exported="false" />
+        <activity
+            android:name=".NetworkMainPage"
+            android:exported="false" />
+        <activity
+            android:name=".JoinNetworkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateNetworkSuccess"
+            android:exported="false" />
         <activity
             android:name=".Car_details_3"
             android:exported="false" />

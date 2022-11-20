@@ -1,4 +1,4 @@
-package com.example.poolrdriver.Firebase;
+package com.example.poolrdriver.Firebase.Constants;
 
 public class FirebaseFields {
 
@@ -17,6 +17,7 @@ public class FirebaseFields {
     public static final String TRIP_CASH_PAID = "is_promotion_used";
     public static final String LUGGAGE = "luggage";
     public static final String IS_TRIP_ACTIVE = "is_trip_active";
+    public static final String IS_ROUTE_COMMON = "is_route_common";
 
     //car
     public static final String CAR_TYPE = "car_type";
@@ -47,6 +48,13 @@ public class FirebaseFields {
     public static String NETWORK_TRAVEL_ADMIN = "network_travel_admin";
     public static String NETWORK_UID = "network_uid";
     public static String NETWORK_MEMBERS = "network_members";
+    public static String NETWORK_MEMBER_ID = "network_member_id";
+    public static String NETWORK_IS_ACCEPT_ON_CODE = "is_accept_on_code";
+    public static String NETWORK_CODE = "network_code";
+    public static String NETWORK_HOME_LOCATION="network_home_location";
+    public static String NETWORK_WORK_LOCATION="network_work_location";
+    public static final String NETWORK_REQUESTS = "network_requests";
+
 
 
     //ride requests
@@ -83,8 +91,8 @@ public class FirebaseFields {
     public static String LONGTITUDE="longitude";
 
     //REVIEWS
-    public static String REVIEWER_UID="driver_route";
+    public static String REVIEWER_UID="reviewer_uid";
     public static String REVIEWER_NAME="reviewer_name";
-    public static String REVIEWER_CONTENT="review_content";
-    public static String REVIEWER_RATING="review_rating";
+    public static String REVIEW_DESCRIPTION="review_content";
+    public static String REVIEW_RATING="review_rating";
 }

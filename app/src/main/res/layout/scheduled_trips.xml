@@ -26,13 +26,13 @@
             android:background="@color/colorPrimary">
 
             <TextView
-                android:id="@+id/timing"
+                android:id="@+id/txtNetworkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="Imara daima network"
+                android:text="network"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/timing" />
+                app:layout_constraintTop_toBottomOf="@+id/txtNetworkName" />
 
             <ImageView
                 android:id="@+id/imageView34"

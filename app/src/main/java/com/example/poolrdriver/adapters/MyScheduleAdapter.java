@@ -51,7 +51,7 @@ public class MyScheduleAdapter extends RecyclerView.Adapter<MyScheduleAdapter.Ho
 
             //initializations
             destinations=itemView.findViewById(R.id.destination);
-            timing=itemView.findViewById(R.id.timing);
+            timing=itemView.findViewById(R.id.txtNetworkName);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.poolrdriver;
 
 
+import static com.example.poolrdriver.My_trips_expanded.STARTING_LOCATION;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.databinding.ActivityMapsBinding;
@@ -78,6 +80,11 @@ public class MapsActivity extends FragmentActivity{
                             Intent intent=new Intent(getApplicationContext(),OngoingTrip.class);
                             TripModel trip=setUpTripObject(new Trips(snapshot));
                             intent.putExtra(CHOSEN_TRIP,trip);
+
+                            Bundle startingPoint = new Bundle();
+                            startingPoint.putParcelable("start", trip.getSourcePoint());
+
+                            intent.putExtra(STARTING_LOCATION,startingPoint);
                             intent.putStringArrayListExtra(PASSENGERS,passengers);
                             //put extra a trip object from snapshot
                             startActivity(intent);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".NetworkUserProfile"
+            android:exported="false" />
+        <activity
+            android:name=".ViewNetworkRequests"
+            android:exported="false" />
+        <activity
+            android:name=".NetworkInformationScreen"
+            android:exported="false" />
+        <activity
+            android:name=".NetworksActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

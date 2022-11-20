@@ -1,10 +1,7 @@
 package com.example.poolrdriver.userRegistrationJourney;
 
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,7 +12,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.poolrdriver.Firebase.FirebaseConstants;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.adapters.IntroViewPagerAdapter;
 import com.example.poolrdriver.classes.screenItem;

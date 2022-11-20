@@ -11,13 +11,18 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.setDocument;
 import static com.example.poolrdriver.util.AppSystem.getMyDefaultLocation;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,23 +32,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
-import com.example.poolrdriver.OngoingTrip;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.TAG;
 import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.models.Requests;
 import com.example.poolrdriver.models.TripModel;
-import com.example.poolrdriver.reviewActivity;
+import com.example.poolrdriver.userRegistrationJourney.LogInScreen;
+import com.example.poolrdriver.util.RatingDialog;
 import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ncorti.slidetoact.SlideToActView;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -74,7 +77,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OngoingTripsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull OngoingTripsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String passengerId=passengerIDs.get(position);
         String path= FirebaseConstants.PASSENGERS+"/"+passengerId;
         getDocument(createDocumentReference(path), new Callback() {
@@ -84,7 +87,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
                 Passenger passenger=new Passenger(task.getResult());
                 //reviews=passenger.getReviews();
                 setTexts(passenger,holder);
-                setListener(passenger,holder);
+                setListener(passenger,position,holder);
 
             }
 
@@ -95,9 +98,16 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
         });
 
     }
+    private void navigateUser(){
+        Uri navigationIntentUri = Uri.parse("google.navigation:q=" + trip.getDestinationpoint().latitude +"," + trip.getDestinationpoint().longitude);//creating intent with latlng
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, navigationIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        activity.startActivity(mapIntent);
+    }
 
-    private void setListener(Passenger passenger, ViewHolder holder) {
-      holder.endTrip.setOnSlideCompleteListener(slideToActView -> calculateTripCost(passenger));
+    private void setListener(Passenger passenger,int position, ViewHolder holder) {
+      holder.btnEndTrip.setOnClickListener(v -> calculateTripCost(passenger,position));
+      holder.btnMapNavigator.setOnClickListener(v -> navigateUser());
     }
 
     private void setTexts(Passenger passenger, ViewHolder holder) {
@@ -112,23 +122,29 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
     public int getItemCount() {
         return passengerIDs.size();
     }
-    private void calculateTripCost(Passenger passenger) {
+    private void calculateTripCost(Passenger passenger,int position) {
+
+
+
         getMyDefaultLocation(activity, new Callback() {
             @Override
             public void onSuccess(Object object) {
                 endLocation=(Location) object;
-                checkIfTripIsComplete(passenger);
+                checkIfTripIsComplete(passenger,position);
                 Log.d("tag", "checkIfTripIsComplete: "+endLocation);
 
             }
 
             @Override
-            public void onError(Object object) {}});
+            public void onError(Object object) {
+
+            }
+        });
 
     }
 
 
-    private void checkIfTripIsComplete(Passenger passenger) {
+    private void checkIfTripIsComplete(Passenger passenger,int position) {
         LatLng source=new LatLng(startLocation.getLatitude(),startLocation.getLongitude());
         LatLng tripSource=trip.getSourcePoint();
 
@@ -143,60 +159,80 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
         Log.d("tag", "checkIfTripIsComplete: "+tripDestination);
 
 
-        double distance,pricePerSeat;
-        boolean isTripComplete;
+        double pricePerSeat=0;
+        boolean isTripComplete=false;
 
 
         //if trip is within limits of driver
-        if (mathsUtil.getDistanceFromUserPoints(source,tripSource)<1
-                && mathsUtil.getDistanceFromUserPoints(destination,tripDestination)<1){
+        if (mathsUtil.getDistanceFromUserPoints(destination,tripDestination)<1){
             pricePerSeat=trip.getTripPrice();
             isTripComplete=true;
-
-        }
-        //trip canceled prematurely
-        else {
-            distance=mathsUtil.getDistanceFromUserPoints(source,destination);
-            pricePerSeat=(distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER)/trip.getSeats();
-            isTripComplete=false;
+            chargeBookingFee(pricePerSeat,passenger,isTripComplete,position);
 
         }
 
+            //trip canceled prematurely
+        else  {
+            double distance=mathsUtil.getDistanceFromUserPoints(source,destination);
+            if(distance<1){
+                new AlertDialog.Builder(activity)
+                        .setTitle("Cancel trip")
+                        .setMessage("You haven't traveled for the minimum distance to warant a carpool. Do you still want to cancel?")
+                        .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
+                            //cancelled ride
+
+                            RatingDialog rate=new RatingDialog(activity,passenger,trip.getTripID());
+                            rate.startRatingAlertDialog();
+
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog12, which) -> dialog12.dismiss())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+            }
+            else {
+                Toast.makeText(mContext, "you are cancelling the trip early", Toast.LENGTH_SHORT).show();
+                pricePerSeat=(distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER)/trip.getSeats();
+                chargeBookingFee(pricePerSeat,passenger,false,position);
+            }
 
 
-        chargeBookingFee(pricePerSeat,passenger,isTripComplete);
+        }
+
+
+
     }
 
-    private void chargeBookingFee(double pricePerSeat,Passenger passenger,boolean isTripComplete) {
+    private void chargeBookingFee(double pricePerSeat,Passenger passenger,boolean isTripComplete,int pos) {
 
 
-        movePledgedFundsToDriverWallet(passenger,pricePerSeat,isTripComplete);
+        movePledgedFundsToDriverWallet(passenger,pricePerSeat,isTripComplete,pos);
 
     }
 
-    private void movePledgedFundsToDriverWallet(Passenger passenger,double pricePerSeat, boolean isTripComplete) {
-        getPledgeWalletForTheSpecificTrip(passenger,pricePerSeat,isTripComplete);
+    private void movePledgedFundsToDriverWallet(Passenger passenger,double pricePerSeat, boolean isTripComplete,int pos) {
+        getPledgeWalletForTheSpecificTrip(passenger,pricePerSeat,isTripComplete,pos);
     }
 
-    private void getPledgeWalletForTheSpecificTrip(Passenger passenger,double pricePerSeat,boolean isTripComplete) {
-        String path=FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+ "/"+FirebaseConstants.PLEDGED_FUNDS_WALLET;
-        getDocumentsFromQueryInCollection(
-                createQuery(
-                        createCollectionReference(path),
-                        FirebaseFields.TRIP_ID,
-                        trip.getTripID()), new Callback() {
+    private void getPledgeWalletForTheSpecificTrip(Passenger passenger,double pricePerSeat,boolean isTripComplete,int position) {
+        String path=FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+ "/"+FirebaseConstants.PLEDGED_FUNDS_WALLET+"/"+trip.getTripID();
+        getDocument(
+                createDocumentReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
 
-                Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
+                Task<DocumentSnapshot> task=(Task<DocumentSnapshot>) object;
+                DocumentSnapshot snapshot=task.getResult();
 
-                for (DocumentSnapshot snapshot:task.getResult()){
+
+                    Toast.makeText(mContext, "You have.", Toast.LENGTH_SHORT).show();
                     double cash_for_trip=snapshot.getDouble(FirebaseFields.CASH);
                     double bookingFee=snapshot.getDouble(FirebaseFields.PASSENGER_BOOKING_FEE);
 
                     //if trip is complete
                     if (isTripComplete) {
                         //charge driver cut
+                        //reconsider
                         double driverFee=cash_for_trip*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
 
                         //update new price information
@@ -236,10 +272,17 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
                     //update trip information
                     updateTrips(passenger.getUsername());//todo: fix error
                     deleteWalletEntry(snapshot.getId(),passenger.getUsername());
+                    passengerIDs.remove(position);
+                    notifyItemRemoved(position);
+
+                    //review passenger
+                    RatingDialog rate=new RatingDialog(activity,passenger,trip.getTripID());
+                    rate.startRatingAlertDialog();
                     //Toast.makeText(mContext, "Trip successfully ended for "+passenger.getNames(), Toast.LENGTH_SHORT).show();
 
                 }
-            }
+
+
 
             @Override
             public void onError(Object object) {
@@ -273,7 +316,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
 
@@ -292,7 +335,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
                     String cash= String.valueOf(snapshot.get(FirebaseFields.CASH));
                     wallet_balance=Double.valueOf(cash);
                     wallet_balance=wallet_balance+driverFee;
-                    topUpCash(walletUid,wallet_balance);
+                    topUpAdminCash(walletUid,wallet_balance);
                     logTransaction();
                 }
             }
@@ -334,8 +377,9 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
         //move trip to past trips
         String pledgeWalletPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.PLEDGED_FUNDS_WALLET+"/"+walletId;
         String upcomingTripPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.TRIPS+"/"+trip.getTripID();
-        String ongoingTripPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.ONGOING_TRIP+"/"+new User().getUID();
+        String ongoingTripPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.ONGOING_TRIP+"/"+trip.getTripID();
         String booking_on_trip=FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS+"/"+passengerID;
+
 
         deleteFromDatabase(pledgeWalletPath);
         deleteFromDatabase(upcomingTripPath);
@@ -353,7 +397,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
     }
@@ -372,7 +416,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+        Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
 
@@ -390,12 +434,26 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
 
     }
 
+    private void topUpAdminCash(String walletUid,double newBalance) {
+        String path=FirebaseConstants.ADMIN+"/"+FirebaseConstants.ROOT_ADMIN_ID+"/"+FirebaseConstants.ADMIN_WALLET+"/"+walletUid;
+        setDocument(createWallet(newBalance), createDocumentReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+
+            }
+
+            @Override
+            public void onError(Object object) {
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
+            }
+        });
+    }
 
 
     private void topUpCash(String walletUid,double newBalance) {
@@ -408,7 +466,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
     }
@@ -422,7 +480,7 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
             @Override
             public void onError(Object object) {
-
+                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
             }
         });
     }
@@ -445,12 +503,15 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        SlideToActView endTrip;
+
         TextView passengerName;
         ImageView profilePicture;
+        TextView btnMapNavigator;
+        Button btnEndTrip;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            endTrip=itemView.findViewById(R.id.end_trip_slider);
+            btnEndTrip=itemView.findViewById(R.id.btn_endTrip);
+            btnMapNavigator=itemView.findViewById(R.id.txtViewDirections);
             passengerName=itemView.findViewById(R.id.passenger_name_ongoing);
             profilePicture=itemView.findViewById(R.id.imgPassengerProfilePicture_ongoing);
         }

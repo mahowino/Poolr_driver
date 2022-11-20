@@ -6,27 +6,24 @@ import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
-import com.example.poolrdriver.classes.Network;
 import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.GeoPoint;
 import com.ncorti.slidetoact.SlideToActView;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +38,7 @@ public class price_split extends AppCompatActivity {
     EditText priceToPay;
     Long maxPrice;
     TimePickerObject date;
+    CheckBox chkIsRouteCommon;
     private static final String TRIP_EXTRA="trip";
     private static final String date_selected="time_picker";
 
@@ -112,6 +110,8 @@ public class price_split extends AppCompatActivity {
         max_amount=findViewById(R.id.txt_maximum_to_charge);
         priceToPay=findViewById(R.id.editTextPriceToPay);
         amount_of_luggage=findViewById(R.id.tab_LuggageAllowed);
+        chkIsRouteCommon=findViewById(R.id.chkIsRouteCommon);
+
         double tripDistance= mathsUtil.getDistanceFromUserPoints(trip.getSourcePoint(),trip.getDestinationpoint());
         maxPrice=Math.round(tripDistance*FirebaseConstants.FIXED_RATE_PER_KILOMETER);
         maxPrice=maxPrice/trip.getSeats();
@@ -180,6 +180,8 @@ public class price_split extends AppCompatActivity {
         map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
         map.put(FirebaseFields.DRIVER,trip.getDriverUid());
         map.put(FirebaseFields.DEPARTURETIME, date.getDate(true));
+        if (chkIsRouteCommon.isChecked())
+            map.put(FirebaseFields.IS_ROUTE_COMMON,true);
 
         //when putting price, add passenger booking fee to the trip cost.
 

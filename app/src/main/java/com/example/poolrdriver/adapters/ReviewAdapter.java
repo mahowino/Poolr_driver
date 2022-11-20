@@ -38,7 +38,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     private void setDataOnReview(Reviews review,ViewHolder holder) {
         holder.reviewerName.setText(review.getReviewerName());
         holder.review.setText(review.getReview());
-        holder.reviewRating.setText(review.getRating());
+        holder.reviewRating.setText(review.getRating()+" stars");
         Glide.with(holder.itemView).load(review.getReviewerProfilePicture()).into(holder.reviewerProfilePicture);
     }
 

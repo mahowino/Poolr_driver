@@ -1,20 +1,27 @@
-package com.example.poolrdriver.classes;
+package com.example.poolrdriver.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Network implements Parcelable {
-    String NetworkName,NetworkTravelAdminUID,NetworkUID;
-    int NetworkRating;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.GeoPoint;
 
-    public Network() {
-    }
+public class Network implements Parcelable {
+    String NetworkName,NetworkTravelAdminUID,NetworkUID,networkCode;
+    int NetworkRating;
+    LatLng homeLocation,workLocation;
+    boolean isNetworkAcceptOnCode;
+
 
     protected Network(Parcel in) {
         NetworkName = in.readString();
         NetworkTravelAdminUID = in.readString();
         NetworkUID = in.readString();
+        networkCode = in.readString();
         NetworkRating = in.readInt();
+        homeLocation = in.readParcelable(LatLng.class.getClassLoader());
+        workLocation = in.readParcelable(LatLng.class.getClassLoader());
+        isNetworkAcceptOnCode = in.readByte() != 0;
     }
 
     public static final Creator<Network> CREATOR = new Creator<Network>() {
@@ -28,6 +35,43 @@ public class Network implements Parcelable {
             return new Network[size];
         }
     };
+
+    public boolean isNetworkAcceptOnCode() {
+        return isNetworkAcceptOnCode;
+    }
+
+    public void setNetworkAcceptOnCode(boolean networkAcceptOnCode) {
+        isNetworkAcceptOnCode = networkAcceptOnCode;
+    }
+;
+
+    public String getNetworkCode() {
+        return networkCode;
+    }
+
+    public void setNetworkCode(String networkCode) {
+        this.networkCode = networkCode;
+    }
+
+    public LatLng getHomeLocation() {
+        return homeLocation;
+    }
+
+    public void setHomeLocation(LatLng homeLocation) {
+        this.homeLocation = homeLocation;
+    }
+
+    public LatLng getWorkLocation() {
+        return workLocation;
+    }
+
+    public void setWorkLocation(LatLng workLocation) {
+        this.workLocation = workLocation;
+    }
+
+    public Network() {
+    }
+
 
     public String getNetworkName() {
         return NetworkName;
@@ -61,6 +105,7 @@ public class Network implements Parcelable {
         NetworkRating = networkRating;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -71,6 +116,10 @@ public class Network implements Parcelable {
         dest.writeString(NetworkName);
         dest.writeString(NetworkTravelAdminUID);
         dest.writeString(NetworkUID);
+        dest.writeString(networkCode);
         dest.writeInt(NetworkRating);
+        dest.writeParcelable(homeLocation, flags);
+        dest.writeParcelable(workLocation, flags);
+        dest.writeByte((byte) (isNetworkAcceptOnCode ? 1 : 0));
     }
 }

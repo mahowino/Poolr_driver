@@ -12,12 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.poolrdriver.NetworkMainPage;
 import com.example.poolrdriver.NetworkTrips;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Network;
-import com.example.poolrdriver.classes.Schedule;
+import com.example.poolrdriver.models.Network;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NetworksAdapter extends RecyclerView.Adapter<NetworksAdapter.HolderView> {
@@ -25,8 +24,8 @@ public class NetworksAdapter extends RecyclerView.Adapter<NetworksAdapter.Holder
     Context mContext;
     Activity activity;
 
-    public NetworksAdapter(List<Network> schedules, Context mContext, Activity activity) {
-        this.networks=schedules;
+    public NetworksAdapter(List<Network> networks, Context mContext, Activity activity) {
+        this.networks=networks;
         this.mContext=mContext;
         this.activity=activity;
     }
@@ -48,8 +47,8 @@ public class NetworksAdapter extends RecyclerView.Adapter<NetworksAdapter.Holder
     }
 
     private void openNetworkTrips(Network network) {
-        Intent intent=new Intent(mContext, NetworkTrips.class);
-        intent.putExtra("network",network);
+        Intent intent=new Intent(mContext, NetworkMainPage.class);
+        intent.putExtra("Network",network);
         activity.startActivity(intent);
     }
 
@@ -65,8 +64,8 @@ public class NetworksAdapter extends RecyclerView.Adapter<NetworksAdapter.Holder
             super(itemView);
 
             //initializations
-            network_name=itemView.findViewById(R.id.destination);
-            timing=itemView.findViewById(R.id.timing);
+
+            network_name=itemView.findViewById(R.id.txtNetworkName);
             networkCard=itemView.findViewById(R.id.card_network);
         }
     }

@@ -1,16 +1,20 @@
 package com.example.poolrdriver.classes;
 
+import static android.content.ContentValues.TAG;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
+import static com.example.poolrdriver.classes.userLogInAttempt.user;
 
-import android.hardware.lights.LightsManager;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
+import com.example.poolrdriver.Firebase.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -28,7 +32,9 @@ public class Passenger implements Parcelable {
     DocumentSnapshot snapshot;
     Task<QuerySnapshot> reviewSnapshot;
     StorageReference reference;
-    String userDetailsPath,reviewsPath;
+    String userDetailsPath,reviewsPath,networkId;
+    String travelAdminUid;
+    boolean isTravelAdministrator;
 
 
     public String getUsername() {
@@ -57,6 +63,29 @@ public class Passenger implements Parcelable {
 
     public Uri getProfilePic() {return profilePic;}
 
+    public static void getProfilePicture(Callback callback){
+        //firebase storage setup and initialization
+        StorageReference firebaseStorage= FirebaseStorage.getInstance().getReference()
+                .child("profileImages")
+                .child(new User().getUID()+".jpeg");
+
+        firebaseStorage.getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                    Log.d(TAG, "onSuccess: "+uri);callback.onSuccess(uri);})
+                .addOnFailureListener(e -> Log.e(TAG, "onFailure: ",e.getCause()));
+    }
+    public static void getProfilePicture(String Uid,Callback callback){
+        //firebase storage setup and initialization
+        StorageReference firebaseStorage= FirebaseStorage.getInstance().getReference()
+                .child("profileImages")
+                .child(Uid+".jpeg");
+
+        firebaseStorage.getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                    Log.d(TAG, "onSuccess: "+uri);callback.onSuccess(uri);})
+                .addOnFailureListener(e -> Log.e(TAG, "onFailure: ",e.getCause()));
+    }
+
      public void setProfilePic(Uri profilePic) {
          this.profilePic = profilePic;
      }
@@ -76,8 +105,18 @@ public class Passenger implements Parcelable {
          getReviewsFromFirebase();
          getProfilePictureFromFirestore();
      }
+    public Passenger(DocumentSnapshot snapshot, Context context){
+        this.snapshot=snapshot;
+        username=snapshot.getId();
 
-    private void getUserInformation() {
+    }
+
+
+    public boolean isNetworkAdmin(){
+        return username.equals(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN));
+    }
+
+        private void getUserInformation() {
          getSnapshot();
          getReviewsFromFirebase();
          getProfilePictureFromFirestore();

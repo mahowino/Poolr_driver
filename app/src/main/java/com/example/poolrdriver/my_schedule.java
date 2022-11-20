@@ -1,9 +1,7 @@
 package com.example.poolrdriver;
 
-import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createDocumentReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocument;
-import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
 import static com.example.poolrdriver.util.AppSystem.displayError;
 
 import android.content.Context;
@@ -13,20 +11,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.MyScheduleAdapter;
 import com.example.poolrdriver.classes.Schedule;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Objects;

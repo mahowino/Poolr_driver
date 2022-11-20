@@ -15,18 +15,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.models.CarTypes;
+import com.example.poolrdriver.userRegistrationJourney.HomeAndWorkAdress;
 import com.example.poolrdriver.util.LoadingDialog;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CarDetail2 extends AppCompatActivity {
@@ -74,7 +74,7 @@ public class CarDetail2 extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                 Toast.makeText(CarDetail2.this, "Successfully added car", Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(getApplicationContext(),MapsActivity.class);
+                Intent intent=new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(intent);
             }
 

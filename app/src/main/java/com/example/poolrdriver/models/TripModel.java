@@ -3,15 +3,11 @@ package com.example.poolrdriver.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.poolrdriver.classes.Network;
-import com.example.poolrdriver.classes.Passenger;
 import com.example.poolrdriver.classes.Requests;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TripModel implements Parcelable {
     private int seats;
@@ -25,7 +21,23 @@ public class TripModel implements Parcelable {
     private TimePickerObject timePickerObject;
     private String networkId,tripID;
     private LatLng sourceGeopoint,destinationGeopoint;
+    private LatLng startingPoint,endingPoint;
 
+    public LatLng getStartingPoint() {
+        return startingPoint;
+    }
+
+    public void setStartingPoint(LatLng startingPoint) {
+        this.startingPoint = startingPoint;
+    }
+
+    public LatLng getEndingPoint() {
+        return endingPoint;
+    }
+
+    public void setEndingPoint(LatLng endingPoint) {
+        this.endingPoint = endingPoint;
+    }
 
     public TripModel(){}
 
@@ -52,6 +64,8 @@ public class TripModel implements Parcelable {
         tripID = in.readString();
         sourceGeopoint = in.readParcelable(LatLng.class.getClassLoader());
         destinationGeopoint = in.readParcelable(LatLng.class.getClassLoader());
+        startingPoint = in.readParcelable(LatLng.class.getClassLoader());
+        endingPoint = in.readParcelable(LatLng.class.getClassLoader());
     }
 
     public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
@@ -250,5 +264,7 @@ public class TripModel implements Parcelable {
         dest.writeString(tripID);
         dest.writeParcelable(sourceGeopoint, flags);
         dest.writeParcelable(destinationGeopoint, flags);
+        dest.writeParcelable(startingPoint, flags);
+        dest.writeParcelable(endingPoint, flags);
     }
 }

@@ -3,7 +3,6 @@ package com.example.poolrdriver;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createQuery;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsFromQueryInCollection;
-import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,14 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.MyTripsAdapter;
-import com.example.poolrdriver.classes.Network;
+import com.example.poolrdriver.models.Network;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.tasks.Task;

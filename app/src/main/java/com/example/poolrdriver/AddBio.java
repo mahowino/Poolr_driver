@@ -12,9 +12,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.userRegistrationJourney.HomeAndWorkAdress;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class AddBio extends AppCompatActivity {
             @Override
             public void onSuccess(Object object) {
                 Toast.makeText(AddBio.this, "Successfully updated bio", Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(getApplicationContext(),MapsActivity.class);
+                Intent intent=new Intent(getApplicationContext(), HomeAndWorkAdress.class);
                 startActivity(intent);
             }
 

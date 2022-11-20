@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             sleep(2000);
             if(user!=null) {
                 if (user.getPhoneNumber()==null){redirectActivity(MainActivity.this, verifyPhoneNumberScreen.class); finish();}
-                else redirectActivity(MainActivity.this, MapsActivity.class); finish(); finish();}
+                else redirectActivity(MainActivity.this, MyCars.class); finish(); finish();}
             else{redirectActivity(MainActivity.this, WalkthroughScreen.class); finish();}
         }
         catch (Exception exception){

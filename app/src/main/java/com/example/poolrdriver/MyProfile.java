@@ -2,7 +2,6 @@ package com.example.poolrdriver;
 
 import static android.content.ContentValues.TAG;
 
-import static com.example.poolrdriver.util.AppSystem.openGallery;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,10 +19,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.FirebaseConstants;
-import com.example.poolrdriver.Firebase.FirebaseFields;
+import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
+import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.userRegistrationJourney.HomeAndWorkAdress;
