@@ -26,6 +26,9 @@
         android:theme="@style/Theme.PoolrDriver"
         tools:replace="android:icon">
         <activity
+            android:name=".MyRoutes"
+            android:exported="false" />
+        <activity
             android:name=".MyCars"
             android:exported="false" />
         <activity

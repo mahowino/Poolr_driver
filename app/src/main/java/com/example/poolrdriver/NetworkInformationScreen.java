@@ -66,6 +66,7 @@ public class NetworkInformationScreen extends AppCompatActivity {
         checkIfCodeExists(code, new Callback() {
             @Override
             public void onSuccess(Object object) {
+                loadingDialog.dismissDialog();
                 Network network=new Network();
                 network.setNetworkName(networkName.getText().toString());
                 network.setNetworkTravelAdminUID(new User().getUID());

@@ -87,6 +87,7 @@ public class TimePickerObject implements Parcelable {
         calendar.set(Calendar.YEAR,year);
         return calendar.getTime();
     }
+
     public Date getDate(boolean bool){
         return new Date((year-1900),month,day,hour,minute,0);
     }

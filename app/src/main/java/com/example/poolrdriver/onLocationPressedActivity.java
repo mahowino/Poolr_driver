@@ -217,7 +217,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         for (DocumentSnapshot snapshot:querysnapshot){
             Network network=new Network();
             network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
-            network.setNetworkUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_UID)));
+            network.setNetworkUID(snapshot.getId());
             network.setNetworkTravelAdminUID(String.valueOf(snapshot.get(FirebaseFields.NETWORK_TRAVEL_ADMIN)));
             networks.add(network);
         }
@@ -437,6 +437,7 @@ public class onLocationPressedActivity extends AppCompatActivity implements Task
         next.putExtra("destinationPoint",destinationPoint);
         next.putExtra("sourcePoint",sourcePoint);
         next.putExtra("trip", trip);
+        next.putExtra(CAR_FOR_TRIP,chosenCarForTrip);
         next.putExtra("time_picker",trip.getTimePickerObject());
 
         startActivity(next);

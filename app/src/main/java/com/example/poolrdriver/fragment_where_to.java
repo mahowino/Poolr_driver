@@ -24,6 +24,7 @@ import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.models.Network;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -131,7 +132,7 @@ public class fragment_where_to extends Fragment {
 
         requests.setOnClickListener(v -> redirectActivity(getActivity(),NotificationsActivity.class));
 
-        wallet.setOnClickListener(v -> redirectActivity(getActivity(),wallet.class));
+        wallet.setOnClickListener(v -> redirectActivity(getActivity(), NetworksActivity.class));
 
         trips.setOnClickListener(v -> redirectActivity(getActivity(),choose_trip_to_display.class));
     }

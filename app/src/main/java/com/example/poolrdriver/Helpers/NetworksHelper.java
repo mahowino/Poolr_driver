@@ -27,6 +27,7 @@ import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.AggregateQuerySnapshot;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,11 +40,13 @@ import java.util.Map;
 public class NetworksHelper {
 
     public static void createNetworkInDatabase(Network network, Callback callback){
-        setDocument(createNetworkPath(network), NETWORK_REFERENCE, new Callback() {
+        DocumentReference reference=NETWORK_REFERENCE.document();
+        setDocument(createNetworkPath(network), reference, new Callback() {
             @Override
             public void onSuccess(Object object) {
                 //generate code;
-                addNetworkMember(network,callback);
+               network.setNetworkUID(reference.getId());
+               addNetworkMember(network,callback);
 
             }
 
@@ -111,6 +114,7 @@ public class NetworksHelper {
                     }
                     else callback.onError(null);
                 }
+                callback.onError(null);
 
             }
 

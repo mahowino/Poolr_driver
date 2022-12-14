@@ -65,7 +65,7 @@ public class MyCars extends AppCompatActivity {
         recyclerView.setVisibility(View.VISIBLE);
 
         CarTypeAdapter adapter=new CarTypeAdapter(getApplicationContext(), cars, position -> {
-            Intent intent=new Intent(getApplicationContext(),onLocationPressedActivity.class);
+            Intent intent=new Intent(getApplicationContext(),MyRoutes.class);
             intent.putExtra(CAR_FOR_TRIP,cars.get(position));
             startActivity(intent);
             overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );

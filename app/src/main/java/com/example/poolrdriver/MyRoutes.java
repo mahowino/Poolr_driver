@@ -1,16 +1,20 @@
 package com.example.poolrdriver;
 
-import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
-
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.createQuery;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsFromQueryInCollection;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
+import static com.example.poolrdriver.My_trips.FROM_NETWORK;
+import static com.example.poolrdriver.onLocationPressedActivity.CAR_FOR_TRIP;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Callback;
@@ -18,55 +22,65 @@ import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.adapters.MyTripsAdapter;
-import com.example.poolrdriver.models.Network;
 import com.example.poolrdriver.classes.Trips;
+import com.example.poolrdriver.models.CarTypes;
+import com.example.poolrdriver.models.Network;
 import com.example.poolrdriver.models.TripModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class My_trips extends AppCompatActivity {
-    public static final String FROM_NETWORK ="from_network" ;
-    RecyclerView upcomingTrips;
-    private List<TripModel> tripsList;
-    private TextView viewPastTrips;
-    private String network_trips_path,public_trips_path;
-    private List<Network> networks;
+public class MyRoutes extends AppCompatActivity {
+    List<TripModel> tripsList;
+    List<Network> networks;
+    String public_trips_path,network_trips_path;
+    RecyclerView routesRecyclerView;
+    FloatingActionButton addRoute;
+    CarTypes chosenCarForTrip;
     private int counter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_trips);
+        setContentView(R.layout.activity_my_routes);
         initializeVariables();
-        setListeners();
         getPostsDataFromDriver();
-
+        setListeners();
     }
 
     private void setListeners() {
-        viewPastTrips.setOnClickListener(v -> redirectActivity(My_trips.this,PastTrips.class));
+        addRoute.setOnClickListener(view -> {
+            Intent intent=new Intent(getApplicationContext(),onLocationPressedActivity.class);
+            intent.putExtra(CAR_FOR_TRIP,chosenCarForTrip);
+            startActivity(intent);
+            overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+        });
     }
 
     private void initializeVariables() {
         //initializations
         tripsList=new ArrayList<>();
         networks=new ArrayList<>();
-        upcomingTrips=findViewById(R.id.upcomingtripsRecyclerView);
-        viewPastTrips=findViewById(R.id.lnk_view_past_trips);
+        routesRecyclerView=findViewById(R.id.upcomingRoutesRecyclerView);
+        addRoute=findViewById(R.id.btnAddRoute);
+
         getUserNetworks();
 
-        //public trips
-        public_trips_path=FirebaseConstants.RIDES;
 
-        //network trips
-        network_trips_path=FirebaseConstants.NETWORKS;
+        //public trips
+        public_trips_path= FirebaseConstants.ROUTES;
+        chosenCarForTrip=getIntent().getParcelableExtra(CAR_FOR_TRIP);
+
+
+
     }
+
     private void getUserNetworks() {
         String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.NETWORKS;
         getDocumentsInCollection(createCollectionReference(path), new Callback() {
@@ -80,13 +94,12 @@ public class My_trips extends AppCompatActivity {
 
             @Override
             public void onError(Object object) {
-                Toast.makeText(My_trips.this, "error ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyRoutes.this, "error ", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void getNetworks(QuerySnapshot querysnapshot) {
-
         for (DocumentSnapshot snapshot:querysnapshot){
             Network network=new Network();
             network.setNetworkName(String.valueOf(snapshot.get(FirebaseFields.NETWORK_NAME)));
@@ -95,13 +108,9 @@ public class My_trips extends AppCompatActivity {
             networks.add(network);
         }
 
-
-
-
-
     }
     private void getPostsDataFromDriver() {
-                //get user networks
+        //get user networks
         //get networks
         if (networks.size()>0){
             counter=0;
@@ -141,6 +150,7 @@ public class My_trips extends AppCompatActivity {
             public void onError(Object object) {Log.d(TAG.TAG, "onFailure: "+((Exception)object).getMessage());}
         });
     }
+
 
     private void getPublicTripsFromDatabase() {
         Log.d("tag", "onSuccess: "+new User().getUID());
@@ -186,9 +196,9 @@ public class My_trips extends AppCompatActivity {
 
     private void initializeRecyclerView() {
 
-        MyTripsAdapter adapter=new MyTripsAdapter(tripsList,getApplicationContext(),My_trips.this);
-        upcomingTrips.setAdapter(adapter);
-        upcomingTrips.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
+        MyTripsAdapter adapter=new MyTripsAdapter(tripsList,getApplicationContext(),MyRoutes.this);
+        routesRecyclerView.setAdapter(adapter);
+        routesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
 
     }
 }

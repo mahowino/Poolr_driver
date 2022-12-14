@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables;
+import com.example.poolrdriver.MapsActivity;
 import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -67,7 +68,13 @@ public abstract class GoogleSignIn {
 
         GoogleSignIn.authenticateGoogleAccountWithFirebase(idToken, new Callback() {
             @Override
-            public void onSuccess(Object object) {if (((Task<AuthResult>) object).isSuccessful())runSuccesfullSignIn(data,activity,nextClass);}
+            public void onSuccess(Object object) { Task<AuthResult> task=((Task<AuthResult>) object);
+                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                if (task.isSuccessful()){
+                    if (isNew)
+                        runSuccesfullSignIn(data,activity,nextClass);
+                    else AppSystem.redirectActivity(activity, MapsActivity.class);
+                }}
             @Override
             public void onError(Object object) {
                 AppSystem.displayError(activity,activity.getApplicationContext(),(Exception) object);}});

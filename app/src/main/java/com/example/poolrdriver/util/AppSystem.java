@@ -5,6 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -31,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.poolrdriver.Firebase.Constants.Constants;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.onLocationPressedActivity;
 import com.google.android.gms.common.api.ApiException;
@@ -208,6 +211,22 @@ public abstract class AppSystem {
     }
     public static LatLng convertGeopointToLatLong(GeoPoint location) {
         return new LatLng(location.getLatitude(), location.getLongitude());
+    }
+
+    public static void createNotificationChannel(Activity activity) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = activity.getString(R.string.channel_name);
+            String description = activity.getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(Constants.REQUEST_NOTIFICATION, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = activity.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }

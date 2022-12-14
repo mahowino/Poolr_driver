@@ -15,6 +15,8 @@ public abstract class FirebaseConstants {
 
     public static final String REVIEWS = "reviews";
 
+    public static final String ROUTES = "routes";
+
     public static double FIXED_RATE_PER_KILOMETER =44.92;
 
     public static double FIXED_RATE_PASSENGER_CUT =0.07;

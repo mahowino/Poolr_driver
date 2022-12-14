@@ -1,6 +1,8 @@
 package com.example.poolrdriver;
 
 
+import static com.example.poolrdriver.Firebase.FirebaseRepository.createDocumentReference;
+import static com.example.poolrdriver.Firebase.FirebaseRepository.setDocument;
 import static com.example.poolrdriver.My_trips_expanded.STARTING_LOCATION;
 
 import android.content.Intent;
@@ -11,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
+import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.classes.Trips;
 import com.example.poolrdriver.databinding.ActivityMapsBinding;
 import com.example.poolrdriver.models.TripModel;
@@ -23,8 +27,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity{
 
@@ -52,12 +60,51 @@ public class MapsActivity extends FragmentActivity{
                 }
                 return false;
             };
+    private void setFirebaseToken() {
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+                   // Timber.tag("app_token").d(token);
+                    updateTokenInDatabase(getTokenData(token));
+
+                });
+    }
+
+
+    private Map<String, Object> getTokenData(String token) {
+        Map<String,Object> map=new HashMap<>();
+        map.put("token",token);
+        return map;
+    }
+
+    private void updateTokenInDatabase(Map<String,Object> map) {
+        String path=FirebaseConstants.DRIVERS+"/"+new User().getUID();
+        setDocument(map, createDocumentReference(path), SetOptions.merge(), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+
+            }
+
+            @Override
+            public void onError(Object object) {
+
+            }
+        });
+
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
         if(user!=null){
+            setFirebaseToken();
             String path= FirebaseConstants.PASSENGERS+"/"+user.getUid()+"/"+FirebaseConstants.ONGOING_TRIP;
             collectionReference= FirebaseRepository.createCollectionReference(path);
             collectionReference.addSnapshotListener((value, error) -> {

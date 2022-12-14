@@ -201,7 +201,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="wallet"
+                            android:text="networks"
                             android:textColor="@color/black" />
 
                         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -212,7 +212,7 @@
                             android:layout_marginBottom="8dp"
                             android:clickable="true"
                             app:backgroundTint="@color/colorPrimary"
-                            app:srcCompat="@drawable/icons8_wallet_32px" />
+                            app:srcCompat="@drawable/icons8_group_64px" />
                     </LinearLayout>
 
                     <LinearLayout

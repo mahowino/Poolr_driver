@@ -26,7 +26,7 @@ public class FirebaseFields {
     public static final String CAR_YEAR = "car_year";
     public static final String NUMBER_PLATE = "number_plate";
     public static final String COLOR = "color";
-
+    public static final String ROUTE_DAYS = "route_days";
 
 
     public static String UID="uid";

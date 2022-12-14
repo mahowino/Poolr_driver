@@ -1,13 +1,18 @@
 package com.example.poolrdriver;
 
 import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
+import static com.example.poolrdriver.onLocationPressedActivity.CAR_FOR_TRIP;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +20,7 @@ import com.example.poolrdriver.Firebase.Callback;
 import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
 import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.models.CarTypes;
 import com.example.poolrdriver.models.TimePickerObject;
 import com.example.poolrdriver.models.TripModel;
 import com.example.poolrdriver.util.mathsUtil;
@@ -24,6 +30,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.ncorti.slidetoact.SlideToActView;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +45,23 @@ public class price_split extends AppCompatActivity {
     EditText priceToPay;
     Long maxPrice;
     TimePickerObject date;
-    CheckBox chkIsRouteCommon;
+    CheckBox chkIsRouteCommon,checkAllDays;
+    CheckBox [] daysCheckBoxes;
+    private Integer[] chkBoxIds = {
+            R.id.chckMonday,
+            R.id.chckTuesday,
+            R.id.chckWednseday,
+            R.id.chckThursday,
+            R.id.chckFriday,
+            R.id.chckSaturday,
+            R.id.chckSunday
+    };
     private static final String TRIP_EXTRA="trip";
     private static final String date_selected="time_picker";
+    LinearLayout dayPicker;
 
     private final String documentID=generateRandomId();
+    private CarTypes chosenCarForTrip;
 
 
     @Override
@@ -56,6 +75,25 @@ public class price_split extends AppCompatActivity {
 
     private void setUpListeners() {
         post_ride.setOnSlideCompleteListener(slideToActView -> postTrip());
+
+        chkIsRouteCommon.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked)
+                dayPicker.setVisibility(View.VISIBLE);
+            else
+                dayPicker.setVisibility(View.GONE);
+        });
+        checkAllDays.setOnCheckedChangeListener((buttonView, isChecked)->{
+            if (isChecked)
+                for(int i = 0; i < chkBoxIds.length; i++) {
+                    daysCheckBoxes[i].setChecked(true);
+                }
+
+            else
+                for(int i = 0; i < chkBoxIds.length; i++) {
+                    daysCheckBoxes[i].setChecked(false);
+                }
+
+        });
 
     }
 
@@ -94,8 +132,14 @@ public class price_split extends AppCompatActivity {
         else {
             trip.setTripPrice((Long.parseLong(String.valueOf(priceInput))));
 
-            if (trip.isPrivacy()) postTripOnPublicTrips();
-            else postTripOnNetworkTrips();
+            if (chkIsRouteCommon.isChecked()){
+                if (trip.isPrivacy()) postRouteOnPublicTrips();
+                else postRouteOnNetworkTrips();
+            }
+            else {
+                if (trip.isPrivacy()) postTripOnPublicTrips();
+                else postTripOnNetworkTrips();
+            }
 
             redirectActivity(price_split.this,MapsActivity.class);
         }
@@ -111,12 +155,23 @@ public class price_split extends AppCompatActivity {
         priceToPay=findViewById(R.id.editTextPriceToPay);
         amount_of_luggage=findViewById(R.id.tab_LuggageAllowed);
         chkIsRouteCommon=findViewById(R.id.chkIsRouteCommon);
+        dayPicker=findViewById(R.id.dayPickerLayout);
+        checkAllDays=findViewById(R.id.chckAllDays);
+
+
+        daysCheckBoxes = new CheckBox[chkBoxIds.length];
+        for(int i = 0; i < chkBoxIds.length; i++) {
+            daysCheckBoxes[i] =  findViewById(chkBoxIds[i]);
+        }
+
+
 
         double tripDistance= mathsUtil.getDistanceFromUserPoints(trip.getSourcePoint(),trip.getDestinationpoint());
         maxPrice=Math.round(tripDistance*FirebaseConstants.FIXED_RATE_PER_KILOMETER);
         maxPrice=maxPrice/trip.getSeats();
         max_amount.setText("KSH "+maxPrice);
-    }
+        chosenCarForTrip=getIntent().getParcelableExtra(CAR_FOR_TRIP);}
+
     private void postTripOnPublicTrips(){
         String path= FirebaseConstants.RIDES+"/"+documentID;
 
@@ -134,21 +189,63 @@ public class price_split extends AppCompatActivity {
         });
 
     }
+    private void postRouteOnPublicTrips(){
+        String path= FirebaseConstants.ROUTES+"/"+documentID;
+
+        setDocument(getMapData(), createDocumentReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                // Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Object object) {
+                Toast.makeText(price_split.this, "error ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void postRouteOnFirebaseNetwork(String networkUID) {
+        String path= FirebaseConstants.NETWORKS+"/"+networkUID+"/"+FirebaseConstants.ROUTES;
+        setDocument(getMapData(), createCollectionReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+                Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Object object) {
+                Toast.makeText(price_split.this, "error ", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void postTripOnNetworkTrips() {
 
         List<String> networkIDS=getIntent().getStringArrayListExtra("networks");
+
         if (networkIDS==null)postTripOnFirebaseNetwork(trip.getNetworkId());
         else
             for (String networkID:networkIDS)
                 postTripOnFirebaseNetwork(networkID);
     }
+    private void postRouteOnNetworkTrips() {
+
+        List<String> networkIDS=getIntent().getStringArrayListExtra("networks");
+        if (networkIDS==null)postRouteOnFirebaseNetwork(trip.getNetworkId());
+        else
+            for (String networkID:networkIDS)
+                postRouteOnFirebaseNetwork(networkID);
+    }
+
 
     private void postTripOnFirebaseNetwork(String networkUID) {
         String path= FirebaseConstants.NETWORKS+"/"+networkUID+"/"+FirebaseConstants.RIDES;
         setDocument(getMapData(), createCollectionReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
-
+                Toast.makeText(price_split.this, "Your ride has been successfully posted", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -180,10 +277,20 @@ public class price_split extends AppCompatActivity {
         map.put(FirebaseFields.PRIVACY,trip.isPrivacy());
         map.put(FirebaseFields.DRIVER,trip.getDriverUid());
         map.put(FirebaseFields.DEPARTURETIME, date.getDate(true));
-        if (chkIsRouteCommon.isChecked())
-            map.put(FirebaseFields.IS_ROUTE_COMMON,true);
 
-        //when putting price, add passenger booking fee to the trip cost.
+        if (chkIsRouteCommon.isChecked()){
+            map.put(FirebaseFields.IS_ROUTE_COMMON,true);
+            List<Integer> daysOfWeekTripIsAvaliable=new ArrayList<>();
+            for(int i = 0; i < chkBoxIds.length; i++) {
+                if (daysCheckBoxes[i].isChecked())
+                    daysOfWeekTripIsAvaliable.add(i);
+
+            }
+            map.put(FirebaseFields.ROUTE_DAYS,daysOfWeekTripIsAvaliable);
+        }
+
+        map.put(FirebaseFields.NUMBER_PLATE,chosenCarForTrip.getNumberplate());
+
 
         return map;
     }

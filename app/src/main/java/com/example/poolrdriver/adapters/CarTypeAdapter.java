@@ -60,7 +60,7 @@ public class CarTypeAdapter extends RecyclerView.Adapter<CarTypeAdapter.HolderVi
                 .addOnFailureListener(e -> Log.e(TAG, "onFailure: ",e.getCause()));
 
 
-        if(carType.getNumberplate().isEmpty())
+        if(carType.getNumberplate()==null)
         holder.textView.setText(carType.getCarType());
         else
             holder.textView.setText(carType.getCarType() +"  " +carType.getNumberplate().toUpperCase());

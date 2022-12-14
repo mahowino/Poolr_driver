@@ -57,7 +57,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
 
     private void getNotificationFromFirebase() {
-        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.NOTIFICATIONS;
+        String path=FirebaseConstants.DRIVERS+"/"+new User().getUID()+"/"+FirebaseConstants.NOTIFICATIONS;
 
         getDocumentsInCollection(createCollectionReference(path), new Callback() {
             @Override

@@ -1,6 +1,6 @@
 package com.example.poolrdriver.models;
 
-import android.net.Uri;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,6 +13,40 @@ public class CarTypes implements Parcelable {
 
         this.carType = carType;
     }
+
+    protected CarTypes(Parcel in) {
+        carType = in.readString();
+        model = in.readString();
+        numberplate = in.readString();
+        color = in.readString();
+        year = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(carType);
+        dest.writeString(model);
+        dest.writeString(numberplate);
+        dest.writeString(color);
+        dest.writeString(year);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<CarTypes> CREATOR = new Creator<CarTypes>() {
+        @Override
+        public CarTypes createFromParcel(Parcel in) {
+            return new CarTypes(in);
+        }
+
+        @Override
+        public CarTypes[] newArray(int size) {
+            return new CarTypes[size];
+        }
+    };
 
     public String getModel() {
         return model;
@@ -38,11 +72,6 @@ public class CarTypes implements Parcelable {
         this.color = color;
     }
 
-    protected CarTypes(Parcel in) {
-        carType = in.readString();
-        year=in.readString();
-    }
-
     public String getYear() {
         return year;
     }
@@ -50,18 +79,6 @@ public class CarTypes implements Parcelable {
     public void setYear(String year) {
         this.year = year;
     }
-
-    public static final Creator<CarTypes> CREATOR = new Creator<CarTypes>() {
-        @Override
-        public CarTypes createFromParcel(Parcel in) {
-            return new CarTypes(in);
-        }
-
-        @Override
-        public CarTypes[] newArray(int size) {
-            return new CarTypes[size];
-        }
-    };
 
     public String getCarType() {
         return carType;
@@ -71,14 +88,4 @@ public class CarTypes implements Parcelable {
         this.carType = carType;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(carType);
-        dest.writeString(year);
-    }
 }
