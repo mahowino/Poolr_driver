@@ -3,16 +3,16 @@
 
     <application>
         <activity
-            android:name=".NetworkUserProfile"
+            android:name=".ui.activities.other.NetworkUserProfile"
             android:exported="false" />
         <activity
-            android:name=".ViewNetworkRequests"
+            android:name=".ui.activities.networks.ViewNetworkRequests"
             android:exported="false" />
         <activity
-            android:name=".NetworkInformationScreen"
+            android:name=".ui.activities.networks.NetworkInformationScreen"
             android:exported="false" />
         <activity
-            android:name=".NetworksActivity"
+            android:name=".ui.activities.networks.NetworksActivity"
             android:exported="false" />
     </application>
 

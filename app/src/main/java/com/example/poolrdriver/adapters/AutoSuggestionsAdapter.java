@@ -9,8 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import com.example.poolrdriver.models.PlaceApi;
-import com.google.android.libraries.places.widget.Autocomplete;
+import com.example.poolrdriver.classes.models.PlaceApi;
 
 import java.util.ArrayList;
 

@@ -14,10 +14,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.poolrdriver.My_trips_expanded;
+import com.example.poolrdriver.ui.activities.other.My_trips_expanded;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.models.TimePickerObject;
-import com.example.poolrdriver.models.TripModel;
+import com.example.poolrdriver.ui.activities.other.TripSummary;
+import com.example.poolrdriver.classes.models.TimePickerObject;
+import com.example.poolrdriver.classes.models.TripModel;
 
 
 import java.util.List;
@@ -26,10 +27,12 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
     private List<TripModel> tripsList;
     private Context mContext;
     private Activity activity;
-    public MyTripsAdapter(List<TripModel> tripsList, Context mContext, Activity activity) {
+    private boolean isRoute;
+    public MyTripsAdapter(List<TripModel> tripsList, Context mContext, Activity activity,boolean isRoute) {
         this.tripsList=tripsList;
         this.mContext=mContext;
         this.activity=activity;
+        this.isRoute=isRoute;
     }
 
     @NonNull
@@ -51,12 +54,23 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
 
         holder.viewMore.setOnClickListener(v -> {
 
-            TimePickerObject object=tripModel.getTimePickerObject();
-            Intent myTrips=new Intent(activity, My_trips_expanded.class);
-            Log.d("tag", "setUpTripObject: "+tripModel.getTripID());
-            myTrips.putExtra("chosen_trip",tripModel);
-            myTrips.putExtra("trip_time",object);
-            activity.startActivity(myTrips);
+            if (!isRoute){
+                TimePickerObject object=tripModel.getTimePickerObject();
+                Intent myTrips=new Intent(activity, My_trips_expanded.class);
+                Log.d("tag", "setUpTripObject: "+tripModel.getTripID());
+                myTrips.putExtra("chosen_trip",tripModel);
+                myTrips.putExtra("trip_time",object);
+                activity.startActivity(myTrips);
+            }
+            else {
+                TimePickerObject object=tripModel.getTimePickerObject();
+                Intent myTrips=new Intent(activity, TripSummary.class);
+                Log.d("tag", "setUpTripObject: "+tripModel.getTripID());
+                myTrips.putExtra("chosen_trip",tripModel);
+                myTrips.putExtra("trip_time",object);
+                activity.startActivity(myTrips);
+            }
+
 
         });
     }

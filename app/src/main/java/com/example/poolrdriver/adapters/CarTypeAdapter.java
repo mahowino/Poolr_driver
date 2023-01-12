@@ -16,12 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.poolrdriver.Interfaces.ItemClickListener;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.models.CarTypes;
+import com.example.poolrdriver.classes.models.CarTypes;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

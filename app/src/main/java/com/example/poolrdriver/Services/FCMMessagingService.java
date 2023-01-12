@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 
-import com.example.poolrdriver.MainActivity;
+import com.example.poolrdriver.ui.activities.other.MainActivity;
 import com.example.poolrdriver.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

@@ -12,10 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.poolrdriver.NetworkMainPage;
-import com.example.poolrdriver.NetworkTrips;
+import com.example.poolrdriver.ui.activities.networks.NetworkMainPage;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.models.Network;
+import com.example.poolrdriver.classes.models.Network;
 
 import java.util.List;
 

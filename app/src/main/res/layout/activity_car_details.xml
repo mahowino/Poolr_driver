@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Car_details">
+    tools:context=".ui.activities.userRegistrationJourney.Car_details">
 
     <AutoCompleteTextView
         android:id="@+id/car_picker_edit_text"

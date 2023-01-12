@@ -1,15 +1,13 @@
 package com.example.poolrdriver.adapters;
 
-import static com.example.poolrdriver.NetworkUserProfile.NETWORK_FROM;
-import static com.example.poolrdriver.NetworkUserProfile.NETWORK_PASSENGER;
-import static com.example.poolrdriver.classes.Passenger.getProfilePicture;
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
+import static com.example.poolrdriver.ui.activities.other.NetworkUserProfile.NETWORK_FROM;
+import static com.example.poolrdriver.ui.activities.other.NetworkUserProfile.NETWORK_PASSENGER;
+import static com.example.poolrdriver.classes.other.Passenger.getProfilePicture;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.ContentInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +17,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.NetworkUserProfile;
-import com.example.poolrdriver.Passengers;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.ui.activities.other.NetworkUserProfile;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.models.Network;
+import com.example.poolrdriver.classes.other.Passenger;
+import com.example.poolrdriver.classes.models.Network;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 

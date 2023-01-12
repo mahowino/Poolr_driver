@@ -1,32 +1,28 @@
 package com.example.poolrdriver.Helpers;
 
-import static com.example.poolrdriver.Firebase.Constants.FirebaseCollections.*;
-import static com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables.db;
+import static com.example.poolrdriver.Abstract.Constants.FirebaseCollections.*;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.*;
 import static com.example.poolrdriver.util.AppSystem.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.icu.lang.UCharacter;
 
-import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
-import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
-import com.example.poolrdriver.Firebase.Constants.FirebasePaths;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.FirebaseConstants;
+import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
+import com.example.poolrdriver.Abstract.Constants.FirebasePaths;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.Interfaces.FirebaseDocumentCount;
 import com.example.poolrdriver.Interfaces.PassengerRetriever;
-import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.models.Network;
-import com.example.poolrdriver.userRegistrationJourney.LogInScreen;
+import com.example.poolrdriver.classes.other.Passenger;
+import com.example.poolrdriver.classes.models.Network;
 import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.AggregateQuerySnapshot;
 import com.google.firebase.firestore.AggregateSource;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;

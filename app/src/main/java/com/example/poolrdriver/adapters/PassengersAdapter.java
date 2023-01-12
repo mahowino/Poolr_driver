@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,10 +15,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.poolrdriver.PassengerProfile;
+import com.example.poolrdriver.ui.activities.other.PassengerProfile;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.models.Requests;
+import com.example.poolrdriver.classes.other.Passenger;
+import com.example.poolrdriver.classes.models.Requests;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;

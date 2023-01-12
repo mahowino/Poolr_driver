@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".drop_offs">
+    tools:context=".ui.activities.other.drop_offs">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

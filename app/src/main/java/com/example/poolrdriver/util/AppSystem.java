@@ -14,11 +14,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.telecom.Call;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -33,9 +31,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.example.poolrdriver.Firebase.Constants.Constants;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.Constants.Constants;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.onLocationPressedActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -117,7 +115,7 @@ public abstract class AppSystem {
                 .checkLocationSettings(builder.build())
                 .addOnCompleteListener(task -> promptUserForGps(task,activity));
     }
-    public static void getMyDefaultLocation(Activity activity,com.example.poolrdriver.Firebase.Callback callback) {
+    public static void getMyDefaultLocation(Activity activity, Callback callback) {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(5000);

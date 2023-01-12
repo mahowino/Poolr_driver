@@ -8,10 +8,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
-import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
-import com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables;
-import com.example.poolrdriver.classes.userLogInAttempt;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.FirebaseConstants;
+import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
+import com.example.poolrdriver.Abstract.Constants.FirebaseInitVariables;
+import com.example.poolrdriver.classes.other.userLogInAttempt;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;

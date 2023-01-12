@@ -6,9 +6,10 @@ import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 import android.app.Activity;
 import android.util.Log;
 
-import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
-import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
-import com.example.poolrdriver.Firebase.Constants.FirebaseInitVariables;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.FirebaseConstants;
+import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
+import com.example.poolrdriver.Abstract.Constants.FirebaseInitVariables;
 import com.example.poolrdriver.util.AppSystem;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;

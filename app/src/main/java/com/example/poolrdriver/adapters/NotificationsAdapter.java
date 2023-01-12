@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Notifications;
+import com.example.poolrdriver.classes.other.Notifications;
 
 import java.util.List;
 

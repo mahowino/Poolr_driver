@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Schedule;
+import com.example.poolrdriver.classes.other.Schedule;
 
 import java.util.ArrayList;
 

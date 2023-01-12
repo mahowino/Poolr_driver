@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.screenItem;
+import com.example.poolrdriver.classes.other.screenItem;
 
 import java.util.List;
 

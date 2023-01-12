@@ -5,19 +5,20 @@ import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
-import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.FirebaseConstants;
+import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.classes.Reviews;
+import com.example.poolrdriver.classes.other.Passenger;
+import com.example.poolrdriver.classes.other.Reviews;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,16 @@ public class RatingDialog {
     RatingBar ratingBar;
     EditText ratingDescription;
     Passenger passenger;
-    String tripId,userDescription;
+    String tripId;
     float rating;
     Button submitRating;
+    CheckBox instantBookListCheckBox;
+
     public RatingDialog(Activity activity, Passenger passenger, String tripID) {
         this.tripId=tripID;
         this.passenger=passenger;
         this.activity = activity;
+
         rating=0;
     }
     public void startRatingAlertDialog(){
@@ -64,6 +68,8 @@ public class RatingDialog {
     }
 
     private void postRating() {
+        if (instantBookListCheckBox.isChecked())
+            addPassengerToDriverList();
         Reviews reviews=new Reviews();
         reviews.setReview(ratingDescription.getText().toString());
         reviews.setRating(rating);
@@ -84,12 +90,41 @@ public class RatingDialog {
 
     }
 
+    private void addPassengerToDriverList() {
+        String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.INSTANT_BOOK_LIST+"/"+passenger.getUsername();
+        String path2= FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+"/"+FirebaseConstants.INSTANT_BOOK_LIST+"/"+new User().getUID();
+        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createCollectionReference(path), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+
+            }
+
+            @Override
+            public void onError(Object object) {
+                Exception e=(Exception) object;
+                Toast.makeText(activity, "error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createCollectionReference(path2), new Callback() {
+            @Override
+            public void onSuccess(Object object) {
+
+            }
+
+            @Override
+            public void onError(Object object) {
+                Exception e=(Exception) object;
+                Toast.makeText(activity, "error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private View setViewTexts(View view, String passengerName, String tripId) {
         name=view.findViewById(R.id.txtPassengerNameRatingCard);
         ratingBar=view.findViewById(R.id.ratingBarPassenger);
         ratingDescription=view.findViewById(R.id.ratingDescriptionBar);
         submitRating=view.findViewById(R.id.btnSubmitRating);
-
+        instantBookListCheckBox=view.findViewById(R.id.chkBxInstantBookList);
         name.setText(passengerName);
         ratingBar.setRating(0);
         return view;
@@ -106,6 +141,13 @@ public class RatingDialog {
         map.put(FirebaseFields.REVIEW_DESCRIPTION,reviews.getReview());
         map.put(FirebaseFields.REVIEW_RATING,reviews.getRating());
         map.put(FirebaseFields.REVIEWER_UID,new User().getUID());
+        return map;
+
+    }
+
+    private Map<String,Object> setDriverList(){
+        Map<String,Object> map=new HashMap<>();
+        map.put(FirebaseFields.FULL_NAMES,passenger.getNames());
         return map;
 
     }

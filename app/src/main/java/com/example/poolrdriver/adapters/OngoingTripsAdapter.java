@@ -9,7 +9,6 @@ import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsFr
 import static com.example.poolrdriver.Firebase.FirebaseRepository.getDocumentsInCollection;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.setDocument;
 import static com.example.poolrdriver.util.AppSystem.getMyDefaultLocation;
-import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -31,15 +30,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.poolrdriver.Firebase.Callback;
-import com.example.poolrdriver.Firebase.Constants.FirebaseConstants;
-import com.example.poolrdriver.Firebase.Constants.FirebaseFields;
+import com.example.poolrdriver.Abstract.Callback;
+import com.example.poolrdriver.Abstract.FirebaseConstants;
+import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
 import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.R;
-import com.example.poolrdriver.TAG;
-import com.example.poolrdriver.classes.Passenger;
-import com.example.poolrdriver.models.TripModel;
-import com.example.poolrdriver.userRegistrationJourney.LogInScreen;
+import com.example.poolrdriver.ui.activities.other.TAG;
+import com.example.poolrdriver.classes.other.Passenger;
+import com.example.poolrdriver.classes.models.TripModel;
 import com.example.poolrdriver.util.RatingDialog;
 import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;

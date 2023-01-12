@@ -26,88 +26,91 @@
         android:theme="@style/Theme.PoolrDriver"
         tools:replace="android:icon">
         <activity
-            android:name=".MyRoutes"
+            android:name=".ui.activities.other.TripSummary"
             android:exported="false" />
         <activity
-            android:name=".MyCars"
+            android:name=".ui.activities.other.MyRoutes"
             android:exported="false" />
         <activity
-            android:name=".NetworkViewMembers"
+            android:name=".ui.activities.other.MyCars"
             android:exported="false" />
         <activity
-            android:name=".NetworkMainPage"
+            android:name=".ui.activities.other.NetworkViewMembers"
             android:exported="false" />
         <activity
-            android:name=".JoinNetworkActivity"
+            android:name=".ui.activities.networks.NetworkMainPage"
             android:exported="false" />
         <activity
-            android:name=".CreateNetworkSuccess"
+            android:name=".ui.activities.networks.JoinNetworkActivity"
             android:exported="false" />
         <activity
-            android:name=".Car_details_3"
+            android:name=".ui.activities.other.CreateNetworkSuccess"
             android:exported="false" />
         <activity
-            android:name=".CarDetail2"
+            android:name=".ui.activities.userRegistrationJourney.Car_details_3"
             android:exported="false" />
         <activity
-            android:name=".Car_details"
+            android:name=".ui.activities.userRegistrationJourney.CarDetail2"
             android:exported="false" />
         <activity
-            android:name=".reviewActivity"
+            android:name=".ui.activities.userRegistrationJourney.Car_details"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.other.reviewActivity"
             android:exported="false" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".drop_offs"
+            android:name=".ui.activities.other.drop_offs"
             android:exported="false" />
         <activity
-            android:name=".Passengers"
+            android:name=".ui.activities.other.Passengers"
             android:exported="false" />
         <activity
-            android:name=".OngoingTrip"
+            android:name=".ui.activities.other.OngoingTrip"
             android:exported="false" />
         <activity
-            android:name=".AddBio"
+            android:name=".ui.activities.userRegistrationJourney.AddBio"
             android:exported="false" />
         <activity
-            android:name=".ChangeProfilePicture"
+            android:name=".ui.activities.userRegistrationJourney.ChangeProfilePicture"
             android:exported="false" />
         <activity
-            android:name=".NetworkTrips"
+            android:name=".ui.activities.other.NetworkTrips"
             android:exported="false" />
         <activity
-            android:name=".MyNetworks"
+            android:name=".ui.activities.networks.MyNetworks"
             android:exported="false" />
         <activity
-            android:name=".trip_requests"
+            android:name=".ui.activities.other.trip_requests"
             android:exported="false" />
         <activity
-            android:name=".PassengerProfile"
+            android:name=".ui.activities.other.PassengerProfile"
             android:exported="false" />
         <activity
-            android:name=".price_split"
+            android:name=".ui.activities.other.price_split"
             android:exported="false" />
         <activity
-            android:name=".onLocationPressedActivity"
+            android:name=".ui.activities.other.onLocationPressedActivity"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.CancelTrip"
+            android:name=".ui.activities.userRegistrationJourney.CancelTrip"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.verifyOTP"
+            android:name=".ui.activities.userRegistrationJourney.verifyOTP"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.ForgotPassword"
+            android:name=".ui.activities.userRegistrationJourney.ForgotPassword"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.HomeAndWorkAdress"
+            android:name=".ui.activities.userRegistrationJourney.HomeAndWorkAdress"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.LogInScreen"
+            android:name=".ui.activities.userRegistrationJourney.LogInScreen"
             android:exported="false" />
         <activity
-            android:name=".userRegistrationJourney.verifyPhoneNumberScreen"
+            android:name=".ui.activities.userRegistrationJourney.verifyPhoneNumberScreen"
             android:exported="false" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -122,43 +125,43 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MyProfile"
+            android:name=".ui.activities.other.MyProfile"
             android:exported="false" />
         <activity
-            android:name=".My_trips"
+            android:name=".ui.activities.other.My_trips"
             android:exported="false" />
         <activity
-            android:name=".verifyPhoneNumber"
+            android:name=".ui.activities.other.verifyPhoneNumber"
             android:exported="false" />
         <activity
-            android:name=".NotificationsActivity"
+            android:name=".ui.activities.other.NotificationsActivity"
             android:exported="false" />
         <activity
-            android:name=".My_trips_expanded"
+            android:name=".ui.activities.other.My_trips_expanded"
             android:exported="false" />
         <activity
-            android:name=".wallet"
+            android:name=".ui.activities.other.wallet"
             android:exported="false" />
         <activity
-            android:name=".MapsActivity"
+            android:name=".ui.activities.other.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".userRegistrationJourney.SignUpScreen"
+            android:name=".ui.activities.userRegistrationJourney.SignUpScreen"
             android:exported="false" />
         <activity
-            android:name=".WalkthroughScreen"
+            android:name=".ui.activities.other.WalkthroughScreen"
             android:exported="false" />
         <activity
-            android:name=".choose_trip_to_display"
+            android:name=".ui.activities.other.choose_trip_to_display"
             android:exported="false" />
         <activity
-            android:name=".HomePageActivity"
+            android:name=".ui.activities.other.HomePageActivity"
             android:exported="false"
             android:label="@string/title_activity_home_page"
             android:theme="@style/Theme.PoolrDriver.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.other.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
