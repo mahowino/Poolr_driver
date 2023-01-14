@@ -2,6 +2,7 @@ package com.example.poolrdriver.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,8 @@ import com.example.poolrdriver.Firebase.User;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.classes.other.Passenger;
 import com.example.poolrdriver.classes.other.Reviews;
+import com.example.poolrdriver.ui.activities.other.MapsActivity;
+import com.example.poolrdriver.ui.activities.other.OngoingTrip;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,12 +37,13 @@ public class RatingDialog {
     float rating;
     Button submitRating;
     CheckBox instantBookListCheckBox;
+    boolean isTripDone;
 
-    public RatingDialog(Activity activity, Passenger passenger, String tripID) {
+    public RatingDialog(Activity activity, Passenger passenger, String tripID,boolean isTripDone) {
         this.tripId=tripID;
         this.passenger=passenger;
         this.activity = activity;
-
+        this.isTripDone=isTripDone;
         rating=0;
     }
     public void startRatingAlertDialog(){
@@ -57,12 +61,7 @@ public class RatingDialog {
     }
 
     private void setListeners() {
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-               RatingDialog.this.rating=rating;
-            }
-        });
+        ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> RatingDialog.this.rating=rating);
 
         submitRating.setOnClickListener(v->postRating());
     }
@@ -80,6 +79,13 @@ public class RatingDialog {
             public void onSuccess(Object object) {
                 Toast.makeText(activity, "rating posted", Toast.LENGTH_SHORT).show();
                 dismissDialog();
+
+                if (isTripDone){
+                    Toast.makeText(activity, "Trip successfully ended", Toast.LENGTH_SHORT).show();
+                    Intent intent=new Intent(activity, MapsActivity.class);
+                    activity.startActivity(intent);
+                    activity.finish();
+                }
             }
 
             @Override
@@ -93,7 +99,7 @@ public class RatingDialog {
     private void addPassengerToDriverList() {
         String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.INSTANT_BOOK_LIST+"/"+passenger.getUsername();
         String path2= FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+"/"+FirebaseConstants.INSTANT_BOOK_LIST+"/"+new User().getUID();
-        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createCollectionReference(path), new Callback() {
+        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createDocumentReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
 
@@ -105,7 +111,7 @@ public class RatingDialog {
                 Toast.makeText(activity, "error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createCollectionReference(path2), new Callback() {
+        FirebaseRepository.setDocument(setDriverList(), FirebaseRepository.createDocumentReference(path2), new Callback() {
             @Override
             public void onSuccess(Object object) {
 

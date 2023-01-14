@@ -1,5 +1,6 @@
 package com.example.poolrdriver.adapters;
 
+import static com.example.poolrdriver.Abstract.Constants.FirebaseInitVariables.db;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createCollectionReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createDocumentReference;
 import static com.example.poolrdriver.Firebase.FirebaseRepository.createQuery;
@@ -33,7 +34,9 @@ import com.bumptech.glide.Glide;
 import com.example.poolrdriver.Abstract.Callback;
 import com.example.poolrdriver.Abstract.FirebaseConstants;
 import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
+import com.example.poolrdriver.Firebase.FirebaseRepository;
 import com.example.poolrdriver.Firebase.User;
+import com.example.poolrdriver.Interfaces.OnTripEndedListener;
 import com.example.poolrdriver.R;
 import com.example.poolrdriver.ui.activities.other.TAG;
 import com.example.poolrdriver.classes.other.Passenger;
@@ -42,10 +45,13 @@ import com.example.poolrdriver.util.RatingDialog;
 import com.example.poolrdriver.util.mathsUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,13 +65,19 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
     TripModel trip;
     private Location endLocation;
     Activity activity;
+    double driverAmount,passengerAmount,adminAmount;
+    OnTripEndedListener listener;
 
-    public OngoingTripsAdapter(Context mContext, Activity activity, List<String> passengerIDs, TripModel trip) {
+    public OngoingTripsAdapter(Context mContext, Activity activity, List<String> passengerIDs, TripModel trip, OnTripEndedListener listener) {
         this.mContext = mContext;
         this.passengerIDs = passengerIDs;
         this.trip = trip;
         this.activity=activity;
         startLocation=new GeoPoint(trip.getSourcePoint().latitude,trip.getSourcePoint().longitude);
+        driverAmount=0;
+        passengerAmount=0;
+        adminAmount=0;
+        this.listener=listener;
     }
 
     @NonNull
@@ -140,363 +152,76 @@ public class OngoingTripsAdapter extends RecyclerView.Adapter<OngoingTripsAdapte
         });
 
     }
+    private void getTripCharges(boolean isTripComplete,double distance,Passenger passenger){
+        double cash_for_trip= trip.getTripPrice();
+        double bookingFee=trip.getPassengerBookingFee();
+        double pricePerSeat;
+
+        if (isTripComplete) {
+            //charge driver cut
+            double driverFee=cash_for_trip*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
+
+            adminAmount=bookingFee;
+            passengerAmount=0;
+            driverAmount=cash_for_trip;
+            listener.onTripEnded(driverAmount,adminAmount,passengerAmount,passenger);
+
+
+
+        }
+        else if(distance<1){
+            new AlertDialog.Builder(activity)
+                    .setTitle("Cancel trip")
+                    .setMessage("You haven't traveled for the minimum distance to warant a carpool. Do you still want to cancel?")
+                    .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
+                        //cancelled ride
+
+                        listener.onTripEnded(0,bookingFee,cash_for_trip,passenger);
+
+
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog12, which) -> dialog12.dismiss())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+        }
+
+        else {
+            pricePerSeat=(distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER)/trip.getSeats();
+
+            //get driver cut
+            double driverFee=pricePerSeat*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
+
+            //update new price information
+            double priceToGiveDriver=pricePerSeat-driverFee;
+
+            //update balance to add back to passenger account
+            double balanceToTopUpPassenger=cash_for_trip-(pricePerSeat)-bookingFee;
+
+            adminAmount=bookingFee;
+            passengerAmount=balanceToTopUpPassenger;
+            driverAmount=pricePerSeat;
+
+
+            Log.d("ongoing", "onSuccess: ongoing trip driver fee"+priceToGiveDriver);
+            Log.d("ongoing", "onSuccess: ongoing trip booking fee"+(bookingFee+driverFee));
+            Log.d("ongoing", "onSuccess: ongoing trip passenger fee"+balanceToTopUpPassenger);
+            listener.onTripEnded(driverAmount,adminAmount,passengerAmount,passenger);
+
+        }
+
+    }
+
 
 
     private void checkIfTripIsComplete(Passenger passenger,int position) {
-        LatLng source=new LatLng(startLocation.getLatitude(),startLocation.getLongitude());
-        LatLng tripSource=trip.getSourcePoint();
-
+        LatLng source = new LatLng(startLocation.getLatitude(), startLocation.getLongitude());
 
         //get destinationPoint from app
-
-        LatLng destination=new LatLng(endLocation.getLatitude(),endLocation.getLongitude());
-        LatLng tripDestination=trip.getDestinationpoint();
-        Log.d("tag", "checkIfTripIsComplete: "+source);
-        Log.d("tag", "checkIfTripIsComplete: "+tripSource);
-        Log.d("tag", "checkIfTripIsComplete: "+destination);
-        Log.d("tag", "checkIfTripIsComplete: "+tripDestination);
-
-
-        double pricePerSeat=0;
-        boolean isTripComplete=false;
-
-
-        //if trip is within limits of driver
-        if (mathsUtil.getDistanceFromUserPoints(destination,tripDestination)<1){
-            pricePerSeat=trip.getTripPrice();
-            isTripComplete=true;
-            chargeBookingFee(pricePerSeat,passenger,isTripComplete,position);
-
-        }
-
-            //trip canceled prematurely
-        else  {
-            double distance=mathsUtil.getDistanceFromUserPoints(source,destination);
-            if(distance<1){
-                new AlertDialog.Builder(activity)
-                        .setTitle("Cancel trip")
-                        .setMessage("You haven't traveled for the minimum distance to warant a carpool. Do you still want to cancel?")
-                        .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
-                            //cancelled ride
-
-                            RatingDialog rate=new RatingDialog(activity,passenger,trip.getTripID());
-                            rate.startRatingAlertDialog();
-
-                        })
-                        .setNegativeButton(android.R.string.no, (dialog12, which) -> dialog12.dismiss())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-            }
-            else {
-                Toast.makeText(mContext, "you are cancelling the trip early", Toast.LENGTH_SHORT).show();
-                pricePerSeat=(distance*FirebaseConstants.FIXED_RATE_PER_KILOMETER)/trip.getSeats();
-                chargeBookingFee(pricePerSeat,passenger,false,position);
-            }
-
-
-        }
-
-
-
-    }
-
-    private void chargeBookingFee(double pricePerSeat,Passenger passenger,boolean isTripComplete,int pos) {
-
-
-        movePledgedFundsToDriverWallet(passenger,pricePerSeat,isTripComplete,pos);
-
-    }
-
-    private void movePledgedFundsToDriverWallet(Passenger passenger,double pricePerSeat, boolean isTripComplete,int pos) {
-        getPledgeWalletForTheSpecificTrip(passenger,pricePerSeat,isTripComplete,pos);
-    }
-
-    private void getPledgeWalletForTheSpecificTrip(Passenger passenger,double pricePerSeat,boolean isTripComplete,int position) {
-        String path=FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+ "/"+FirebaseConstants.PLEDGED_FUNDS_WALLET+"/"+trip.getTripID();
-        getDocument(
-                createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-                Task<DocumentSnapshot> task=(Task<DocumentSnapshot>) object;
-                DocumentSnapshot snapshot=task.getResult();
-
-
-                    Toast.makeText(mContext, "You have.", Toast.LENGTH_SHORT).show();
-                    double cash_for_trip=snapshot.getDouble(FirebaseFields.CASH);
-                    double bookingFee=snapshot.getDouble(FirebaseFields.PASSENGER_BOOKING_FEE);
-
-                    //if trip is complete
-                    if (isTripComplete) {
-                        //charge driver cut
-                        //reconsider
-                        double driverFee=cash_for_trip*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
-
-                        //update new price information
-                        cash_for_trip=cash_for_trip-driverFee;
-
-                        //top up wallets
-                        addWalletAmountToDriverWallet(cash_for_trip);
-                        addBookingFeeToAdminWallet(driverFee+bookingFee);
-
-                    }
-
-                    else {
-
-
-                        //get driver cut
-                        double driverFee=pricePerSeat*FirebaseConstants.FIXED_RATE_DRIVER_CUT;
-
-
-                        //update new price information
-                        double priceToGiveDriver=pricePerSeat-driverFee;
-
-                        //update balance to add back to passenger account
-                        double balanceToTopUpPassenger=cash_for_trip-(pricePerSeat);
-
-                        Log.d("ongoing", "onSuccess: ongoing trip driver fee"+priceToGiveDriver);
-                        Log.d("ongoing", "onSuccess: ongoing trip booking fee"+(bookingFee+driverFee));
-                        Log.d("ongoing", "onSuccess: ongoing trip passenger fee"+balanceToTopUpPassenger);
-
-                        Toast.makeText(mContext, "Trip  for "+passenger.getNames(), Toast.LENGTH_SHORT).show();
-                        //top up wallets
-                        addWalletAmountToDriverWallet(priceToGiveDriver);
-                        addBookingFeeToAdminWallet(bookingFee+driverFee);
-                        updatePassengersWallet(balanceToTopUpPassenger,passenger);
-
-                    }
-
-                    //update trip information
-                    updateTrips(passenger.getUsername());//todo: fix error
-                    deleteWalletEntry(snapshot.getId(),passenger.getUsername());
-                    passengerIDs.remove(position);
-                    notifyItemRemoved(position);
-
-                    //review passenger
-                    RatingDialog rate=new RatingDialog(activity,passenger,trip.getTripID());
-                    rate.startRatingAlertDialog();
-                    //Toast.makeText(mContext, "Trip successfully ended for "+passenger.getNames(), Toast.LENGTH_SHORT).show();
-
-                }
-
-
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());}
-        });
-
-
-    }
-
-    private void updatePassengersWallet(double balanceToTopUpPassenger, Passenger passenger) {
-        String path=FirebaseConstants.PASSENGERS+"/"+passenger.getUsername()+ "/"+FirebaseConstants.PASSENGER_WALLET;
-        getDocumentsFromQueryInCollection(
-                createQuery(createCollectionReference(path),
-                        FirebaseFields.TRIP_ID,
-                        trip.getTripID()), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-                double wallet_balance;
-                Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
-                for (DocumentSnapshot snapshot:task.getResult()){
-                String cash= String.valueOf(snapshot.get(FirebaseFields.CASH));
-                wallet_balance=Double.valueOf(cash);
-                wallet_balance=wallet_balance+balanceToTopUpPassenger;
-
-                topUpPassengerCash(snapshot.getId(),wallet_balance,passenger.getUsername());
-            }
-
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-
-    }
-
-    private void addBookingFeeToAdminWallet(double driverFee) {
-        String path=FirebaseConstants.ADMIN+"/"+FirebaseConstants.ROOT_ADMIN_ID+"/"+FirebaseConstants.ADMIN_WALLET;
-        getDocumentsInCollection(createCollectionReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-                String walletUid;
-                double wallet_balance;
-                Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
-                for (DocumentSnapshot snapshot:task.getResult()){
-                    walletUid=snapshot.getId();
-                    String cash= String.valueOf(snapshot.get(FirebaseFields.CASH));
-                    wallet_balance=Double.valueOf(cash);
-                    wallet_balance=wallet_balance+driverFee;
-                    topUpAdminCash(walletUid,wallet_balance);
-                    logTransaction();
-                }
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d("tag", "onFailure: failure "+((Exception)object).getMessage());}
-        });
-
-    }
-
-    private void addWalletAmountToDriverWallet(double cash_for_trip) {
-        String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.DRIVER_WALLET;
-        getDocumentsInCollection(createCollectionReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-                String walletUid;
-                double wallet_balance;
-                Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
-                for (DocumentSnapshot snapshot:task.getResult()){
-                    walletUid=snapshot.getId();
-                    String cash= String.valueOf(snapshot.get(FirebaseFields.CASH));
-                    wallet_balance=Double.valueOf(cash);
-                    wallet_balance=wallet_balance+cash_for_trip;
-                    topUpCash(walletUid,wallet_balance);
-
-                }
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d("tag", "onFailure: failure "+((Exception)object).getMessage());}
-        });
-
-    }
-
-
-    private void deleteWalletEntry(String walletId,String passengerID) {
-        //move trip to past trips
-        String pledgeWalletPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.PLEDGED_FUNDS_WALLET+"/"+walletId;
-        String upcomingTripPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.TRIPS+"/"+trip.getTripID();
-        String ongoingTripPath=FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.ONGOING_TRIP+"/"+trip.getTripID();
-        String booking_on_trip=FirebaseConstants.RIDES+"/"+trip.getTripID()+"/"+FirebaseConstants.BOOKINGS+"/"+passengerID;
-
-
-        deleteFromDatabase(pledgeWalletPath);
-        deleteFromDatabase(upcomingTripPath);
-        deleteFromDatabase(ongoingTripPath);
-        deleteFromDatabase(booking_on_trip);
-
-
-    }
-    private void deleteFromDatabase(String path) {
-        deleteDocument(createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-    }
-
-
-
-    private void logTransaction() {
-
-        String path2=FirebaseConstants.ADMIN+"/"+FirebaseConstants.ROOT_ADMIN_ID+"/"+FirebaseConstants.TRANSACTIONS;
-
-        setDocument(createBookingTransaction(), createCollectionReference(path2), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-        Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-
-
-    }
-
-
-    private void updateTrips(String passengerID) {
-        String path= FirebaseConstants.PASSENGERS+"/"+passengerID+"/"+FirebaseConstants.PAST_RIDES;
-        setDocument(createBookingTransaction(),createCollectionReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-
-    }
-
-    private void topUpAdminCash(String walletUid,double newBalance) {
-        String path=FirebaseConstants.ADMIN+"/"+FirebaseConstants.ROOT_ADMIN_ID+"/"+FirebaseConstants.ADMIN_WALLET+"/"+walletUid;
-        setDocument(createWallet(newBalance), createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-    }
-
-
-    private void topUpCash(String walletUid,double newBalance) {
-        String path=FirebaseConstants.PASSENGERS+"/"+new User().getUID()+ "/"+FirebaseConstants.DRIVER_WALLET+"/"+walletUid;
-        setDocument(createWallet(newBalance), createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-    }
-    private void topUpPassengerCash(String walletUid,double newBalance,String passenger) {
-        String path=FirebaseConstants.PASSENGERS+"/"+passenger+ "/"+FirebaseConstants.PASSENGER_WALLET+"/"+walletUid;
-        setDocument(createWallet(newBalance), createDocumentReference(path), new Callback() {
-            @Override
-            public void onSuccess(Object object) {
-
-            }
-
-            @Override
-            public void onError(Object object) {
-                Log.d(TAG.TAG, "onFailure: failure "+((Exception)object).getMessage());
-            }
-        });
-    }
-
-    private Map createWallet(double amountToUpdate) {
-        Map<String,Object> wallet_update_object=new HashMap<>();
-
-        wallet_update_object.put(FirebaseFields.CASH,amountToUpdate);
-        wallet_update_object.put(FirebaseFields.UPDATE_TIME,new Date());
-        return wallet_update_object;
-
-    }
-    private Map createBookingTransaction() {
-        //todo:populateTripValues
-        Map<String,Object> map=new HashMap<>();
-        map.put(FirebaseFields.TRIP_ID,trip);
-        map.put(FirebaseFields.CASH,trip.getTripPrice());
-        return map;
+        LatLng destination = new LatLng(endLocation.getLatitude(), endLocation.getLongitude());
+        LatLng tripDestination = trip.getDestinationpoint();
+        getTripCharges(mathsUtil.getDistanceFromUserPoints(destination, tripDestination) <= 1, mathsUtil.getDistanceFromUserPoints(source, destination), passenger);
+       /* mathsUtil.getDistanceFromUserPoints(destination, tripDestination) <= 100000*/
     }
 
 

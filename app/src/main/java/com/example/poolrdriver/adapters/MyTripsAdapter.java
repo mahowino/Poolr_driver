@@ -51,6 +51,8 @@ public class MyTripsAdapter extends RecyclerView.Adapter<MyTripsAdapter.holderVi
 
     private void setListeners(holderView holder,TripModel tripModel) {
 
+        if (isRoute)
+            holder.viewMore.setText("post");
 
         holder.viewMore.setOnClickListener(v -> {
 

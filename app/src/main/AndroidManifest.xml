@@ -26,6 +26,11 @@
         android:theme="@style/Theme.PoolrDriver"
         tools:replace="android:icon">
         <activity
+            android:name=".ui.activities.other.ConfirmTripPassengers"
+            android:exported="false" />
+        <activity android:name=".ui.activities.other.PastTrips"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.other.TripSummary"
             android:exported="false" />
         <activity

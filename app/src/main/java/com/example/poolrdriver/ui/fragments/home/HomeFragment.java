@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.poolrdriver.databinding.FragmentHomeBinding;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;

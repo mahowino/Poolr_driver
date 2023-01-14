@@ -136,7 +136,7 @@ public class fragment_where_to extends Fragment {
 
         wallet.setOnClickListener(v -> redirectActivity(getActivity(), NetworksActivity.class));
 
-        trips.setOnClickListener(v -> redirectActivity(getActivity(),choose_trip_to_display.class));
+        trips.setOnClickListener(v -> redirectActivity(getActivity(),My_trips.class));
     }
 
     private void initializeVariables(View view) {

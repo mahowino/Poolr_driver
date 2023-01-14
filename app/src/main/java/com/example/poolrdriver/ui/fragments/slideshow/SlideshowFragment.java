@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.poolrdriver.databinding.FragmentSlideshowBinding;
+
 public class SlideshowFragment extends Fragment {
 
     private SlideshowViewModel slideshowViewModel;

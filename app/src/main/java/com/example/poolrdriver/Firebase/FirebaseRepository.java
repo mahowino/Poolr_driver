@@ -1,16 +1,20 @@
 package com.example.poolrdriver.Firebase;
 
 import static android.content.ContentValues.TAG;
+import static com.example.poolrdriver.Abstract.Constants.FirebaseInitVariables.db;
 import static com.example.poolrdriver.util.AppSystem.redirectActivity;
 
 import android.app.Activity;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.example.poolrdriver.Abstract.Callback;
 import com.example.poolrdriver.Abstract.FirebaseConstants;
 import com.example.poolrdriver.Abstract.Constants.FirebaseFields;
 import com.example.poolrdriver.Abstract.Constants.FirebaseInitVariables;
 import com.example.poolrdriver.util.AppSystem;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -23,6 +27,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseRepository {
@@ -35,30 +40,34 @@ public class FirebaseRepository {
         return FirebaseInitVariables.mAuth.getCurrentUser();
     }
 
-    public static void getDocument(DocumentReference reference, Callback callback) {
+    public static void getDocument(@NonNull DocumentReference reference, Callback callback) {
         reference.get().addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
 
-    public static void setDocument(Map map, DocumentReference reference, final Callback callback) {
+    public static void setDocument(Map map, @NonNull DocumentReference reference, final Callback callback) {
         reference.set(map).addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
-    public static void setDocument(Map map, CollectionReference reference, final Callback callback) {
+    public static void setDocument(Map map, @NonNull CollectionReference reference, final Callback callback) {
         reference.document().set(map).addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
-    public static void deleteDocument(DocumentReference reference, Callback callback){
+    public static void deleteDocument(@NonNull DocumentReference reference, Callback callback){
         reference.delete().addOnCompleteListener(task -> runTaskValidation(task,callback));
     }
 
 
-    public static void getDocumentsInCollection(CollectionReference collectionReference, final Callback callback) {
+    public static void getDocumentsInCollection(@NonNull CollectionReference collectionReference, final Callback callback) {
         collectionReference.get().addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
+    public static void getTripsInCollection(@NonNull CollectionReference collectionReference, final Callback callback) {
+        collectionReference.orderBy(FirebaseFields.TRiP_DATE, Query.Direction.DESCENDING).limit(10).get().addOnCompleteListener(task -> runTaskValidation(task, callback));
+    }
 
-    public static void getDocumentsFromQueryInCollection(Query query, final Callback callback) {
+
+    public static void getDocumentsFromQueryInCollection(@NonNull Query query, final Callback callback) {
         query.get().addOnCompleteListener(task -> runTaskValidation(task, callback));
     }
 
-    private static void runTaskValidation(Task task, Callback callback) {
+    private static void runTaskValidation(@NonNull Task task, Callback callback) {
         if (task.isSuccessful()) callback.onSuccess(task);
         else callback.onError(FirebaseConstants.FAIL);
     }
@@ -100,6 +109,17 @@ public class FirebaseRepository {
         reference.getDownloadUrl()
                 .addOnSuccessListener(uri -> {callback.onSuccess(uri);})
                 .addOnFailureListener(e ->{ Log.e(TAG, "onFailure: ",e.getCause());callback.onError(e);});
+    }
+    public static void deleteBatch(List<DocumentReference> references,Callback callback) {
+        // Get a new write batch
+        WriteBatch batch = db.batch();
+        for (DocumentReference reference: references ) {
+            batch.delete(reference);
+        }
+
+        batch.commit().addOnCompleteListener(task -> {
+            runTaskValidation(task,callback);
+        });
     }
 
     public static boolean checkIfDocumentExists(DocumentReference reference, Activity activity) {

@@ -3,6 +3,8 @@ package com.example.poolrdriver.Abstract;
 public abstract class FirebaseConstants {
     public static  final String PASSENGERS = "passengers";
 
+    public static  final String ADMIN_WALLET_ID = "q23SaEsC7HbG6KNrnWrd";
+
     public static  final String ADMIN = "Admin";
 
     public static  final String PASSENGER_WALLET = "passenger_wallet";
@@ -18,6 +20,8 @@ public abstract class FirebaseConstants {
     public static final String ROUTES = "routes";
 
     public static final String INSTANT_BOOK_LIST ="instant_book_list" ;
+
+    public static final String TRIP_WALLET ="trip_wallet" ;
 
     public static double FIXED_RATE_PER_KILOMETER =44.92;
 

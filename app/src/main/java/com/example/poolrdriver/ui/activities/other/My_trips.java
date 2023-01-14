@@ -25,9 +25,11 @@ import com.example.poolrdriver.classes.models.TripModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class My_trips extends AppCompatActivity {
@@ -70,7 +72,7 @@ public class My_trips extends AppCompatActivity {
     }
     private void getUserNetworks() {
         String path= FirebaseConstants.PASSENGERS+"/"+new User().getUID()+"/"+FirebaseConstants.NETWORKS;
-        getDocumentsInCollection(createCollectionReference(path), new Callback() {
+        getTripsInCollection(createCollectionReference(path), new Callback() {
             @Override
             public void onSuccess(Object object) {
                 QuerySnapshot snapshot=((Task<QuerySnapshot>) object).getResult();
@@ -96,14 +98,9 @@ public class My_trips extends AppCompatActivity {
             networks.add(network);
         }
 
-
-
-
-
     }
     private void getPostsDataFromDriver() {
-                //get user networks
-        //get networks
+
         if (networks.size()>0){
             counter=0;
             for (Network network:networks)
@@ -116,9 +113,12 @@ public class My_trips extends AppCompatActivity {
     }
 
     private void getTripsFromNetwork(String networkID) {
-        String path=FirebaseConstants.NETWORKS+"/"+networkID+"/"+FirebaseConstants.ROUTES;
+        Date currentDate=new Date();
 
-        getDocumentsFromQueryInCollection(createQuery(createCollectionReference(path),FirebaseFields.DRIVER,new User().getUID()), new Callback() {
+        Query tripsQuery=createCollectionReference(FirebaseConstants.NETWORKS+"/"+networkID+"/"+FirebaseConstants.RIDES)
+                .orderBy(FirebaseFields.DEPARTURETIME, Query.Direction.DESCENDING).limit(10)
+                .whereGreaterThanOrEqualTo(FirebaseFields.DEPARTURETIME,currentDate);
+        getDocumentsFromQueryInCollection(tripsQuery, new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;
@@ -144,8 +144,12 @@ public class My_trips extends AppCompatActivity {
     }
 
     private void getPublicTripsFromDatabase() {
-        Log.d("tag", "onSuccess: "+new User().getUID());
-        getDocumentsFromQueryInCollection(createQuery(createCollectionReference(public_trips_path),FirebaseFields.DRIVER,new User().getUID()), new Callback() {
+        Date currentDate=new Date();
+        Query tripsQuery=createCollectionReference(FirebaseConstants.RIDES)
+                .orderBy(FirebaseFields.DEPARTURETIME, Query.Direction.DESCENDING).limit(10)
+                .whereGreaterThanOrEqualTo(FirebaseFields.DEPARTURETIME,currentDate);
+
+        getDocumentsFromQueryInCollection(tripsQuery, new Callback() {
             @Override
             public void onSuccess(Object object) {
                 Task<QuerySnapshot> task=(Task<QuerySnapshot>) object;

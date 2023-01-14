@@ -60,8 +60,8 @@ public class TripSummary extends AppCompatActivity {
         setContentView(R.layout.activity_trip_summary);
         initializeData();
         setData();
-        setTextData();
         setDefaultDate();
+        setTextData();
         setListeners();
     }
     private String generateRandomId(){
@@ -108,11 +108,12 @@ public class TripSummary extends AppCompatActivity {
     private void setTextData() {
         tripSource.setText(trip.getDriverSource());
         tripDestination.setText(trip.getDriverDestination());
-        int day=timePickerObject.getDay();
-        int month=timePickerObject.getMonth();
-        int year=timePickerObject.getYear();
+        int day=time.getDay();
+        int month=time.getMonth();
+        int year=time.getYear();
         int hour=timePickerObject.getHour();
         int minute= timePickerObject.getMinute();
+
         tripTime.setText(day+"/"+month+"/"+year+" at "+hour+":"+minute+" hours");
 
         //departure_time.setText(SimpleDateFormat.getInstance().format(new Date()));//trip.getTimePickerObject().getDate()
